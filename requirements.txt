@@ -1,0 +1,7 @@
+discord.py
+asyncpg
+jishaku
+cachetools
+asyncio
+aiohttp
+python-dotenv

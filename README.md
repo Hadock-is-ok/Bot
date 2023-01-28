@@ -1,2 +1,1 @@
-# Bot
-The official repository for Alone Bot.
+# The official repository for Alone Bot.

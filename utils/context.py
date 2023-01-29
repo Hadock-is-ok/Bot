@@ -20,7 +20,7 @@ BASE_KWARGS: dict[str, Any] = {
 class _Emojis:
     x = PartialEmoji(name="cross", id=1019436205269602354)
     check = PartialEmoji(name="tick", id=1019436222260723744)
-    slash = PartialEmoji(name="greyTick", id=895688440690114560)
+    slash = PartialEmoji(name="slash", id=1041021694682349569)
 
 class AloneContext(commands.Context):
     async def send(self, content: str = None, *args: Any, add_button_view: bool = True, **kwargs: Any):

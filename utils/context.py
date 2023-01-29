@@ -18,8 +18,8 @@ BASE_KWARGS: dict[str, Any] = {
 }
 
 class _Emojis:
-    x = PartialEmoji(name="redTick", id=895688440568508518)
-    check = PartialEmoji(name="greenTick", id=895688440690147370)
+    x = PartialEmoji(name="cross", id=1019436205269602354)
+    check = PartialEmoji(name="tick", id=1019436222260723744)
     slash = PartialEmoji(name="greyTick", id=895688440690114560)
 
 class AloneContext(commands.Context):

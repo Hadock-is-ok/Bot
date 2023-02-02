@@ -75,8 +75,11 @@ class AloneBot(commands.AutoShardedBot):
             return
         
         ctx = await self.get_context(message)
-        async with ctx.typing():
-            await self.invoke(ctx)
+        if ctx.valid:
+            async with ctx.typing():
+                await self.invoke(ctx)
+        else:
+            return
     
     async def setup_hook(self):
         self.db = await asyncpg.create_pool(

@@ -121,10 +121,6 @@ class Owner(commands.Cog):
     @commands.command(aliases=["shutdown", "fuckoff", "quit"])
     async def logout(self, ctx: commands.Context):
         await ctx.message.add_reaction(ctx.Emojis.check)
-
-        await self.bot.session.close()
-        await self.bot.db.close()
-
         await self.bot.close()
 
     @commands.command()

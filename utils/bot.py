@@ -6,6 +6,8 @@ import os
 import asyncpg
 import datetime
 import discord
+import logging
+import aiohttp
 from cachetools import TTLCache
 from discord.ext import commands
 
@@ -80,7 +82,6 @@ class AloneBot(commands.AutoShardedBot):
 
         async with ctx.typing():
             await self.invoke(ctx)
-
     
     async def setup_hook(self):
         self.db = await asyncpg.create_pool(
@@ -109,6 +110,17 @@ class AloneBot(commands.AutoShardedBot):
 
         records = await self.db.fetch("SELECT * FROM afk")
         self.afk = {user_id: reason for user_id, reason in records}
+    
+    async def close(self):
+        await self.session.close()
+        await self.db.close()
+        await super().close()
+    
+    async def start(self):
+        discord.utils.setup_logging(handler=logging.FileHandler("bot.log"))
+        self.logger = logging.getLogger("discord")
+        self.session = aiohttp.ClientSession()
+        await super().start()
 
     def get_log_channel(self):
         return self.get_channel(906683175571435550)

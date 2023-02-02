@@ -67,9 +67,17 @@ class AloneBot(commands.AutoShardedBot):
         assert self.user
         return *prefixes, f"<@!{self.user.id}> ", f"<@{self.user.id}> "
 
-    async def get_context(self, message, *, cls=AloneContext):
+    async def get_context(self, message: discord.Message, *, cls=AloneContext):
         return await super().get_context(message, cls=cls)
 
+    async def process_commands(self, message: discord.Message):
+        if message.author.bot:
+            return
+
+        async with ctx.typing():
+            ctx = await self.get_context(message)
+            await self.invoke(ctx)
+    
     async def setup_hook(self):
         self.db = await asyncpg.create_pool(
             host=os.environ["database"], 

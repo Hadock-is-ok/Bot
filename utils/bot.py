@@ -73,9 +73,9 @@ class AloneBot(commands.AutoShardedBot):
     async def process_commands(self, message: discord.Message):
         if message.author.bot:
             return
-
+        
+        ctx = await self.get_context(message)
         async with ctx.typing():
-            ctx = await self.get_context(message)
             await self.invoke(ctx)
     
     async def setup_hook(self):

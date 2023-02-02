@@ -116,7 +116,7 @@ class AloneBot(commands.AutoShardedBot):
         await self.db.close()
         await super().close()
     
-    async def start(self):
+    async def start(self, token: str):
         discord.utils.setup_logging(handler=logging.FileHandler("bot.log"))
         self.logger = logging.getLogger("discord")
         self.session = aiohttp.ClientSession()

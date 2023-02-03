@@ -8,7 +8,7 @@ class Voice(commands.Cog):
     
     @commands.Cog.listener()
     async def on_voice_join(self, member, state):
-        vc = self.bot.guild_config.get(state.channel.guild.id, None).get("voice_channel", None)
+        vc = self.bot.guild_config.get(state.channel.guild.id, {}).get("voice_channel", None)
         if not vc or state.channel.id != vc:
             return
         

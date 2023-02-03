@@ -96,7 +96,9 @@ Nitro Tier: {guild.premium_tier}""",
     
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
+        print("i")
         if not before.channel:
+            print("h")
             return self.bot.dispatch("voice_join", member, after)
 
         elif not after.channel:

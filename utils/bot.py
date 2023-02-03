@@ -27,6 +27,7 @@ class AloneBot(commands.AutoShardedBot):
         "ext.moderation",
         "ext.owner",
         "ext.utility",
+        "ext.voice",
         "jishaku",
     ]
 

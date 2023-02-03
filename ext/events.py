@@ -93,6 +93,14 @@ Nitro Tier: {guild.premium_tier}""",
         if self.bot.messages.get(message):
             bot_message = self.bot.messages.pop(message)
             await bot_message.delete()
+    
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, member, before, after):
+        if not before.channel:
+            return bot.dispatch("voice_join", member, after)
+
+        elif not after.channel:
+            return bot.dispatch("voice_leave", member, before)
 
 async def setup(bot: AloneBot):
     await bot.add_cog(Events(bot))

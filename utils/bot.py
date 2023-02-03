@@ -45,7 +45,7 @@ class AloneBot(commands.AutoShardedBot):
         self.afks: Dict[int, str] = {}
         self.todos: Dict[int, List[Todo]] = {}
         self.user_prefixes: Dict[int, List[str]] = {}
-        self.guild_prefixes: Dict[int, str] = {}
+        self.guild_config: Dict[int, Dict[str, Any]] = {}
         self.messages: TTLCache[str, discord.Message] = TTLCache(maxsize=2000, ttl=300.0)
 
         self.support_server: str = os.environ["bot_guild"]
@@ -60,8 +60,8 @@ class AloneBot(commands.AutoShardedBot):
         if user_prefixes:
             prefixes.extend(user_prefixes)
 
-        if message.guild and message.guild.id in self.guild_prefixes:
-            prefixes.append(self.guild_prefixes[message.guild.id])
+        if message.guild and (self.guild_config.get(message.guild.id, None).get("prefixes", None)):
+            prefixes.append(self.guild_config.get(message.guild.id)["prefix"])
 
         if not message.guild or message.author.id in self.owner_ids:
             prefixes.append("")
@@ -100,7 +100,8 @@ class AloneBot(commands.AutoShardedBot):
         self.user_prefixes = {user_id: prefix for user_id, prefix in records}
 
         records = await self.db.fetch("SELECT * FROM guilds WHERE prefix IS NOT NULL")
-        self.guild_prefixes = {guild_id: prefix for guild_id, prefix in records}
+        for guild_id, prefix in records:
+            self.guild_config[guild_id]["prefix"] = prefix
 
         records = await self.db.fetch("SELECT * FROM todo")
         for user_id, task, jump_url in records:

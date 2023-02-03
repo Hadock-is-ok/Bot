@@ -46,7 +46,7 @@ class Utility(commands.Cog):
             await ctx.message.add_reaction(ctx.Emojis.check)
             return await ctx.reply("Custom prefix for this guild has been cleared.")
 
-        self.bot.guild_prefix[ctx.guild.id] = prefix
+        self.bot.guild_config[ctx.guild.id]["prefix"] = prefix
         await self.bot.db.execute("INSERT INTO guilds VALUES ($1, $2)", ctx.guild.id, prefix)
         await ctx.message.add_reaction(ctx.Emojis.check)
         await ctx.reply(f"Custom prefix for this guild has been changed to `{prefix}`")

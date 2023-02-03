@@ -12,7 +12,7 @@ class Voice(commands.Cog):
         if not vc or state.channel.id != vc:
             return
         
-        new_vc = await member.guild.create_voice_channel(name=member.display_name, category=await member.guild.get_channel(self.bot.guild_config.get(state.channel.guild.id, None).get("voice_category", None)), reason="Made by the personal voice chat module")
+        new_vc = await member.guild.create_voice_channel(name=member.display_name, category=member.guild.get_channel(self.bot.guild_config.get(state.channel.guild.id, None).get("voice_category", None)), reason="Made by the personal voice chat module")
         await member.move(channel=new_vc)
 
 async def setup(bot: AloneBot):

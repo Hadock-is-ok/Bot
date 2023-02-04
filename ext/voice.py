@@ -23,21 +23,15 @@ class Voice(commands.Cog):
     
     @commands.Cog.listener()
     async def on_voice_leave(self, member, state):
-        print("ahgdw")
         vc = self.bot.guild_config.get(member.guild.id, {}).get("community_voice_channels", {})
-        print("haduh")
         if not vc or not state.channel.id in vc:
-            print("HEheia")
             return
-        print("heha")
+
         if not state.channel.members:
-            print("hajhdjhaw")
             channel = state.channel
-            print("haudhuwsd")
             try:
-                print("#hauhdi")
-                message = await channel.send("I will delete this channel for inactivity in 5 minutes if it's not used!")
-                print("HADHoi")
+                owner = vc.get(state.channel.id)
+                message = await (bot.get_member(owner)).send("I will delete this channel for inactivity in 5 minutes if it's not used!")
                 await self.bot.wait_for("voice_join", timeout=300, check=channel_check)
                 await message.delete()
             except asyncio.TimeoutError:

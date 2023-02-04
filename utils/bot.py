@@ -115,7 +115,7 @@ class AloneBot(commands.AutoShardedBot):
         
         records = await self.db.fetch("SELECT * FROM voice")
         for guild_id, user_id, channel_id in records:
-            self.guild_config.get(guild_id, {}).get("community_voice_channels", {})[user_id] = channel_id
+            self.guild_config.get(guild_id, {}).get("community_voice_channels", {})[channel_id] = user_id
 
         records = await self.db.fetch("SELECT * FROM todo")
         for user_id, task, jump_url in records:

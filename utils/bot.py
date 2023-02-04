@@ -17,6 +17,13 @@ class Todo(NamedTuple):
     task: str
     jump_url: str
 
+DEFAULT_GUILD_CONFIG: dict[str, Any] = {
+    prefix: str,
+    voice_channel: int,
+    voice_category: int,
+    community_voice_channels: dict[int, int],
+}
+
 class AloneBot(commands.AutoShardedBot):
     DEFAULT_PREFIXES: ClassVar[List[str]] = ["Alone", "alone"]
     INITIAL_EXTENSIONS: ClassVar[List[str]] = [
@@ -46,7 +53,7 @@ class AloneBot(commands.AutoShardedBot):
         self.afks: Dict[int, str] = {}
         self.todos: Dict[int, List[Todo]] = {}
         self.user_prefixes: Dict[int, List[str]] = {}
-        self.guild_config: Dict[int, Dict[str, Any]] = {}
+        self.guild_config: Dict[int, DEFAULT_GUILD_CONFIG] = {}
         self.messages: TTLCache[str, discord.Message] = TTLCache(maxsize=2000, ttl=300.0)
 
         self.support_server: str = os.environ["bot_guild"]
@@ -100,9 +107,15 @@ class AloneBot(commands.AutoShardedBot):
         records = await self.db.fetch("SELECT user_id, array_agg(prefix) AS prefixes FROM prefix GROUP BY user_id")
         self.user_prefixes = {user_id: prefix for user_id, prefix in records}
 
-        records = await self.db.fetch("SELECT * FROM guilds WHERE prefix IS NOT NULL")
-        for guild_id, prefix in records:
-            self.guild_config[guild_id]["prefix"] = prefix
+        records = await self.db.fetch("SELECT * FROM guilds")
+        for guild_id, prefix, voice_channel, voice_category in records:
+            self.guild_config.get(guild_id, {}).setdefault("prefix", prefix)
+            self.guild_config.get(guild_id, {}).setdefault("voice_channel", voice_channel)
+            self.guild_config.get(guild_id, {}).setdefault("voice_category", voice_category)
+        
+        records = await self.db.fetch("SELECT * FROM voice")
+        for guild_id, user_id, channel_id in records:
+            self.guild_config.get(guild_id, {}).get("community_voice_channels", {})[user_id] = channel_id
 
         records = await self.db.fetch("SELECT * FROM todo")
         for user_id, task, jump_url in records:

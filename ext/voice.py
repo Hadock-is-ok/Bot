@@ -14,7 +14,7 @@ class Voice(commands.Cog):
         
         new_vc = await member.guild.create_voice_channel(name=member.display_name, category=member.guild.get_channel(self.bot.guild_config.get(state.channel.guild.id, None).get("voice_category", None)), reason="Made by the personal voice chat module")
         await member.move_to(channel=new_vc)
-        self.bot.guild_config[member.guild.id].get("community_voice_channels", {})[member.id] = new_vc.id
+        self.bot.guild_config[member.guild.id].setdefault("community_voice_channels", {})[member.id] = new_vc.id
         await self.bot.db.execute("INSERT INTO voice VALUES ($1, $2, $3)", member.guild.id, member.id, new_vc.id)
         await member.send("Welcome to your own voice chat! Here, you lay the rules. your house, your magic. Have fun!")
     

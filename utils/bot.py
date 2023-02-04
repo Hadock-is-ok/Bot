@@ -18,10 +18,10 @@ class Todo(NamedTuple):
     jump_url: str
 
 DEFAULT_GUILD_CONFIG: dict[str, Any] = {
-    prefix: str = None,
-    voice_channel: int = None,
-    voice_category: int = None,
-    community_voice_channels: dict[int, int] = {},
+    "prefix": str,
+    "voice_channel": int,
+    "voice_category": int,
+    "community_voice_channels": dict[int, int],
 }
 
 class AloneBot(commands.AutoShardedBot):

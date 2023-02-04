@@ -27,7 +27,7 @@ class Voice(commands.Cog):
         if not vc or not state.channel.id in vc:
             return
         
-        if len(state.channel.members) == 0:
+        if not state.channel.members:
             channel = state.channel
             try:
                 message = await channel.send("I will delete this channel for inactivity in 5 minutes if it's not used!")

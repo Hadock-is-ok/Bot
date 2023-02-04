@@ -30,7 +30,9 @@ class Voice(commands.Cog):
         if len(state.channel.members) == 0:
             channel = state.channel
             try:
+                message = await channel.send("I will delete this channel for inactivity in 5 minutes if it's not used!")
                 await self.bot.wait_for("voice_join", timeout=300, check=channel_check)
+                await message.delete()
             except asyncio.TimeoutError:
                 try:
                     await channel.delete()

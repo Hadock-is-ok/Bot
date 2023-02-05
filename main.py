@@ -2,7 +2,7 @@ import os
 from discord import Intents
 from discord.ext import commands
 from dotenv import load_dotenv
-from asyncio import run, environ
+from asyncio import run
 
 import utils.bot as _bot
 
@@ -30,7 +30,7 @@ async def maintenance(ctx: commands.Context):
 
 async def main():
     async with bot:
-        await bot.start(environ["token"])
+        await bot.start(os.environ["token"])
 
 if __name__ == "__main__":
     run(main())

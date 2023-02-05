@@ -1,8 +1,8 @@
+import os
 from discord import Intents
-from asyncio import run
-from os import environ
 from discord.ext import commands
 from dotenv import load_dotenv
+
 import utils.bot as _bot
 
 load_dotenv()
@@ -10,7 +10,7 @@ load_dotenv()
 bot = _bot.AloneBot(intents=Intents.all())
 
 @bot.after_invoke
-async def aftercount(ctx: commands.Context):
+async def command_counter(ctx: commands.Context):
     bot.command_counter += 1
 
 @bot.check_once

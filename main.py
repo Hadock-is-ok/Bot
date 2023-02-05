@@ -2,6 +2,7 @@ import os
 from discord import Intents
 from discord.ext import commands
 from dotenv import load_dotenv
+from asyncio import run
 
 import utils.bot as _bot
 

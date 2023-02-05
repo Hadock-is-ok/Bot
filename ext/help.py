@@ -17,8 +17,10 @@ class _Help(commands.HelpCommand):
         for name, cog in self.context.bot.cogs.items():
             if not self.filter_commands(cog.get_commands(), sorted=True):
                 continue
+
             if not cog.get_commands():
                 continue
+            
             view.cog_select.append_option(discord.SelectOption(label=name))
         await self.context.reply(embed=embed, add_button_view=False, view=view)
 

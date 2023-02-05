@@ -20,8 +20,15 @@ class JoinSupportView(discord.ui.View):
 
 class CogSelect(discord.ui.View):
     def __init__(self, ctx):
+        self.ctx = ctx
         super().__init__(timeout=None)
     
+    async def interaction_check(interaction):
+        if interaction.user != self.ctx.author:
+            await interaction.response.send_message(f"This is {self.ctx.author.display_name}'s command!", ephemeral=True)
+            return False
+        return True
+
     @discord.ui.select(custom_id="select_cog", placeholder="Choose a category", min_values=1, max_values=1, row=1)
     async def cog_select(self, interaction, select):
         cog = interaction.client.get_cog(select.values[0])

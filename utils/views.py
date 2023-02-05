@@ -23,7 +23,7 @@ class CogSelect(discord.ui.View):
         self.ctx = ctx
         super().__init__(timeout=None)
     
-    async def interaction_check(interaction):
+    async def interaction_check(self, interaction):
         if interaction.user != self.ctx.author:
             await interaction.response.send_message(f"This is {self.ctx.author.display_name}'s command!", ephemeral=True)
             return False

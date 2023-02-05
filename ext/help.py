@@ -14,7 +14,8 @@ class _Help(commands.HelpCommand):
         embed.add_field(name="Extra information", value="You can also use `alone help [command|category]` to see more information about a specific command or category.")
 
         view = views.CogSelect(self.context)
-        for cog in self.context.bot.cogs:
+        for _cog in self.context.bot.cogs:
+            cog = bot.get_cog(_cog)
             if not cog.get_commands():
                 continue
             view.cog_select.append_option(discord.SelectOption(label=cog))

@@ -24,7 +24,7 @@ class CogSelect(discord.ui.View):
     
     @discord.ui.select(custom_id="select_cog", placeholder="Choose a category", min_values=1, max_values=1, row=1)
     async def cog_select(self, interaction, select):
-        cog = bot.get_cog(select.values[0])
+        cog = interaction.client.get_cog(select.values[0])
         command_list = ""
         for command in cog.get_commands():
             command_list += f"{command.name} "

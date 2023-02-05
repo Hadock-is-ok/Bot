@@ -15,6 +15,8 @@ class _Help(commands.HelpCommand):
 
         view = views.CogSelect(self.context)
         for cog in self.context.bot.cogs:
+            if not cog.get_commands():
+                continue
             view.cog_select.append_option(discord.SelectOption(label=cog))
         await self.context.reply(embed=embed, add_button_view=False, view=view)
 

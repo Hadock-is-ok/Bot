@@ -2,8 +2,6 @@ import discord, asyncio
 from discord.ext import commands
 from utils.bot import AloneBot
 
-def channel_check(member, state):
-    return state.channel == channel
 
 class Voice(commands.Cog):
     def __init__(self, bot: AloneBot):
@@ -39,6 +37,8 @@ class Voice(commands.Cog):
                     await channel.delete()
                 except Exception:
                     pass
+            except Exception as error:
+                self.bot.logger.error("Voice_leave died", exc_info=error)
 
 async def setup(bot: AloneBot):
     await bot.add_cog(Voice(bot))

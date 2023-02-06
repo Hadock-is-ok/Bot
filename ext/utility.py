@@ -168,11 +168,11 @@ class Utility(commands.Cog):
         duration = (endwrite - startwrite) * 100
         embed = discord.Embed(title="Pong!", color=discord.Colour.blue())
         embed.add_field(
-            name="<a:typing:990387851940229120> | Typing",
+            name="<a:typing:1041021440352337991> | Typing",
             value=f"```py\n{duration:.2f}ms```",
         )
         embed.add_field(
-            name="<a:loading2:990387928213631046> | Websocket",
+            name="<a:loading:1041021510590152834> | Websocket",
             value=f"```py\n{websocket:.2f}ms```",
         )
         embed.add_field(

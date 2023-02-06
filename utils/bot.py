@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, ClassVar, Dict, List, Optional, NamedTuple
+from typing import Any, ClassVar, Dict, List, Optional, NamedTuple, TypedDict
 
 import os
 import asyncpg
@@ -17,12 +17,12 @@ class Todo(NamedTuple):
     task: str
     jump_url: str
 
-DEFAULT_GUILD_CONFIG: dict[str, Any] = {
-    "prefix": str,
-    "voice_channel": int,
-    "voice_category": int,
-    "community_voice_channels": dict[int, int],
-}
+class DEFAULT_GUILD_CONFIG(TypedDict):
+    "prefix": str
+    "enabled": bool
+    "voice_channel": int
+    "voice_category": int
+    "community_voice_channels": dict[int, int]
 
 class AloneBot(commands.AutoShardedBot):
     DEFAULT_PREFIXES: ClassVar[List[str]] = ["Alone", "alone"]
@@ -114,8 +114,9 @@ class AloneBot(commands.AutoShardedBot):
             self.guild_config.get(guild_id, {}).setdefault("voice_category", voice_category)
         
         records = await self.db.fetch("SELECT * FROM voice")
-        for guild_id, user_id, channel_id in records:
+        for guild_id, user_id, channel_id, enabled in records:
             self.guild_config.get(guild_id, {}).get("community_voice_channels", {})[channel_id] = user_id
+            self.guild_config.get(guild_id, {}).setdefault("enabled", enabled)
 
         records = await self.db.fetch("SELECT * FROM todo")
         for user_id, task, jump_url in records:
@@ -153,7 +154,7 @@ class AloneBot(commands.AutoShardedBot):
         try:
             self.owner_ids.remove(user_id)
         except ValueError:
-            return
+            return "There's no owner with that ID!"
 
     def format_print(self, text):
         format = datetime.datetime.utcnow().strftime("%x | %X") + f" | {text}"

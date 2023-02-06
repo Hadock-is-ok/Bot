@@ -122,7 +122,7 @@ class Utility(commands.Cog):
     @commands.command()
     async def source(self, ctx, *, command_name: str = None):
         if not command_name:
-            return await ctx.reply("https://github.com/Alone-Bot/Alone-Bot")
+            return await ctx.reply("https://github.com/Alone-Discord-Bot/Bot")
         command = self.bot.get_command(command_name)
         if not command:
             return await ctx.reply("That's not a valid command!")

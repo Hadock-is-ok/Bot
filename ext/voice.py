@@ -25,10 +25,13 @@ class Voice(commands.Cog):
     async def on_voice_leave(self, member, state):
         print("ahuidwiagdawda")
         vc = self.bot.guild_config.get(member.guild.id, {}).get("community_voice_channels", {})
+        print("asgwuh")
         if not vc or not state.channel.id in vc:
+            print("HUAhsd")
             return
-
+        print("HEHRH")
         if not state.channel.members:
+            print("uaihdauwdh")
             channel = state.channel
             try:
                 owner = bot.get_member(vc.get(state.channel.id))
@@ -42,6 +45,7 @@ class Voice(commands.Cog):
                     await channel.delete()
                 except Exception:
                     pass
+        print("wtf how")
 
 
 async def setup(bot: AloneBot):

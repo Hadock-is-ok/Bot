@@ -13,7 +13,7 @@ class Voice(commands.Cog):
         if not vc or state.channel.id != vc:
             return
         
-        if self.bot.db.fetch("SELECT * FROM voice WHERE user_id = $1 AND guild_id = $2", member.id, state.channel.guild.id):
+        if await self.bot.db.fetch("SELECT * FROM voice WHERE user_id = $1 AND guild_id = $2", member.id, state.channel.guild.id):
             return await ctx.reply("You can only have 1 private channel per server!")
         
         new_vc = await member.guild.create_voice_channel(name=member.display_name, category=member.guild.get_channel(self.bot.guild_config.get(state.channel.guild.id, None).get("voice_category", None)), reason="Made by the personal voice chat module")

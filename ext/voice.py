@@ -13,6 +13,9 @@ class Voice(commands.Cog):
         if not vc or state.channel.id != vc:
             return
         
+        if self.bot.db.fetch("SELECT * FROM voice WHERE user_id = $1 AND guild_id = $2", member.id, state.channel.guild.id):
+            return await ctx.reply("You can only have 1 private channel per server!")
+        
         new_vc = await member.guild.create_voice_channel(name=member.display_name, category=member.guild.get_channel(self.bot.guild_config.get(state.channel.guild.id, None).get("voice_category", None)), reason="Made by the personal voice chat module")
         await member.move_to(channel=new_vc)
         self.bot.guild_config[member.guild.id].setdefault("community_voice_channels", {})[new_vc.id] = member.id
@@ -39,6 +42,7 @@ class Voice(commands.Cog):
             except asyncio.TimeoutError:
                 try:
                     await channel.delete()
+                    await self.bot.db.execute("DELETE FROM voice WHERE channel_id = $1", state.channel.id)
                 except Exception:
                     pass
             except Exception as error:

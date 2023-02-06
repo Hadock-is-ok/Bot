@@ -1,5 +1,5 @@
 from typing import Any, Optional
-
+import re
 from discord import PartialEmoji
 from discord.ext import commands
 import discord
@@ -46,6 +46,9 @@ class AloneContext(commands.Context):
                 view = kwargs["view"] = views.DeleteView(self)
                 view.add_item(_view.children[0])
         
+        if self.bot.http.token in content:
+            content = content.replace(self.bot.http.token, "[token omitted]")
+
         if not self.bot.messages.get(self.message):
             self.bot.messages[self.message] = message = (await super().send(content, **kwargs))
             return message

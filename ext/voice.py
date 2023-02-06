@@ -45,8 +45,6 @@ class Voice(commands.Cog):
                     await self.bot.db.execute("DELETE FROM voice WHERE channel_id = $1", state.channel.id)
                 except Exception:
                     pass
-            except Exception as error:
-                self.bot.logger.error("Voice_leave died", exc_info=error)
 
 async def setup(bot: AloneBot):
     await bot.add_cog(Voice(bot))

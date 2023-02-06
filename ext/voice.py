@@ -23,6 +23,7 @@ class Voice(commands.Cog):
     
     @commands.Cog.listener()
     async def on_voice_leave(self, member, state):
+        print("ahuidwiagdawda")
         vc = self.bot.guild_config.get(member.guild.id, {}).get("community_voice_channels", {})
         if not vc or not state.channel.id in vc:
             return

@@ -33,7 +33,9 @@ class Voice(commands.Cog):
         if not state.channel.members:
             print("uaihdauwdh")
             channel = state.channel
+            print("bitch what")
             try:
+                print("wtf?")
                 owner = bot.get_member(vc.get(state.channel.id))
                 print("as")
                 message = await owner.send("I will delete this channel for inactivity in 5 minutes if it's not used!")

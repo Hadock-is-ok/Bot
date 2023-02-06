@@ -27,6 +27,10 @@ class Voice(commands.Cog):
 
         if not state.channel.members:
             channel = state.channel
+
+            def channel_check(member, state):
+                return state.channel == channel
+
             try:
                 owner = (self.bot.get_guild(member.guild.id)).get_member(vc.get(state.channel.id))
                 message = await owner.send(f"I will delete your private channel for inactivity in 5 minutes if it's not used!")

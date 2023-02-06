@@ -22,6 +22,7 @@ class _Help(commands.HelpCommand):
                 continue
             
             view.cog_select.append_option(discord.SelectOption(label=name))
+            view.cog_select.add_option(label="Close", description="Closes the help menu.")
         await self.context.reply(embed=embed, add_button_view=False, view=view)
 
     async def send_command_help(self, command):

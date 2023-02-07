@@ -63,8 +63,10 @@ class Fun(commands.Cog):
     @commands.command()
     async def reddit(self, ctx: commands.Context, subreddit: Optional[str]):
         data = await self.fetch_subreddit(subreddit)
-
-
+        if data["over_18"]:
+            return await ctx.reply("This post is nsfw! I cannot send this in a normal channel!")
+        embed = discord.Embed(title=data["title"], url=data["url"]).set_image(url=data["url"])
+        await ctx.reply(embed=embed)
 
 async def setup(bot: AloneBot):
     await bot.add_cog(Fun(bot))

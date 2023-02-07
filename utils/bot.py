@@ -18,11 +18,11 @@ class Todo(NamedTuple):
     jump_url: str
 
 class DEFAULT_GUILD_CONFIG(TypedDict):
-    "prefix": str
-    "enabled": bool
-    "voice_channel": int
-    "voice_category": int
-    "community_voice_channels": dict[int, int]
+    prefix: str
+    enabled: bool
+    voice_channel: int
+    voice_category: int
+    community_voice_channels: dict[int, int]
 
 class AloneBot(commands.AutoShardedBot):
     DEFAULT_PREFIXES: ClassVar[List[str]] = ["Alone", "alone"]

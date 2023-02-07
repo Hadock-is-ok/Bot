@@ -4,7 +4,7 @@ from discord.ext import commands
 from typing import Optional
 import time
 import inspect, json
-from utils import views, bot
+from utils import JoinSupportView
 
 
 class Utility(commands.Cog):
@@ -252,7 +252,7 @@ Nitro Tier: Level {guild.premium_tier}""",
             embed=discord.Embed(
                 title="Support",
                 description=f"Join my [support server]({self.bot.support_server})!",
-            ), view=views.JoinSupportView(ctx)
+            ), view=JoinSupportView(ctx)
         )
 
     @commands.command(aliases=["cf", "flip_coin"])

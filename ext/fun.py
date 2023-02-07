@@ -2,7 +2,7 @@ from typing import Any, Dict, Optional
 
 import discord, random, os, aiohttp
 from discord.ext import commands
-from utils.bot import AloneBot
+from utils import AloneBot
 
 class Fun(commands.Cog):
     def __init__(self, bot: AloneBot):
@@ -59,6 +59,11 @@ class Fun(commands.Cog):
         )
         embed.set_image(url=waifu_url)
         await ctx.reply(embed=embed)
+    
+    @commands.command()
+    async def reddit(self, ctx: commands.Context, subreddit: Optional[str]):
+        data = await self.fetch_subreddit(subreddit)
+
 
 
 async def setup(bot: AloneBot):

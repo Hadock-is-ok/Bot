@@ -1,6 +1,6 @@
 from discord import Embed
 from discord.ext import commands
-from utils.bot import BlacklistedError, MaintenanceError
+from utils import BlacklistedError, MaintenanceError
 
 
 class Error(commands.Cog):

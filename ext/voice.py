@@ -1,6 +1,6 @@
 import discord, asyncio
 from discord.ext import commands
-from utils.bot import AloneBot
+from utils import AloneBot
 
 
 class Voice(commands.Cog):

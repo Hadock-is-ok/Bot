@@ -45,9 +45,6 @@ class AloneContext(commands.Context):
                 _view = kwargs.get("view")
                 view = kwargs["view"] = views.DeleteView(self)
                 view.add_item(_view.children[0])
-        
-        if self.bot.http.token in content:
-            content = content.replace(self.bot.http.token, "[token omitted]")
 
         if not self.bot.messages.get(self.message):
             self.bot.messages[self.message] = message = (await super().send(content, **kwargs))

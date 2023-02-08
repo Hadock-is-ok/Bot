@@ -41,6 +41,7 @@ class CogSelect(discord.ui.View):
         await interaction.response.edit_message(embed=embed)
 
 class InviteView(discord.ui.View):
-    def __init__(self):
+    def __init__(self, ctx):
+        self.ctx = ctx
         super().__init__(timeout=None)
-        self.add_item(discord.ui.Button(label="Invite", url=discord.utils.oauth_url(self.bot.user.id)))
+        self.add_item(discord.ui.Button(label="Invite", url=discord.utils.oauth_url(self.ctx.bot.user.id)))

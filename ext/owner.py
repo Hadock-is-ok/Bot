@@ -1,8 +1,10 @@
 from typing import List, Optional
+
 import discord
 from discord.ext import commands
 
 from utils import AloneBot
+
 
 class Owner(commands.Cog):
     def __init__(self, bot: AloneBot):
@@ -104,12 +106,14 @@ class Owner(commands.Cog):
         await ctx.reply(arg)
 
     @commands.command(aliases=["d", "delete"])
-    async def delmsg(self, ctx: commands.Context, message: Optional[discord.Message] = None):
+    async def delmsg(
+        self, ctx: commands.Context, message: Optional[discord.Message] = None
+    ):
         if not message:
             message = ctx.message.reference
             if not message:
                 return await ctx.message.add_reaction(ctx.Emojis.slash)
-    
+
         await message.delete()
 
     @commands.command()

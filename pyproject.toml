@@ -1,0 +1,23 @@
+name = "Alone bot"
+version = "1.0.0a"
+description = "A personal bot."
+license = "AGPL 3.0"
+author = "Hadock ([@NightSlasher35](https://github.com/NightSlasher35))
+readme = "README.md"
+homepage = "https://github.com/Alone-Discord-Bot/Bot"
+
+[tool.black.dependencies]
+python = "^3.9"
+
+[tool.black]
+line-length = 125
+skip-string-normalization = true
+
+[tool.isort]
+combine_as_imports = true
+combine_star = true
+line_length = 125
+profile = "black"
+
+[tool.pyright]
+pythonversion = "^3.9"

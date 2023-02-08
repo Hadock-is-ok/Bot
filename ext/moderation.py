@@ -1,16 +1,17 @@
 import discord
 from discord.ext import commands
 
+from utils import AloneBot
+
 
 class Moderation(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: AloneBot):
         self.bot = bot
 
-    async def cog_check(self, ctx: commands.Context):
+    def cog_check(self, ctx: commands.Context):
         if not ctx.guild:
             return False
         return True
-
 
     @commands.command()
     @commands.bot_has_guild_permissions(ban_members=True)
@@ -30,10 +31,15 @@ class Moderation(commands.Cog):
                 )
             )
         if ctx.author.top_role <= member.top_role:
-            return await ctx.reply(embed=discord.Embed(title="An error occured", description="You do not have permissions to ban this person."))
+            return await ctx.reply(
+                embed=discord.Embed(
+                    title="An error occured",
+                    description="You do not have permissions to ban this person.",
+                )
+            )
         await member.ban(reason=reason)
         await ctx.reply(f"Banned {member}{f' for {reason}.' if reason else '.'}")
-    
+
     @commands.command()
     @commands.bot_has_guild_permissions(ban_members=True)
     @commands.has_guild_permissions(ban_members=True)
@@ -63,7 +69,12 @@ class Moderation(commands.Cog):
                 )
             )
         if ctx.author.top_role <= member.top_role:
-            return await ctx.reply(embed=discord.Embed(title="An error occured", description="You do not have permissions to kick this person."))
+            return await ctx.reply(
+                embed=discord.Embed(
+                    title="An error occured",
+                    description="You do not have permissions to kick this person.",
+                )
+            )
         await member.kick(reason=reason)
         await ctx.reply(f"Kicked {member}{f' for {reason}.' if reason else '.'}")
 
@@ -76,5 +87,5 @@ class Moderation(commands.Cog):
         await ctx.send(f"{len(messages)} messages deleted.")
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: AloneBot):
     await bot.add_cog(Moderation(bot))

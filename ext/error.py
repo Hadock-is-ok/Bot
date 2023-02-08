@@ -1,12 +1,12 @@
 from discord import Embed
 from discord.ext import commands
-from utils import BlacklistedError, MaintenanceError
+
+from utils import AloneBot, BlacklistedError, MaintenanceError
 
 
 class Error(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: AloneBot):
         self.bot = bot
-
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error: Exception):
@@ -49,5 +49,5 @@ class Error(commands.Cog):
             await ctx.reply(embed=embed)
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: AloneBot):
     await bot.add_cog(Error(bot))

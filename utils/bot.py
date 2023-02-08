@@ -68,7 +68,7 @@ class AloneBot(commands.AutoShardedBot):
         if user_prefixes:
             prefixes.extend(user_prefixes)
 
-        if message.guild and not (self.guild_config.get(message.guild.id, {}).get("prefix", None)) == None:
+        if message.guild and not (self.guild_configs.get(message.guild.id, {}).get("prefix", None)) == None:
             prefixes.append(self.guild_config.get(message.guild.id)["prefix"])
 
         if not message.guild or message.author.id in self.owner_ids:

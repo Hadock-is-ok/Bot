@@ -65,4 +65,8 @@ class AloneContext(commands.Context):
     async def reply(self, *args: Any, mention_author: bool = False, **kwargs: Any):
         return await super().reply(*args, mention_author=mention_author, **kwargs)
     
+    async def create_codeblock(self, content: str):
+        fmt = "`"*3
+        return f"{fmt}py\n{content}{fmt}"
+
     Emojis = _Emojis()

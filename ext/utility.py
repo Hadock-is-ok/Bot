@@ -136,8 +136,8 @@ class Utility(commands.Cog):
     @commands.guild_only()
     async def serverinfo(self, ctx: AloneContext, guild: Optional[discord.Guild]) -> None:
         guild = guild or ctx.guild
-        guild.bots = sum(member.bot for member in guild.members)
-        embed = discord.Embed(title=f"Server Info for {guild.name}", description=f"Owner: {guild.owner}\nID: {guild.id}\nMembers: {guild.member_count}\nBots: {guild.bots}\nNitro Level: {guild.premium_tier}")
+        bots = sum(member.bot for member in guild.members)
+        embed = discord.Embed(title=f"Server Info for {guild.name}", description=f"Owner: {guild.owner}\nID: {guild.id}\nMembers: {guild.member_count}\nBots: {bots}\nNitro Level: {guild.premium_tier}")
         embed.set_thumbnail(url=guild.icon.url)
         await ctx.reply(embed=embed)
     

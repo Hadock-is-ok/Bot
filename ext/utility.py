@@ -65,7 +65,7 @@ class Utility(commands.Cog):
         end = perf_counter()
         database_ping = end - start
 
-        embed = discord.Embed(title="Ping")
+        embed = discord.Embed(title="Ping", color=discord.Color.random())
         embed.add_field(name="<a:typing:1041021440352337991> | Typing", value=await ctx.create_codeblock(f"{typing_ping:.2f}ms"))
         embed.add_field(name="<a:loading:1041021510590152834> | Websocket", value=await ctx.create_codeblock(f"{websocket_ping:.2f}ms"))
         embed.add_field(name="<:PostgreSQL:1019435339124850708> | Database", value=await ctx.create_codeblock(f"{database_ping:.2f}ms"))

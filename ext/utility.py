@@ -71,7 +71,7 @@ class Utility(commands.Cog):
         embed.add_field(name="<:PostgreSQL:1019435339124850708> | Database", value=ctx.create_codeblock(f"{database_ping:.2f}ms"))
         await message.edit(content=None, embed=embed)
     
-    @commands.Group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True)
     async def prefix(self, ctx: AloneContext) -> None:
         prefix_list = "\n".join(await self.bot.get_prefix(ctx.message))
         embed = discord.Embed(title="Prefixes you can use", description=prefix_list)

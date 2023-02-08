@@ -156,7 +156,7 @@ class Utility(commands.Cog):
     
     @commands.command()
     async def support(self, ctx: AloneContext) -> None:
-        embed = discord.Embed(title="Support", description="Join my [support server]({self.bot.support_server})")
+        embed = discord.Embed(title="Support", description="Join my [support server]({self.bot.support_server})!")
         await ctx.reply(embed=embed, view=JoinSupportView(ctx))
 
 async def setup(bot: AloneBot):

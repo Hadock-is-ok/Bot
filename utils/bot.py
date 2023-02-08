@@ -120,7 +120,7 @@ class AloneBot(commands.AutoShardedBot):
 
         records = await self.db.fetch("SELECT * FROM todo")
         for user_id, content, jump_url in records:
-            self.todos.setdefault(user_id, []).append(Todo(task, jump_url))
+            self.todos.setdefault(user_id, []).append(Todo(content, jump_url))
 
         records = await self.db.fetch("SELECT * FROM afk")
         self.afk = {user_id: reason for user_id, reason in records}

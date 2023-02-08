@@ -14,7 +14,7 @@ from discord.ext import commands
 from .context import AloneContext
 
 class Todo(NamedTuple):
-    task: str
+    content: str
     jump_url: str
 
 class DEFAULT_GUILD_CONFIG(TypedDict):
@@ -119,10 +119,8 @@ class AloneBot(commands.AutoShardedBot):
             self.guild_config.get(guild_id, {}).setdefault("enabled", enabled)
 
         records = await self.db.fetch("SELECT * FROM todo")
-        for user_id, task, jump_url in records:
-            if not self.todos.get(user_id):
-                self.todos[user_id] = []
-            self.todos[user_id].append(Todo(task, jump_url))
+        for user_id, content, jump_url in records:
+            self.todos.setdefault(user_id, []).append(Todo(task, jump_url))
 
         records = await self.db.fetch("SELECT * FROM afk")
         self.afk = {user_id: reason for user_id, reason in records}

@@ -24,7 +24,7 @@ class Utility(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
         await ctx.reply(f"**AFK**\nYou are now afk{fmt}")
     
-    @commands.command(aliases=["av", "pfp", ""])
+    @commands.command(aliases=["av", "pfp"])
     async def avatar(self, ctx: AloneContext, member: Optional[discord.Member]) -> None:
         member = member or ctx.author
         embed = discord.Embed(title=f"{member.display_name}'s avatar")
@@ -158,6 +158,74 @@ class Utility(commands.Cog):
     async def support(self, ctx: AloneContext) -> None:
         embed = discord.Embed(title="Support", description="Join my [support server]({self.bot.support_server})!")
         await ctx.reply(embed=embed, view=SupportView(ctx))
+    
+    @commands.group(invoke_without_command=True)
+    async def todo(self, ctx: AloneContext) -> None:
+        user_todo = self.bot.todos.get(ctx.author.id)
+        if not user_todo:
+            return await ctx.reply("You don't have a to-do list!")
+
+        for number, todo in enumerate(user_todo, start=1):
+            todo_list = "".join(f"**__[{number}]({todo.jump_url})__**: **{todo.content}**\n")
+
+        embed = discord.Embed(title="Todo", description=todo_list)
+        await ctx.reply(embed=embed)
+    
+    @todo.command(name="add")
+    async def todo_add(self, ctx: AloneContext, *, text: Optional[str]) -> None:
+        user_todo = self.bot.todos.get(ctx.author.id)
+        task = self.bot.Todo(text, ctx.message.jump_url)
+        self.bot.todos.setdefault(ctx.author.id, []).append(task)
+
+        await self.bot.db.execute("INSERT INTO todos VALUES ($1, $2, $3)", ctx.author.id, text, ctx.message.jump_url)
+        await ctx.message.add_reactioN(ctx.Emojis.check)
+    
+    @todo.command(name="remove")
+    async def todo_remove(self, ctx: AloneContext, todo_number: Optional[int]) -> None:
+        user_todo = self.bot.todos.get(ctx.author.id)
+        if not user_todo:
+            return await ctx.reply("You don't have a to-do list!")
+        
+        if not todo_number:
+            self.bot.todos.pop(ctx.author.id)
+            await self.bot.db.execute("DELETE FROM todo WHERE user_id = $1", ctx.author.id)
+            return await ctx.message.add_reaction(ctx.Emojis.check)
+        
+        for number, todo in enumerate(user_todo, start=1):
+            if todo_number == number:
+                try:
+                    user_todo.remove(todo)
+                    await self.bot.db.execute("DELETE FROM todo WHERE user_id = $1")
+                    await ctx.message.add_reaction(ctx.Emojis.check)
+                except KeyError:
+                    await ctx.reply("That's not a task in your todo list!")
+    
+    @commands.command()
+    async def uptime(self, ctx: AloneContext) -> None:
+        uptime = datetime.utcnow() - self.bot.launch_time
+        hours, remainder = divmod(int(uptime.total_seconds()), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        days, hours = divmod(hours, 24)
+        timestamp = int(self.bot.launch_time.timestamp())
+        embed = discord.Embed(title="Current Uptime", description=f"Uptime: {days}d, {hours}h, {minutes}m, {seconds}s\n\nStartup Time: <t:{timestamp}:F>", color=0x88FF44)
+        await ctx.reply(embed=embed)
+    
+    @commands.command()
+    async def userinfo(self, ctx: AloneContext, member: Union[discord.Member, discord.User]) -> None:
+        member = member or ctx.author
+
+        if ctx.guild:
+            joined_at = f"Joined At: <t:{int(member.joined_at.timestamp())}:F>\n"
+        else:
+            joined_at = ""
+        created_at = f"Created At: <t:{int(member.created_at.timestamp())}:F>\n"
+
+        embed = discord.Embed(title="Userinfo", description=f"Name: {member.name}\n{joined_at}{created_at}Avatar: [Click Here]({member.avatar.url})\nStatus: {member.status}\n{'Banner' if member.banner else ''}")
+        if member.banner:
+            embed.set_image(url=member.banner)
+        embed.set_thumbnail(url=member.avatar.url)
+
+        await ctx.reply(embed=embed)
 
 async def setup(bot: AloneBot):
     await bot.add_cog(Utility(bot))

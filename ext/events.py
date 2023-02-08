@@ -64,34 +64,34 @@ Nitro Tier: {guild.premium_tier}""",
     @commands.Cog.listener("on_message")
     async def afk_check(self, message: discord.Message):
         for mention in message.mentions:
-            if mention.id in self.bot.afks and not message.author.bot:
+            if mention.id in self.bot.afk_users and not message.author.bot:
                 user = message.guild.get_member(mention.id)
                 await message.reply(
-                    f"I\'m sorry, but {user.display_name} went afk for {self.bot.afks[mention.id]}.", 
+                    f"I\'m sorry, but {user.display_name} went afk for {self.bot.afk_users[mention.id]}.", 
                     mention_author=False
                 )
 
-        if message.author.id in self.bot.afks:
-            self.bot.afks.pop(message.author.id)
+        if message.author.id in self.bot.afk_users:
+            self.bot.afk_users.pop(message.author.id)
             await self.bot.db.execute("DELETE FROM afk WHERE user_id = $1", message.author.id)
 
             await message.reply(f"Welcome back {message.author.display_name}!", mention_author=False)
    
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
-        if not self.bot.messages.get(before):
+        if not self.bot.bot_messages_cache.get(before):
             return await self.bot.process_commands(after)
-        message = self.bot.messages.get(before)
+        message = self.bot.bot_messages_cache.get(before)
         if not after.content.startswith(await self.bot.get_prefix(before)):
             await message.delete()
-            self.bot.messages.pop(before)
+            self.bot.bot_messages_cache.pop(before)
         else:
             await self.bot.process_commands(after)
     
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message):
-        if self.bot.messages.get(message):
-            bot_message = self.bot.messages.pop(message)
+        if self.bot.bot_messages_cache.get(message):
+            bot_message = self.bot.bot_messages_cache.pop(message)
             await bot_message.delete()
     
     @commands.Cog.listener()

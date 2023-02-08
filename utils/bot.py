@@ -140,7 +140,7 @@ class AloneBot(commands.AutoShardedBot):
         return self.get_channel(906683175571435550)
     
     def is_blacklisted(self, user_id: int) -> bool:
-        return user_id in self.blacklists
+        return user_id in self.blacklisted_users
 
     def add_owner(self, user_id: int):
         self.owner_ids.append(user_id)

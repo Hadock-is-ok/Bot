@@ -42,7 +42,7 @@ class Utility(commands.Cog):
         def is_bot(message: discord.Message) -> bool:
             return message.author == ctx.me
         
-        await channel.purge(bulk=bulk, check=is_bot, limit=limit)
+        await ctx.channel.purge(bulk=bulk, check=is_bot, limit=limit)
         await ctx.message.add_reaction(ctx.Emojis.check)
     
     @commands.command()
@@ -66,9 +66,9 @@ class Utility(commands.Cog):
         database_ping = end - start
 
         embed = discord.Embed(title="Ping")
-        embed.add_field(name="<a:typing:1041021440352337991> | Typing", value=ctx.create_codeblock(f"{typing_ping:.2f}ms"))
-        embed.add_field(name="<a:loading:1041021510590152834> | Websocket", value=ctx.create_codeblock(f"{websocket_ping:.2f}ms"))
-        embed.add_field(name="<:PostgreSQL:1019435339124850708> | Database", value=ctx.create_codeblock(f"{database_ping:.2f}ms"))
+        embed.add_field(name="<a:typing:1041021440352337991> | Typing", value=await ctx.create_codeblock(f"{typing_ping:.2f}ms"))
+        embed.add_field(name="<a:loading:1041021510590152834> | Websocket", value=await ctx.create_codeblock(f"{websocket_ping:.2f}ms"))
+        embed.add_field(name="<:PostgreSQL:1019435339124850708> | Database", value=await ctx.create_codeblock(f"{database_ping:.2f}ms"))
         await message.edit(content=None, embed=embed)
     
     @commands.group(invoke_without_command=True)
@@ -151,7 +151,7 @@ class Utility(commands.Cog):
             return await ctx.reply("That command doesn't exist!")
         
         source = getsource(command.callback)
-        embed = discord.Embed(title=f"Source for {command.name}", description=ctx.create_codeblock(source))
+        embed = discord.Embed(title=f"Source for {command.name}", description=await ctx.create_codeblock(source))
         await ctx.reply(embed=embed)
     
     @commands.command()

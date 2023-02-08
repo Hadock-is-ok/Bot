@@ -12,7 +12,7 @@ class DeleteView(discord.ui.View):
             return await interaction.message.delete()
         await interaction.response.send_message(f"This command was ran by {self.ctx.author.name}, so you can't delete it!", ephemeral=True)
 
-class JoinSupportView(discord.ui.View):
+class SupportView(discord.ui.View):
     def __init__(self, ctx):
         super().__init__(timeout=None)
         self.ctx = ctx
@@ -39,3 +39,8 @@ class CogSelect(discord.ui.View):
             command_list += f"{command.name}\n"
         embed = discord.Embed(title=cog.qualified_name, description=command_list)
         await interaction.response.edit_message(embed=embed)
+
+class InviteView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+        self.add_item(discord.ui.Button(label="Invite", url=discord.utils.oauth_url(self.bot.user.id)))

@@ -1,4 +1,4 @@
-from utils import AloneContext, AloneBot, JoinSupportView
+from utils import AloneContext, AloneBot, SupportView, InviteView
 from discord.ext import commands
 from time import perf_counter
 from inspect import getsource
@@ -49,7 +49,7 @@ class Utility(commands.Cog):
     async def invite(self, ctx: AloneContext) -> None:
         link = discord.utils.oauth_url(self.bot.user.id)
         embed = discord.Embed(title="Thank you for supporting me!", description=f"[Invite Me!]({link})")
-        await ctx.reply(embed=embed)
+        await ctx.reply(embed=embed, view=InviteView(ctx))
     
     @commands.command()
     async def ping(self, ctx: AloneContext) -> None:
@@ -157,7 +157,7 @@ class Utility(commands.Cog):
     @commands.command()
     async def support(self, ctx: AloneContext) -> None:
         embed = discord.Embed(title="Support", description="Join my [support server]({self.bot.support_server})!")
-        await ctx.reply(embed=embed, view=JoinSupportView(ctx))
+        await ctx.reply(embed=embed, view=SupportView(ctx))
 
 async def setup(bot: AloneBot):
     await bot.add_cog(Utility(bot))

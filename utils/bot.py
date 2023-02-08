@@ -49,12 +49,12 @@ class AloneBot(commands.AutoShardedBot):
             **kwargs,
         )
 
-        self.blacklists: Dict[int, str] = {}
-        self.afks: Dict[int, str] = {}
+        self.blacklisted_users: Dict[int, str] = {}
+        self.afk_users: Dict[int, str] = {}
         self.todos: Dict[int, List[Todo]] = {}
         self.user_prefixes: Dict[int, List[str]] = {}
-        self.guild_config: Dict[int, DEFAULT_GUILD_CONFIG] = {}
-        self.messages: TTLCache[str, discord.Message] = TTLCache(maxsize=2000, ttl=300.0)
+        self.guild_configs: Dict[int, DEFAULT_GUILD_CONFIG] = {}
+        self.bot_messages_cache: TTLCache[str, discord.Message] = TTLCache(maxsize=2000, ttl=300.0)
 
         self.support_server: str = os.environ["bot_guild"]
         self.maintenance: Optional[str] = None
@@ -146,9 +146,6 @@ class AloneBot(commands.AutoShardedBot):
         self.owner_ids.append(user_id)
 
     def remove_owner(self, user_id: int):
-        if user_id == 412734157819609090:
-            return
-        
         try:
             self.owner_ids.remove(user_id)
         except ValueError:

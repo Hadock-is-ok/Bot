@@ -14,7 +14,7 @@ class Utility(commands.Cog):
     @commands.command()
     async def afk(self, ctx: AloneContext, *, reason: Optional[str] = "no reason") -> None:
         await self.bot.db.execute("INSERT INTO afk VALUES ($1, $2)", ctx.author.id, reason)
-        self.bot.afks[ctx.author.id] = reason
+        self.bot.afk_users[ctx.author.id] = reason
 
         if reason != "no reason":
             fmt = f" for {reason}."

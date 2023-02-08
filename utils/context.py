@@ -12,8 +12,7 @@ BASE_KWARGS: dict[str, Any] = {
     "embeds": [], 
     "attachments": [], 
     "suppress": False, 
-    "delete_after": None, 
-    "allowed_mentions": None, 
+    "delete_after": None,
     "view": None, 
 }
 
@@ -25,7 +24,7 @@ class _Emojis:
 class AloneContext(commands.Context):
     async def send(self, content: str = None, *args: Any, add_button_view: bool = True, **kwargs: Any):
         embed: Optional[discord.Embed] = kwargs.get("embed")
-        if embed is not None:
+        if embed:
             if not embed.color:
                 embed.color = discord.Color.random()
 

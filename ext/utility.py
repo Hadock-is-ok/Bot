@@ -49,7 +49,7 @@ class Utility(commands.Cog):
     async def invite(self, ctx: AloneContext) -> None:
         link = discord.utils.oauth_url(self.bot.user.id)
         embed = discord.Embed(title="Thank you for supporting me!", description=f"[Invite Me!]({link})")
-        await ctx.reply(embed=embed, view=InviteView(ctx))
+        await ctx.reply(embed=embed, view=InviteView())
     
     @commands.command()
     async def ping(self, ctx: AloneContext) -> None:

@@ -1,3 +1,5 @@
+from typing import Any
+
 import discord
 from discord.ext import commands
 
@@ -17,6 +19,8 @@ class DeleteView(discord.ui.View):
     )
     async def delete(self, interaction: discord.Interaction, _):
         if interaction.user.id == self.ctx.author.id:
+            if not interaction.message:
+                return
             return await interaction.message.delete()
         await interaction.response.send_message(
             f"This command was ran by {self.ctx.author.name}, so you can't delete it!",
@@ -32,7 +36,7 @@ class SupportView(discord.ui.View):
 
 
 class CogSelect(discord.ui.View):
-    def __init__(self, ctx: AloneContext):
+    def __init__(self, ctx: commands.Context[Any]) -> None:
         self.ctx = ctx
         super().__init__(timeout=None)
 
@@ -42,17 +46,19 @@ class CogSelect(discord.ui.View):
             return False
         return True
 
-    @discord.ui.select(
+    @discord.ui.select(  # type: ignore
         custom_id="select_cog",
         placeholder="Choose a category",
         min_values=1,
         max_values=1,
         row=1,
     )
-    async def cog_select(self, interaction: discord.Interaction, select: discord.ui.Select):
+    async def cog_select(self, interaction: discord.Interaction, select: discord.ui.Select[Any]):
         if select.values[0] == "Close":
+            if not interaction.message:
+                return
             return await interaction.message.delete()
-        cog: commands.Cog = interaction.client.get_cog(select.values[0])
+        cog: commands.Cog = interaction.client.get_cog(select.values[0])  # type: ignore
         command_list = ""
         for command in cog.get_commands():
             command_list += f"{command.name}\n"

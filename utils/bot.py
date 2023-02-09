@@ -10,6 +10,7 @@ import asyncpg
 import discord
 from cachetools import TTLCache
 from discord.ext import commands
+from typing_extensions import Self
 
 from .context import AloneContext
 
@@ -38,12 +39,11 @@ class AloneBot(commands.AutoShardedBot):
         "ext.owner",
         "ext.utility",
         "ext.voice",
-        "jishaku",
     ]
 
     owner_ids: List[int]
 
-    def __init__(self, *args: Any, **kwargs: Any):
+    def __init__(self: Self, *args: Any, **kwargs: Any):
         super().__init__(
             command_prefix=self.get_prefix,  # type: ignore
             strip_after_prefix=True,
@@ -66,9 +66,9 @@ class AloneBot(commands.AutoShardedBot):
         self.command_counter: int = 0
         self.launch_time: datetime.datetime = datetime.datetime.utcnow()
 
-    async def get_prefix(self, message: discord.Message, /) -> Union[List[str], str]:
+    async def get_prefix(self: Self, message: discord.Message, /) -> Union[List[str], str]:
         prefixes: List[str] = self.DEFAULT_PREFIXES.copy()
-        user_prefixes = self.user_prefixes.get(message.author.id)
+        user_prefixes: List[str] | None = self.user_prefixes.get(message.author.id)
         if user_prefixes:
             prefixes.extend(user_prefixes)
 
@@ -82,10 +82,10 @@ class AloneBot(commands.AutoShardedBot):
         prefixes.append(f"<@!{self.user.id}> ")
         return prefixes
 
-    async def get_context(self, message: discord.Message):
+    async def get_context(self: Self, message: discord.Message):
         return await super().get_context(message, cls=AloneContext)
 
-    async def process_commands(self, message: discord.Message):
+    async def process_commands(self: Self, message: discord.Message):
         if message.author.bot:
             return
 
@@ -97,7 +97,7 @@ class AloneBot(commands.AutoShardedBot):
             await self.invoke(ctx)
 
     async def setup_hook(self: Self):
-        self.db: asyncpg.Pool | None = await asyncpg.create_pool(
+        self.db: asyncpg.Pool[Any] | Any = await asyncpg.create_pool(
             host=os.environ["database"],
             port=int(os.environ["db_port"]),
             user=os.environ["db_user"],
@@ -106,6 +106,7 @@ class AloneBot(commands.AutoShardedBot):
         )
 
         assert self.db
+        await self.load_extension("jishaku")
         for extension in self.INITIAL_EXTENSIONS:
             await self.load_extension(extension)
 
@@ -132,7 +133,10 @@ class AloneBot(commands.AutoShardedBot):
 
     async def close(self):
         await self.session.close()
-        await self.db.close()  # type: ignore
+
+        if self.db:
+            await self.db.close()
+
         await super().close()
 
     async def start(self, token: str, *, reconnect: bool = True) -> None:
@@ -141,8 +145,8 @@ class AloneBot(commands.AutoShardedBot):
         self.session = aiohttp.ClientSession()
         await super().start(token)
 
-    def get_log_channel(self) -> discord.TextChannel:
-        return self.get_channel(906683175571435550)  # type: ignore
+    def get_log_channel(self) -> Any:
+        return self.get_channel(906683175571435550)
 
     def is_blacklisted(self, user_id: int) -> bool:
         return user_id in self.blacklisted_users

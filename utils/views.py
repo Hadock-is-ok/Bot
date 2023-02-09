@@ -1,8 +1,13 @@
+from typing import Any
+
 import discord
+from discord.ext import commands
+
+from . import AloneContext
 
 
 class DeleteView(discord.ui.View):
-    def __init__(self, ctx):
+    def __init__(self, ctx: AloneContext):
         super().__init__(timeout=None)
         self.ctx = ctx
 
@@ -12,8 +17,10 @@ class DeleteView(discord.ui.View):
         label="Delete",
         custom_id="delete",
     )
-    async def delete(self, interaction, _):
+    async def delete(self, interaction: discord.Interaction, _):
         if interaction.user.id == self.ctx.author.id:
+            if not interaction.message:
+                return
             return await interaction.message.delete()
         await interaction.response.send_message(
             f"This command was ran by {self.ctx.author.name}, so you can't delete it!",
@@ -22,38 +29,36 @@ class DeleteView(discord.ui.View):
 
 
 class SupportView(discord.ui.View):
-    def __init__(self, ctx):
+    def __init__(self, ctx: AloneContext):
         super().__init__(timeout=None)
         self.ctx = ctx
-        self.add_item(
-            discord.ui.Button(label="Support", url=self.ctx.bot.support_server)
-        )
+        self.add_item(discord.ui.Button(label="Support", url=self.ctx.bot.support_server))
 
 
 class CogSelect(discord.ui.View):
-    def __init__(self, ctx):
+    def __init__(self, ctx: commands.Context[Any]) -> None:
         self.ctx = ctx
         super().__init__(timeout=None)
 
-    async def interaction_check(self, interaction):
+    async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user != self.ctx.author:
-            await interaction.response.send_message(
-                f"This is {self.ctx.author.display_name}'s command!", ephemeral=True
-            )
+            await interaction.response.send_message(f"This is {self.ctx.author.display_name}'s command!", ephemeral=True)
             return False
         return True
 
-    @discord.ui.select(
+    @discord.ui.select(  # type: ignore
         custom_id="select_cog",
         placeholder="Choose a category",
         min_values=1,
         max_values=1,
         row=1,
     )
-    async def cog_select(self, interaction, select):
+    async def cog_select(self, interaction: discord.Interaction, select: discord.ui.Select[Any]):
         if select.values[0] == "Close":
+            if not interaction.message:
+                return
             return await interaction.message.delete()
-        cog = interaction.client.get_cog(select.values[0])
+        cog: commands.Cog = interaction.client.get_cog(select.values[0])  # type: ignore
         command_list = ""
         for command in cog.get_commands():
             command_list += f"{command.name}\n"
@@ -62,11 +67,7 @@ class CogSelect(discord.ui.View):
 
 
 class InviteView(discord.ui.View):
-    def __init__(self, ctx):
+    def __init__(self, ctx: AloneContext):
         self.ctx = ctx
         super().__init__(timeout=None)
-        self.add_item(
-            discord.ui.Button(
-                label="Invite", url=discord.utils.oauth_url(self.ctx.bot.user.id)
-            )
-        )
+        self.add_item(discord.ui.Button(label="Invite", url=discord.utils.oauth_url(self.ctx.bot.user.id)))

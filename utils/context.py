@@ -22,10 +22,10 @@ class _Emojis:
     slash = PartialEmoji(name="slash", id=1041021694682349569)
 
 
-class AloneContext(commands.Context):
+class AloneContext(commands.Context[Any]):
     async def send(
         self,
-        content: str = None,
+        content: str | None = None,
         add_button_view: bool = True,
         **kwargs: Any,
     ):
@@ -44,43 +44,35 @@ class AloneContext(commands.Context):
                 embed.timestamp = discord.utils.utcnow()
 
         if add_button_view:
-            if not kwargs.get("view"):
+            _view: discord.ui.View | None = kwargs.get("view")
+            if not _view:
                 kwargs["view"] = views.DeleteView(self)
             else:
-                _view = kwargs.get("view")
                 view = kwargs["view"] = views.DeleteView(self)
                 view.add_item(_view.children[0])
 
         if not self.bot.bot_messages_cache.get(self.message):
-            self.bot.bot_messages_cache[self.message] = message = await super().send(
-                content, **kwargs
-            )
+            self.bot.bot_messages_cache[self.message] = message = await super().send(content, **kwargs)
             return message
         else:
             message = self.bot.bot_messages_cache.get(self.message)
-            edit_kwargs = {
-                key: value for key, value in kwargs.items() if key in BASE_KWARGS
-            }
+            edit_kwargs = {key: value for key, value in kwargs.items() if key in BASE_KWARGS}
             edit_kwargs["content"] = content
             edit_kwargs["embeds"] = (kwargs.pop("embeds", [])) or (
                 [kwargs.pop("embed")] if kwargs.get("embed", None) else []
             )
 
             try:
-                self.bot.bot_messages_cache[
-                    self.message
-                ] = message = await self.bot.bot_messages_cache[self.message].edit(
+                self.bot.bot_messages_cache[self.message] = message = await self.bot.bot_messages_cache[self.message].edit(
                     **edit_kwargs
                 )
                 return message
             except discord.HTTPException:
-                self.bot.bot_messages_cache[
-                    self.message
-                ] = message = await super().send(content, **kwargs)
+                self.bot.bot_messages_cache[self.message] = message = await super().send(content, **kwargs)
                 return message
 
-    async def reply(self, *args: Any, mention_author: bool = False, **kwargs: Any):
-        return await super().reply(*args, mention_author=mention_author, **kwargs)
+    async def reply(self, content: Optional[str] = None, **kwargs: Any) -> discord.Message:
+        return await super().reply(content, mention_author=False, **kwargs)
 
     async def create_codeblock(self, content: str):
         fmt = "`" * 3

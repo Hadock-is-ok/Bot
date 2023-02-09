@@ -1,15 +1,16 @@
 import discord
 from discord.ext import commands
+from typing_extensions import Self
 
 from utils import AloneBot
 
 
 class Events(commands.Cog):
-    def __init__(self, bot: AloneBot):
+    def __init__(self: Self, bot: AloneBot) -> None:
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self: Self) -> None:
         fmt = self.bot.format_print("Alone Bot")
         assert self.bot.user
 
@@ -26,7 +27,7 @@ class Events(commands.Cog):
         )
 
     @commands.Cog.listener()
-    async def on_guild_join(self, guild: discord.Guild):
+    async def on_guild_join(self: Self, guild: discord.Guild) -> None:
         channel = self.bot.get_log_channel()
         bots = sum(member.bot for member in guild.members)
         embed = discord.Embed(
@@ -39,10 +40,11 @@ Bots: {bots}
 Nitro Tier: {guild.premium_tier}""",
             color=0x5FAD68,
         )
+
         await channel.send(embed=embed)
 
     @commands.Cog.listener()
-    async def on_guild_remove(self, guild: discord.Guild):
+    async def on_guild_remove(self: Self, guild: discord.Guild) -> None:
         channel = self.bot.get_log_channel()
         bots = sum(member.bot for member in guild.members)
         embed = discord.Embed(
@@ -55,19 +57,22 @@ Bots: {bots}
 Nitro Tier: {guild.premium_tier}""",
             color=0x5FAD68,
         )
+
         await channel.send(embed=embed)
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self: Self, message: discord.Message) -> None:
         assert self.bot.user
         if message.content == f"<@{self.bot.user.id}>" and not message.author.bot:
             await message.reply("Hello, I am Alone Bot, my prefix is alone.")
 
     @commands.Cog.listener("on_message")
-    async def afk_check(self, message: discord.Message):
+    async def afk_check(self: Self, message: discord.Message) -> None:
         for mention in message.mentions:
             if mention.id in self.bot.afk_users and not message.author.bot:
-                user = message.guild.get_member(mention.id)
+                assert message.guild
+                user: discord.Member | None = message.guild.get_member(mention.id)
+                assert user
                 await message.reply(
                     f"I'm sorry, but {user.display_name} went afk for {self.bot.afk_users[mention.id]}.",
                     mention_author=False,
@@ -75,33 +80,34 @@ Nitro Tier: {guild.premium_tier}""",
 
         if message.author.id in self.bot.afk_users:
             self.bot.afk_users.pop(message.author.id)
-            await self.bot.db.execute(
-                "DELETE FROM afk WHERE user_id = $1", message.author.id
-            )
+            await self.bot.db.execute("DELETE FROM afk WHERE user_id = $1", message.author.id)
 
-            await message.reply(
-                f"Welcome back {message.author.display_name}!", mention_author=False
-            )
+            await message.reply(f"Welcome back {message.author.display_name}!", mention_author=False)
 
     @commands.Cog.listener()
-    async def on_message_edit(self, before: discord.Message, after: discord.Message):
+    async def on_message_edit(self: Self, before: discord.Message, after: discord.Message) -> None:
         if not self.bot.bot_messages_cache.get(before):
             return await self.bot.process_commands(after)
+
         message = self.bot.bot_messages_cache.get(before)
-        if not after.content.startswith(await self.bot.get_prefix(before)):
+
+        if not after.content.startswith(tuple(await self.bot.get_prefix(before))):
+            assert message
             await message.delete()
             self.bot.bot_messages_cache.pop(before)
         else:
             await self.bot.process_commands(after)
 
     @commands.Cog.listener()
-    async def on_message_delete(self, message: discord.Message):
+    async def on_message_delete(self: Self, message: discord.Message) -> None:
         if self.bot.bot_messages_cache.get(message):
             bot_message = self.bot.bot_messages_cache.pop(message)
             await bot_message.delete()
 
     @commands.Cog.listener()
-    async def on_voice_state_update(self, member, before, after):
+    async def on_voice_state_update(
+        self: Self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
+    ) -> None:
         if not before.channel:
             return self.bot.dispatch("voice_join", member, after)
 
@@ -109,5 +115,5 @@ Nitro Tier: {guild.premium_tier}""",
             return self.bot.dispatch("voice_leave", member, before)
 
 
-async def setup(bot: AloneBot):
+async def setup(bot: AloneBot) -> None:
     await bot.add_cog(Events(bot))

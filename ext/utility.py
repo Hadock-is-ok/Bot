@@ -7,7 +7,7 @@ from typing import Optional, Union
 import discord
 from discord.ext import commands
 
-from utils import AloneBot, AloneContext, InviteView, SupportView
+from utils import AloneBot, AloneContext, InviteView, SupportView, Todo as Todo_class
 
 
 class Utility(commands.Cog):
@@ -15,12 +15,9 @@ class Utility(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def afk(
-        self, ctx: AloneContext, *, reason: Optional[str] = "no reason"
-    ) -> None:
-        await self.bot.db.execute(
-            "INSERT INTO afk VALUES ($1, $2)", ctx.author.id, reason
-        )
+    async def afk(self, ctx: AloneContext, *, reason: Optional[str] = "no reason") -> None:
+        assert reason
+        await self.bot.db.execute("INSERT INTO afk VALUES ($1, $2)", ctx.author.id, reason)
         self.bot.afk_users[ctx.author.id] = reason
 
         if reason != "no reason":
@@ -33,33 +30,31 @@ class Utility(commands.Cog):
 
     @commands.command(aliases=["av", "pfp"])
     async def avatar(self, ctx: AloneContext, member: Optional[discord.Member]) -> None:
-        member = member or ctx.author
+        member = member or ctx.author  # type: ignore
+        assert member
         embed = discord.Embed(title=f"{member.display_name}'s avatar")
-        embed.set_image(url=member.avatar.url)
+        embed.set_image(url=member.avatar.url)  # type: ignore
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def choose(
-        self, ctx: AloneContext, choices: commands.Greedy[Union[str, int]]
-    ) -> None:
-        await ctx.reply(choice(choices))
+    async def choose(self, ctx: AloneContext, choices: commands.Greedy[Union[str, int]]) -> None:
+        await ctx.reply(str(choice(choices)))
 
     @commands.command()
     async def cleanup(self, ctx: AloneContext, limit: Optional[int] = 50) -> None:
-        bulk = ctx.channel.permissions_for(ctx.me).manage_messages
+        bulk = ctx.channel.permissions_for(ctx.me).manage_messages  # type: ignore
 
         def is_bot(message: discord.Message) -> bool:
             return message.author == ctx.me
 
-        await ctx.channel.purge(bulk=bulk, check=is_bot, limit=limit)
+        await ctx.channel.purge(bulk=bulk, check=is_bot, limit=limit)  # type: ignore
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command()
     async def invite(self, ctx: AloneContext) -> None:
+        assert self.bot.user
         link = discord.utils.oauth_url(self.bot.user.id)
-        embed = discord.Embed(
-            title="Thank you for supporting me!", description=f"[Invite Me!]({link})"
-        )
+        embed = discord.Embed(title="Thank you for supporting me!", description=f"[Invite Me!]({link})")
         await ctx.reply(embed=embed, view=InviteView(ctx))
 
     @commands.command()
@@ -98,38 +93,33 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @prefix.command(name="add")
-    async def prefix_add(
-        self, ctx: AloneContext, *, prefix: Optional[str] = ""
-    ) -> None:
+    async def prefix_add(self, ctx: AloneContext, *, prefix: Optional[str] = ""):
+        assert prefix
         if len(prefix) > 5:
-            return await ctx.reply(
-                "You can't have a prefix that's longer than 5 characters, sorry!"
-            )
+            return await ctx.reply("You can't have a prefix that's longer than 5 characters, sorry!")
 
         prefix_list = self.bot.user_prefixes.get(ctx.author.id, [])
         prefix_list.append(prefix)
 
-        await self.bot.db.execute(
-            "INSERT INTO prefix VALUES ($1, $2)", ctx.author.id, prefix
-        )
+        await self.bot.db.execute("INSERT INTO prefix VALUES ($1, $2)", ctx.author.id, prefix)
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @prefix.command(name="guild")
-    async def prefix_guild(self, ctx: AloneContext, *, prefix: Optional[str]) -> None:
+    async def prefix_guild(self, ctx: AloneContext, *, prefix: Optional[str]):
+        assert ctx.guild
         if not prefix or "remove" in prefix.lower():
-            self.bot.guild_prefix.pop(ctx.guild.id)
-            await self.bot.db.execute(
-                "UPDATE guilds SET prefix = NULL WHERE guild_id = $1", ctx.guild.id
-            )
+            guild_config = self.bot.guild_configs.get(ctx.guild.id, None)
+            if not guild_config or not guild_config.get("prefix", None):
+                return await ctx.reply("There is no guild prefix to remove!")
+
+            await self.bot.db.execute("UPDATE guilds SET prefix = NULL WHERE guild_id = $1", ctx.guild.id)
             await ctx.message.add_reaction(ctx.Emojis.check)
             return await ctx.reply("The prefix for this guild has been removed.")
 
         if len(prefix) > 5:
-            return await ctx.reply(
-                "You can't have a prefix that's longer than 5 characters, sorry!"
-            )
+            return await ctx.reply("You can't have a prefix that's longer than 5 characters, sorry!")
 
-        self.bot.guild_config[ctx.guild.id]["prefix"] = prefix
+        self.bot.guild_configs[ctx.guild.id]["prefix"] = prefix
         await self.bot.db.execute(
             "INSERT INTO guilds VALUES ($1, $2) ON CONFLICT DO UPDATE guilds SET prefix = $2 WHERE guild_id = $1",
             ctx.guild.id,
@@ -139,16 +129,14 @@ class Utility(commands.Cog):
         await ctx.reply(f"The prefix for this guild is now `{prefix}`")
 
     @prefix.command(name="remove")
-    async def prefix_remove(self, ctx: AloneContext, *, prefix: Optional[str]) -> None:
+    async def prefix_remove(self, ctx: AloneContext, *, prefix: Optional[str]):
         user_prefixes = self.bot.user_prefixes.get(ctx.author.id, [])
         if not user_prefixes:
             return await ctx.reply("You don't have custom prefixes setup!")
 
         if not prefix:
             self.bot.user_prefixes.pop(ctx.author.id)
-            await self.bot.db.execute(
-                "DELETE FROM prefix WHERE user_id = $1", ctx.author.id
-            )
+            await self.bot.db.execute("DELETE FROM prefix WHERE user_id = $1", ctx.author.id)
             return await ctx.message.add_reaction(ctx.Emojis.check)
 
         try:
@@ -164,10 +152,8 @@ class Utility(commands.Cog):
             await ctx.reply("That's not one of your prefixes!")
 
     @commands.command()
-    async def quote(
-        self, ctx: AloneContext, message: Optional[discord.Message]
-    ) -> None:
-        message = message or ctx.message.reference.resolved
+    async def quote(self, ctx: AloneContext, message: Optional[discord.Message]):
+        message = message or ctx.message.reference.resolved  # type: ignore
         if not message:
             return await ctx.reply("You need to give me a message to quote!")
 
@@ -179,20 +165,21 @@ class Utility(commands.Cog):
 
     @commands.command(aliases=["server_info", "server info", "si", "guildinfo"])
     @commands.guild_only()
-    async def serverinfo(
-        self, ctx: AloneContext, guild: Optional[discord.Guild]
-    ) -> None:
+    async def serverinfo(self, ctx: AloneContext, guild: Optional[discord.Guild]) -> None:
         guild = guild or ctx.guild
+        assert guild
+        assert guild.icon
         bots = sum(member.bot for member in guild.members)
         embed = discord.Embed(
             title=f"Server Info for {guild.name}",
-            description=f"Owner: {guild.owner}\nID: {guild.id}\nMembers: {guild.member_count}\nBots: {bots}\nNitro Level: {guild.premium_tier}",
+            description=f"Owner: {guild.owner}\nID: {guild.id}"
+            f"Members: {guild.member_count}\nBots: {bots}\nNitro Level: {guild.premium_tier}",
         )
         embed.set_thumbnail(url=guild.icon.url)
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def source(self, ctx: AloneContext, *, command_name: Optional[str]) -> None:
+    async def source(self, ctx: AloneContext, *, command_name: Optional[str]):
         if not command_name:
             return await ctx.reply("https://github.com/Alone-Discord-Bot/Bot")
 
@@ -216,22 +203,22 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed, view=SupportView(ctx))
 
     @commands.group(invoke_without_command=True)
-    async def todo(self, ctx: AloneContext) -> None:
+    async def todo(self, ctx: AloneContext):
         user_todo = self.bot.todos.get(ctx.author.id)
         if not user_todo:
             return await ctx.reply("You don't have a to-do list!")
 
+        todo_list = ""
         for number, todo in enumerate(user_todo, start=1):
-            todo_list = "".join(
-                f"**__[{number}]({todo.jump_url})__**: **{todo.content}**\n"
-            )
+            todo_list = "".join(f"**__[{number}]({todo.jump_url})__**: **{todo.content}**\n")
 
         embed = discord.Embed(title="Todo", description=todo_list)
         await ctx.reply(embed=embed)
 
     @todo.command(name="add")
     async def todo_add(self, ctx: AloneContext, *, text: Optional[str]) -> None:
-        task = self.bot.Todo(text, ctx.message.jump_url)
+        assert text
+        task: Todo_class = Todo_class(text, ctx.message.jump_url)
         self.bot.todos.setdefault(ctx.author.id, []).append(task)
 
         await self.bot.db.execute(
@@ -240,19 +227,17 @@ class Utility(commands.Cog):
             text,
             ctx.message.jump_url,
         )
-        await ctx.message.add_reactioN(ctx.Emojis.check)
+        await ctx.message.add_reaction(ctx.Emojis.check)
 
     @todo.command(name="remove")
-    async def todo_remove(self, ctx: AloneContext, todo_number: Optional[int]) -> None:
+    async def todo_remove(self, ctx: AloneContext, todo_number: Optional[int]):
         user_todo = self.bot.todos.get(ctx.author.id)
         if not user_todo:
             return await ctx.reply("You don't have a to-do list!")
 
         if not todo_number:
             self.bot.todos.pop(ctx.author.id)
-            await self.bot.db.execute(
-                "DELETE FROM todo WHERE user_id = $1", ctx.author.id
-            )
+            await self.bot.db.execute("DELETE FROM todo WHERE user_id = $1", ctx.author.id)
             return await ctx.message.add_reaction(ctx.Emojis.check)
 
         for number, todo in enumerate(user_todo, start=1):
@@ -279,24 +264,24 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def userinfo(
-        self, ctx: AloneContext, member: Union[discord.Member, discord.User]
-    ) -> None:
+    async def userinfo(self, ctx: AloneContext, member: Union[discord.Member, discord.User]) -> None:
         member = member or ctx.author
 
         if ctx.guild:
-            joined_at = f"Joined At: <t:{int(member.joined_at.timestamp())}:F>\n"
+            joined_at = f"Joined At: <t:{int(member.joined_at.timestamp())}:F>\n"  # type: ignore
         else:
             joined_at = ""
         created_at = f"Created At: <t:{int(member.created_at.timestamp())}:F>\n"
 
         embed = discord.Embed(
             title="Userinfo",
-            description=f"Name: {member.name}\n{joined_at}{created_at}Avatar: [Click Here]({member.avatar.url})\nStatus: {member.status}\n{'Banner' if member.banner else ''}",
+            description=f"Name: {member.name}\n{joined_at}{created_at}"
+            f"Avatar: [Click Here]({(member.avatar or member.default_avatar).url})"
+            f"Status: {member.status}\n{'Banner' if member.banner else ''}",  # type: ignore
         )
         if member.banner:
             embed.set_image(url=member.banner)
-        embed.set_thumbnail(url=member.avatar.url)
+        embed.set_thumbnail(url=member.display_avatar)
 
         await ctx.reply(embed=embed)
 

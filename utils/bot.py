@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import logging
 import os
-from typing import Any, ClassVar, Dict, List, NamedTuple, Optional, TypedDict
+from typing import Any, ClassVar, Dict, List, NamedTuple, Optional, TypedDict, Union
 
 import aiohttp
 import asyncpg
@@ -19,7 +19,7 @@ class Todo(NamedTuple):
     jump_url: str
 
 
-class DEFAULT_GUILD_CONFIG(TypedDict):
+class DEFAULT_guild_configs(TypedDict):
     prefix: str
     enabled: bool
     voice_channel: int
@@ -45,7 +45,7 @@ class AloneBot(commands.AutoShardedBot):
 
     def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(
-            command_prefix=self.get_prefix,
+            command_prefix=self.get_prefix, # type: ignore
             strip_after_prefix=True,
             case_insensitive=True,
             owner_ids=[412734157819609090],
@@ -57,8 +57,8 @@ class AloneBot(commands.AutoShardedBot):
         self.afk_users: Dict[int, str] = {}
         self.todos: Dict[int, List[Todo]] = {}
         self.user_prefixes: Dict[int, List[str]] = {}
-        self.guild_configs: Dict[int, DEFAULT_GUILD_CONFIG] = {}
-        self.bot_messages_cache: TTLCache[str, discord.Message] = TTLCache(
+        self.guild_configs: Dict[int, DEFAULT_guild_configs] = {}
+        self.bot_messages_cache: TTLCache[discord.Message, discord.Message] = TTLCache(
             maxsize=2000, ttl=300.0
         )
 
@@ -68,7 +68,7 @@ class AloneBot(commands.AutoShardedBot):
         self.command_counter: int = 0
         self.launch_time: datetime.datetime = datetime.datetime.utcnow()
 
-    async def get_prefix(self, message: discord.Message):
+    async def get_prefix(self, message: discord.Message, /) -> Union[List[str], str]:
         prefixes: List[str] = self.DEFAULT_PREFIXES.copy()
         user_prefixes = self.user_prefixes.get(message.author.id)
         if user_prefixes:
@@ -79,16 +79,17 @@ class AloneBot(commands.AutoShardedBot):
             and not (self.guild_configs.get(message.guild.id, {}).get("prefix", None))
             is None
         ):
-            prefixes.append(self.guild_config.get(message.guild.id)["prefix"])
+            prefixes.append(self.guild_configs.get(message.guild.id, {}).get("prefix", None))
 
         if not message.guild or message.author.id in self.owner_ids:
             prefixes.append("")
 
         assert self.user
-        return *prefixes, f"<@!{self.user.id}> ", f"<@{self.user.id}> "
+        prefixes.append(f"<@!{self.user.id}> ")
+        return prefixes
 
-    async def get_context(self, message: discord.Message, *, cls=AloneContext):
-        return await super().get_context(message, cls=cls)
+    async def get_context(self, message: discord.Message):
+        return await super().get_context(message, cls=AloneContext)
 
     async def process_commands(self, message: discord.Message):
         if message.author.bot:
@@ -102,7 +103,7 @@ class AloneBot(commands.AutoShardedBot):
             await self.invoke(ctx)
 
     async def setup_hook(self):
-        self.db = await asyncpg.create_pool(
+        self.db: asyncpg.Pool[asyncpg.Record] | None = await asyncpg.create_pool(
             host=os.environ["database"],
             port=int(os.environ["db_port"]),
             user=os.environ["db_user"],
@@ -121,20 +122,20 @@ class AloneBot(commands.AutoShardedBot):
 
         records = await self.db.fetch("SELECT * FROM guilds")
         for guild_id, prefix, voice_channel, voice_category in records:
-            self.guild_config.get(guild_id, {}).setdefault("prefix", prefix)
-            self.guild_config.get(guild_id, {}).setdefault(
+            self.guild_configs.get(guild_id, {}).setdefault("prefix", prefix)
+            self.guild_configs.get(guild_id, {}).setdefault(
                 "voice_channel", voice_channel
             )
-            self.guild_config.get(guild_id, {}).setdefault(
+            self.guild_configs.get(guild_id, {}).setdefault(
                 "voice_category", voice_category
             )
 
         records = await self.db.fetch("SELECT * FROM voice")
         for guild_id, user_id, channel_id, enabled in records:
-            self.guild_config.get(guild_id, {}).get("community_voice_channels", {})[
+            self.guild_configs.get(guild_id, {}).get("community_voice_channels", {})[
                 channel_id
             ] = user_id
-            self.guild_config.get(guild_id, {}).setdefault("enabled", enabled)
+            self.guild_configs.get(guild_id, {}).setdefault("enabled", enabled)
 
         records = await self.db.fetch("SELECT * FROM todo")
         for user_id, content, jump_url in records:
@@ -145,17 +146,17 @@ class AloneBot(commands.AutoShardedBot):
 
     async def close(self):
         await self.session.close()
-        await self.db.close()
+        await self.db.close() # type: ignore
         await super().close()
 
-    async def start(self, token: str):
+    async def start(self, token: str, *, reconnect: bool = True) -> None:
         discord.utils.setup_logging(handler=logging.FileHandler("bot.log"))
         self.logger = logging.getLogger("discord")
         self.session = aiohttp.ClientSession()
         await super().start(token)
 
-    def get_log_channel(self):
-        return self.get_channel(906683175571435550)
+    def get_log_channel(self) -> discord.TextChannel:
+        return self.get_channel(906683175571435550) # type: ignore
 
     def is_blacklisted(self, user_id: int) -> bool:
         return user_id in self.blacklisted_users
@@ -169,7 +170,7 @@ class AloneBot(commands.AutoShardedBot):
         except ValueError:
             return "There's no owner with that ID!"
 
-    def format_print(self, text):
+    def format_print(self, text: str) -> str:
         fmt = datetime.datetime.utcnow().strftime("%x | %X") + f" | {text}"
         return fmt
 

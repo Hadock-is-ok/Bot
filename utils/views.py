@@ -1,8 +1,11 @@
+from discord.ext import commands
 import discord
+from . import AloneContext
+
 
 
 class DeleteView(discord.ui.View):
-    def __init__(self, ctx):
+    def __init__(self, ctx: AloneContext):
         super().__init__(timeout=None)
         self.ctx = ctx
 
@@ -12,7 +15,7 @@ class DeleteView(discord.ui.View):
         label="Delete",
         custom_id="delete",
     )
-    async def delete(self, interaction, _):
+    async def delete(self, interaction: discord.Interaction, _):
         if interaction.user.id == self.ctx.author.id:
             return await interaction.message.delete()
         await interaction.response.send_message(
@@ -22,7 +25,7 @@ class DeleteView(discord.ui.View):
 
 
 class SupportView(discord.ui.View):
-    def __init__(self, ctx):
+    def __init__(self, ctx: AloneContext):
         super().__init__(timeout=None)
         self.ctx = ctx
         self.add_item(
@@ -31,11 +34,11 @@ class SupportView(discord.ui.View):
 
 
 class CogSelect(discord.ui.View):
-    def __init__(self, ctx):
+    def __init__(self, ctx: AloneContext):
         self.ctx = ctx
         super().__init__(timeout=None)
 
-    async def interaction_check(self, interaction):
+    async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user != self.ctx.author:
             await interaction.response.send_message(
                 f"This is {self.ctx.author.display_name}'s command!", ephemeral=True
@@ -50,10 +53,10 @@ class CogSelect(discord.ui.View):
         max_values=1,
         row=1,
     )
-    async def cog_select(self, interaction, select):
+    async def cog_select(self, interaction: discord.Interaction, select: discord.ui.Select):
         if select.values[0] == "Close":
             return await interaction.message.delete()
-        cog = interaction.client.get_cog(select.values[0])
+        cog: commands.Cog = interaction.client.get_cog(select.values[0])
         command_list = ""
         for command in cog.get_commands():
             command_list += f"{command.name}\n"
@@ -62,7 +65,7 @@ class CogSelect(discord.ui.View):
 
 
 class InviteView(discord.ui.View):
-    def __init__(self, ctx):
+    def __init__(self, ctx: AloneContext):
         self.ctx = ctx
         super().__init__(timeout=None)
         self.add_item(

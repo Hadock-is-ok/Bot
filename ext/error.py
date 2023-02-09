@@ -1,7 +1,7 @@
 from discord import Embed
 from discord.ext import commands
 
-from utils import AloneBot, BlacklistedError, MaintenanceError
+from utils import AloneBot, AloneContext, BlacklistedError, MaintenanceError
 
 
 class Error(commands.Cog):
@@ -9,12 +9,12 @@ class Error(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx: commands.Context, error: Exception):
+    async def on_command_error(self, ctx: AloneContext, error: Exception):
         if isinstance(error, commands.CommandNotFound):
             return
         await ctx.message.add_reaction(ctx.Emojis.x)
         if isinstance(error, BlacklistedError):
-            reason = self.bot.blacklists.get(ctx.author.id)
+            reason: str | None = self.bot.blacklisted_users.get(ctx.author.id)
             await ctx.reply(
                 f"You have been blacklisted for {reason}. you may not appeal this blacklist. There still exists a chance I'll unban you, but it's not likely."
             )

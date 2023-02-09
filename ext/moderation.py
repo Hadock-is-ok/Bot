@@ -8,7 +8,7 @@ class Moderation(commands.Cog):
     def __init__(self, bot: AloneBot):
         self.bot = bot
 
-    def cog_check(self, ctx: commands.Context):
+    def cog_check(self, ctx: AloneContext):
         if not ctx.guild:
             return False
         return True
@@ -18,7 +18,7 @@ class Moderation(commands.Cog):
     @commands.has_guild_permissions(ban_members=True)
     async def ban(
         self,
-        ctx: commands.Context,
+        ctx: AloneContext,
         member: discord.Member,
         *,
         reason: str = "No reason provided.",
@@ -43,7 +43,7 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.bot_has_guild_permissions(ban_members=True)
     @commands.has_guild_permissions(ban_members=True)
-    async def unban(self, ctx: commands.Context, member_id: int = None):
+    async def unban(self, ctx: AloneContext, member_id: int = None):
         "This command only works with IDs!"
         if not member_id:
             return await ctx.reply("You need to supply a User ID to unban!")
@@ -56,7 +56,7 @@ class Moderation(commands.Cog):
     @commands.has_guild_permissions(kick_members=True)
     async def kick(
         self,
-        ctx: commands.Context,
+        ctx: AloneContext,
         member: discord.Member,
         *,
         reason: str = "No reason provided.",
@@ -81,7 +81,7 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.bot_has_guild_permissions(manage_messages=True)
     @commands.has_guild_permissions(manage_messages=True)
-    async def purge(self, ctx: commands.Context, limit: int = 20):
+    async def purge(self, ctx: AloneContext, limit: int = 20):
         await ctx.message.delete()
         messages = await ctx.channel.purge(limit=limit)
         await ctx.send(f"{len(messages)} messages deleted.")

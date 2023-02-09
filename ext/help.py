@@ -1,14 +1,15 @@
 import discord
 from discord.ext import commands
 
+from typing import Any, Mapping, List, Optional
 from utils import AloneBot, views
 
 
 class _Help(commands.HelpCommand):
-    def get_command_signature(self, command: str):
+    def get_command_signature(self, command: commands.Command[Any, ..., Any], /) -> str:
         return f"{command.qualified_name}"
 
-    async def send_bot_help(self, mapping: str):
+    async def send_bot_help(self, mapping: Mapping[Optional[commands.Cog], List[commands.Command[Any, ..., Any]]], /) -> None:
         embed = discord.Embed(
             title="Help",
         )

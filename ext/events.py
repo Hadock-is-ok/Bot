@@ -39,6 +39,7 @@ Bots: {bots}
 Nitro Tier: {guild.premium_tier}""",
             color=0x5FAD68,
         )
+
         await channel.send(embed=embed)
 
     @commands.Cog.listener()
@@ -55,6 +56,7 @@ Bots: {bots}
 Nitro Tier: {guild.premium_tier}""",
             color=0x5FAD68,
         )
+
         await channel.send(embed=embed)
 
     @commands.Cog.listener()
@@ -67,7 +69,7 @@ Nitro Tier: {guild.premium_tier}""",
     async def afk_check(self, message: discord.Message):
         for mention in message.mentions:
             if mention.id in self.bot.afk_users and not message.author.bot:
-                user = message.guild.get_member(mention.id)
+                user: discord.Member | None = message.guild.get_member(mention.id)
                 await message.reply(
                     f"I'm sorry, but {user.display_name} went afk for {self.bot.afk_users[mention.id]}.",
                     mention_author=False,
@@ -87,7 +89,9 @@ Nitro Tier: {guild.premium_tier}""",
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
         if not self.bot.bot_messages_cache.get(before):
             return await self.bot.process_commands(after)
+
         message = self.bot.bot_messages_cache.get(before)
+
         if not after.content.startswith(await self.bot.get_prefix(before)):
             await message.delete()
             self.bot.bot_messages_cache.pop(before)
@@ -101,7 +105,7 @@ Nitro Tier: {guild.premium_tier}""",
             await bot_message.delete()
 
     @commands.Cog.listener()
-    async def on_voice_state_update(self, member, before, after):
+    async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
         if not before.channel:
             return self.bot.dispatch("voice_join", member, after)
 

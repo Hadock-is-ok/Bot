@@ -10,11 +10,11 @@ class Owner(commands.Cog):
     def __init__(self, bot: AloneBot):
         self.bot = bot
 
-    async def cog_check(self, ctx: commands.Context):
+    async def cog_check(self, ctx: AloneContext):
         return await self.bot.is_owner(ctx.author)
 
     @commands.command()
-    async def maintenance(self, ctx: commands.Context, *, reason="No reason provided."):
+    async def maintenance(self, ctx: AloneContext, *, reason="No reason provided."):
         if not self.bot.maintenance:
             await ctx.message.add_reaction(ctx.Emojis.check)
             self.bot.maintenance = reason
@@ -32,7 +32,7 @@ class Owner(commands.Cog):
         )
 
     @commands.group(invoke_without_command=True)
-    async def blacklist(self, ctx: commands.Context):
+    async def blacklist(self, ctx: AloneContext):
         fmt: List[str] = []
         for user_id, reason in self.bot.blacklists.items():
             user = self.bot.get_user(user_id)
@@ -48,7 +48,7 @@ class Owner(commands.Cog):
     @blacklist.command()
     async def add(
         self,
-        ctx: commands.Context,
+        ctx: AloneContext,
         member: discord.Member,
         *,
         reason: str = "No reason provided",
@@ -61,7 +61,7 @@ class Owner(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @blacklist.command()
-    async def remove(self, ctx: commands.Context, *, member: discord.Member):
+    async def remove(self, ctx: AloneContext, *, member: discord.Member):
         try:
             self.bot.blacklists.pop(member.id)
             await self.bot.db.execute(
@@ -74,7 +74,7 @@ class Owner(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command()
-    async def disable(self, ctx: commands.Context, name: str):
+    async def disable(self, ctx: AloneContext, name: str):
         command = self.bot.get_command(name)
         if not command:
             await ctx.message.add_reaction(ctx.Emojis.x)
@@ -88,7 +88,7 @@ class Owner(commands.Cog):
         await ctx.reply(f"Disabled {name}.")
 
     @commands.command()
-    async def enable(self, ctx: commands.Context, name: str):
+    async def enable(self, ctx: AloneContext, name: str):
         command = self.bot.get_command(name)
         if not command:
             await ctx.message.add_reaction(ctx.Emojis.x)
@@ -102,12 +102,12 @@ class Owner(commands.Cog):
         await ctx.reply(f"Enabled {name}.")
 
     @commands.command()
-    async def say(self, ctx: commands.Context, *, arg=None):
+    async def say(self, ctx: AloneContext, *, arg=None):
         await ctx.reply(arg)
 
     @commands.command(aliases=["d", "delete"])
     async def delmsg(
-        self, ctx: commands.Context, message: Optional[discord.Message] = None
+        self, ctx: AloneContext, message: Optional[discord.Message] = None
     ):
         if not message:
             message = ctx.message.reference
@@ -118,17 +118,17 @@ class Owner(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def nick(self, ctx: commands.Context, *, name: Optional[str] = None):
+    async def nick(self, ctx: AloneContext, *, name: Optional[str] = None):
         await ctx.me.edit(nick=name)
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command(aliases=["shutdown", "fuckoff", "quit"])
-    async def logout(self, ctx: commands.Context):
+    async def logout(self, ctx: AloneContext):
         await ctx.message.add_reaction(ctx.Emojis.check)
         await self.bot.close()
 
     @commands.command()
-    async def load(self, ctx: commands.Context, cog: str):
+    async def load(self, ctx: AloneContext, cog: str):
         try:
             await self.bot.load_extension(cog)
             message = "Loaded!"
@@ -137,7 +137,7 @@ class Owner(commands.Cog):
         await ctx.reply(message)
 
     @commands.command()
-    async def unload(self, ctx: commands.Context, cog: str):
+    async def unload(self, ctx: AloneContext, cog: str):
         try:
             await self.bot.unload_extension(cog)
             message = "Unloaded!"
@@ -146,7 +146,7 @@ class Owner(commands.Cog):
         await ctx.reply(message)
 
     @commands.command()
-    async def reload(self, ctx: commands.Context):
+    async def reload(self, ctx: AloneContext):
         cog_status = ""
         for extension in self.bot.INITIAL_EXTENSIONS:
             if extension == "jishaku":

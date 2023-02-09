@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional
 import discord
 from discord.ext import commands
 
-from utils import AloneBot
+from utils import AloneBot, AloneContext
 
 
 class Fun(commands.Cog):
@@ -23,18 +23,18 @@ class Fun(commands.Cog):
         return random.choice(data["data"]["children"])["data"]
 
     @commands.command(aliases=["define"])
-    async def urban(self, ctx: commands.Context, *, word: str):
+    async def urban(self, ctx: AloneContext, *, word: str):
         async with self.bot.session.get(
             "https://api.urbandictionary.com/v0/define", params={"term": word}
         ) as response:
             data = await response.json()
-            word = data["list"][0]
-        definition, name = word["definition"], word["word"]
+            word_info = data["list"][0]
+        definition, name = word_info["definition"], word_info["word"]
 
         await ctx.reply(embed=discord.Embed(title=name, description=definition))
 
     @commands.command()
-    async def pp(self, ctx: commands.Context, member: Optional[discord.Member] = None):
+    async def pp(self, ctx: AloneContext, member: Optional[discord.Member] = None):
         member = member or ctx.author  # type: ignore
         pp = "=" * random.randint(1, 50)
 
@@ -45,7 +45,7 @@ class Fun(commands.Cog):
         )
 
     @commands.command()
-    async def meme(self, ctx: commands.Context):
+    async def meme(self, ctx: AloneContext):
         data = await self.fetch_subreddit("dankmemes")
         embed = discord.Embed(title=data["title"], url=data["url"]).set_image(
             url=data["url"]
@@ -54,7 +54,7 @@ class Fun(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def waifu(self, ctx: commands.Context):
+    async def waifu(self, ctx: AloneContext):
         async with self.bot.session.get(
             "https://api.waifu.im/search/", params={"included_tags": "waifu"}
         ) as response:
@@ -69,12 +69,16 @@ class Fun(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def reddit(self, ctx: commands.Context, subreddit: Optional[str]):
+    async def reddit(self, ctx: AloneContext, subreddit: str):
+        if not subreddit:
+            return await ctx.reply("You should give me a subreddit to search!")
+
         data = await self.fetch_subreddit(subreddit)
         if data["over_18"]:
             return await ctx.reply(
                 "This post is nsfw! I cannot send this in a normal channel!"
             )
+
         embed = discord.Embed(title=data["title"], url=data["url"]).set_image(
             url=data["url"]
         )

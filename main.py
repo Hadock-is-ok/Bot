@@ -13,12 +13,12 @@ bot = _bot.AloneBot(intents=Intents.all())
 
 
 @bot.after_invoke
-async def command_counter(ctx: commands.Context):
+async def command_counter(ctx: AloneContext):
     bot.command_counter += 1
 
 
 @bot.check_once
-async def blacklist(ctx: commands.Context):
+async def blacklist(ctx: AloneContext):
     if not bot.is_blacklisted(ctx.author.id):
         return True
     if ctx.author.id in bot.owner_ids:
@@ -27,7 +27,7 @@ async def blacklist(ctx: commands.Context):
 
 
 @bot.check_once
-async def maintenance(ctx: commands.Context):
+async def maintenance(ctx: AloneContext):
     if not bot.maintenance or ctx.author.id in bot.owner_ids:
         return True
     raise _bot.MaintenanceError

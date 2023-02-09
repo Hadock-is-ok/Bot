@@ -1,7 +1,8 @@
+from typing import Any, List, Mapping, Optional
+
 import discord
 from discord.ext import commands
 
-from typing import Any, Mapping, List, Optional
 from utils import AloneBot, views
 
 
@@ -9,7 +10,9 @@ class _Help(commands.HelpCommand):
     def get_command_signature(self, command: commands.Command[Any, ..., Any], /) -> str:
         return f"{command.qualified_name}"
 
-    async def send_bot_help(self, mapping: Mapping[Optional[commands.Cog], List[commands.Command[Any, ..., Any]]], /) -> None:
+    async def send_bot_help(
+        self, mapping: Mapping[Optional[commands.Cog], List[commands.Command[Any, ..., Any]]], /
+    ) -> None:
         embed = discord.Embed(
             title="Help",
         )
@@ -31,9 +34,7 @@ class _Help(commands.HelpCommand):
                 continue
 
             view.cog_select.append_option(discord.SelectOption(label=name))
-            view.cog_select.add_option(
-                label="Close", description="Closes the help menu."
-            )
+            view.cog_select.add_option(label="Close", description="Closes the help menu.")
         await self.context.reply(embed=embed, add_button_view=False, view=view)
 
     async def send_command_help(self, command: str):

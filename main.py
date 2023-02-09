@@ -2,18 +2,17 @@ import os
 from asyncio import run
 
 from discord import Intents
-from discord.ext import commands
 from dotenv import load_dotenv
 
-import utils.bot as _bot
+from utils import AloneBot, AloneContext, BlacklistedError, MaintenanceError
 
 load_dotenv()
 
-bot = _bot.AloneBot(intents=Intents.all())
+bot = AloneBot(intents=Intents.all())
 
 
 @bot.after_invoke
-async def command_counter(ctx: AloneContext):
+async def command_counter():
     bot.command_counter += 1
 
 
@@ -23,14 +22,14 @@ async def blacklist(ctx: AloneContext):
         return True
     if ctx.author.id in bot.owner_ids:
         return True
-    raise _bot.BlacklistedError
+    raise BlacklistedError
 
 
 @bot.check_once
 async def maintenance(ctx: AloneContext):
     if not bot.maintenance or ctx.author.id in bot.owner_ids:
         return True
-    raise _bot.MaintenanceError
+    raise MaintenanceError
 
 
 async def main():

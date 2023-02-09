@@ -1,7 +1,7 @@
-from discord.ext import commands
 import discord
-from . import AloneContext
+from discord.ext import commands
 
+from . import AloneContext
 
 
 class DeleteView(discord.ui.View):
@@ -28,9 +28,7 @@ class SupportView(discord.ui.View):
     def __init__(self, ctx: AloneContext):
         super().__init__(timeout=None)
         self.ctx = ctx
-        self.add_item(
-            discord.ui.Button(label="Support", url=self.ctx.bot.support_server)
-        )
+        self.add_item(discord.ui.Button(label="Support", url=self.ctx.bot.support_server))
 
 
 class CogSelect(discord.ui.View):
@@ -40,9 +38,7 @@ class CogSelect(discord.ui.View):
 
     async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user != self.ctx.author:
-            await interaction.response.send_message(
-                f"This is {self.ctx.author.display_name}'s command!", ephemeral=True
-            )
+            await interaction.response.send_message(f"This is {self.ctx.author.display_name}'s command!", ephemeral=True)
             return False
         return True
 
@@ -68,8 +64,4 @@ class InviteView(discord.ui.View):
     def __init__(self, ctx: AloneContext):
         self.ctx = ctx
         super().__init__(timeout=None)
-        self.add_item(
-            discord.ui.Button(
-                label="Invite", url=discord.utils.oauth_url(self.ctx.bot.user.id)
-            )
-        )
+        self.add_item(discord.ui.Button(label="Invite", url=discord.utils.oauth_url(self.ctx.bot.user.id)))

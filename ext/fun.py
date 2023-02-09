@@ -11,9 +11,7 @@ class Fun(commands.Cog):
     def __init__(self, bot: AloneBot):
         self.bot = bot
 
-    async def fetch_subreddit(
-        self, subreddit: str, sort: str = "hot"
-    ) -> Dict[str, Any]:
+    async def fetch_subreddit(self, subreddit: str, sort: str = "hot") -> Dict[str, Any]:
         async with self.bot.session.get(
             f"https://www.reddit.com/r/{subreddit}/{sort}.json",
             headers={"User-Agent": "Alone Bot"},
@@ -24,9 +22,7 @@ class Fun(commands.Cog):
 
     @commands.command(aliases=["define"])
     async def urban(self, ctx: AloneContext, *, word: str):
-        async with self.bot.session.get(
-            "https://api.urbandictionary.com/v0/define", params={"term": word}
-        ) as response:
+        async with self.bot.session.get("https://api.urbandictionary.com/v0/define", params={"term": word}) as response:
             data = await response.json()
             word_info = data["list"][0]
         definition, name = word_info["definition"], word_info["word"]
@@ -38,26 +34,18 @@ class Fun(commands.Cog):
         member = member or ctx.author  # type: ignore
         pp = "=" * random.randint(1, 50)
 
-        await ctx.reply(
-            embed=discord.Embed(
-                title=f"{member}'s pp", description=f"8{pp}D\n({len(pp)}cm)"
-            )
-        )
+        await ctx.reply(embed=discord.Embed(title=f"{member}'s pp", description=f"8{pp}D\n({len(pp)}cm)"))
 
     @commands.command()
     async def meme(self, ctx: AloneContext):
         data = await self.fetch_subreddit("dankmemes")
-        embed = discord.Embed(title=data["title"], url=data["url"]).set_image(
-            url=data["url"]
-        )
+        embed = discord.Embed(title=data["title"], url=data["url"]).set_image(url=data["url"])
 
         await ctx.reply(embed=embed)
 
     @commands.command()
     async def waifu(self, ctx: AloneContext):
-        async with self.bot.session.get(
-            "https://api.waifu.im/search/", params={"included_tags": "waifu"}
-        ) as response:
+        async with self.bot.session.get("https://api.waifu.im/search/", params={"included_tags": "waifu"}) as response:
             hori = await response.json()
             image = hori["images"][0]
             waifu_url = image["url"]
@@ -75,13 +63,9 @@ class Fun(commands.Cog):
 
         data = await self.fetch_subreddit(subreddit)
         if data["over_18"]:
-            return await ctx.reply(
-                "This post is nsfw! I cannot send this in a normal channel!"
-            )
+            return await ctx.reply("This post is nsfw! I cannot send this in a normal channel!")
 
-        embed = discord.Embed(title=data["title"], url=data["url"]).set_image(
-            url=data["url"]
-        )
+        embed = discord.Embed(title=data["title"], url=data["url"]).set_image(url=data["url"])
         await ctx.reply(embed=embed)
 
 

@@ -77,13 +77,9 @@ Nitro Tier: {guild.premium_tier}""",
 
         if message.author.id in self.bot.afk_users:
             self.bot.afk_users.pop(message.author.id)
-            await self.bot.db.execute(
-                "DELETE FROM afk WHERE user_id = $1", message.author.id
-            )
+            await self.bot.db.execute("DELETE FROM afk WHERE user_id = $1", message.author.id)
 
-            await message.reply(
-                f"Welcome back {message.author.display_name}!", mention_author=False
-            )
+            await message.reply(f"Welcome back {message.author.display_name}!", mention_author=False)
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message):

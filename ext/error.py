@@ -31,9 +31,7 @@ class Error(commands.Cog):
                 )
             )
         elif isinstance(error, commands.CommandOnCooldown):
-            await ctx.reply(
-                f"You are on cooldown. Try again in {error.retry_after:.2f}s"
-            )
+            await ctx.reply(f"You are on cooldown. Try again in {error.retry_after:.2f}s")
         else:
             self.bot.logger.error("An error occurred", exc_info=error)
             embed = Embed(

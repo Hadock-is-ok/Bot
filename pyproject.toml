@@ -2,7 +2,7 @@ name = "Alone bot"
 version = "1.0.0a"
 description = "A personal bot."
 license = "AGPL 3.0"
-author = "Hadock ([@NightSlasher35](https://github.com/NightSlasher35))
+author = "Hadock ([@NightSlasher35](https://github.com/NightSlasher35))"
 readme = "README.md"
 homepage = "https://github.com/Alone-Discord-Bot/Bot"
 

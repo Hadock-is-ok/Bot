@@ -20,16 +20,12 @@ class Owner(commands.Cog):
             self.bot.maintenance = reason
 
             channel = self.bot.get_log_channel()
-            return await channel.send(
-                "I am going on maintenance break, all commands will not work during the downtime."
-            )
+            return await channel.send("I am going on maintenance break, all commands will not work during the downtime.")
         await ctx.reply("Maintenance mode is now off.")
         self.bot.maintenance = None
 
         channel = self.bot.get_log_channel()
-        await channel.send(
-            "The maintenance break is over. All commands should be up now."
-        )
+        await channel.send("The maintenance break is over. All commands should be up now.")
 
     @commands.group(invoke_without_command=True)
     async def blacklist(self, ctx: AloneContext):
@@ -41,9 +37,7 @@ class Owner(commands.Cog):
 
             fmt.append(f"{user} - {reason}")
 
-        await ctx.reply(
-            embed=discord.Embed(title="Blacklisted users", description="\n".join(fmt))
-        )
+        await ctx.reply(embed=discord.Embed(title="Blacklisted users", description="\n".join(fmt)))
 
     @blacklist.command()
     async def add(
@@ -54,9 +48,7 @@ class Owner(commands.Cog):
         reason: str = "No reason provided",
     ):
         self.bot.blacklists[member.id] = reason
-        await self.bot.db.execute(
-            "INSERT INTO blacklist (user_id, reason) VALUES ($1, $2)", member.id, reason
-        )
+        await self.bot.db.execute("INSERT INTO blacklist (user_id, reason) VALUES ($1, $2)", member.id, reason)
 
         await ctx.message.add_reaction(ctx.Emojis.check)
 
@@ -64,9 +56,7 @@ class Owner(commands.Cog):
     async def remove(self, ctx: AloneContext, *, member: discord.Member):
         try:
             self.bot.blacklists.pop(member.id)
-            await self.bot.db.execute(
-                "DELETE FROM blacklist WHERE user_id = $1", member.id
-            )
+            await self.bot.db.execute("DELETE FROM blacklist WHERE user_id = $1", member.id)
         except KeyError:
             await ctx.message.add_reaction(ctx.Emojis.x)
             return await ctx.reply("That user isn't blacklisted!")
@@ -106,9 +96,7 @@ class Owner(commands.Cog):
         await ctx.reply(arg)
 
     @commands.command(aliases=["d", "delete"])
-    async def delmsg(
-        self, ctx: AloneContext, message: Optional[discord.Message] = None
-    ):
+    async def delmsg(self, ctx: AloneContext, message: Optional[discord.Message] = None):
         if not message:
             message = ctx.message.reference
             if not message:
@@ -160,9 +148,7 @@ class Owner(commands.Cog):
                     await self.bot.load_extension(extension)
                     cog_status += f"\U00002705 {extension} Loaded!\n\n"
                 except Exception as error:
-                    cog_status += (
-                        f"\U0000274c {extension} Errored!\n```py\n{error}```\n\n"
-                    )
+                    cog_status += f"\U0000274c {extension} Errored!\n```py\n{error}```\n\n"
         await ctx.reply(embed=discord.Embed(title="Cogs", description=cog_status))
         await ctx.message.add_reaction(ctx.Emojis.check)
 

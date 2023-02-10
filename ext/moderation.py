@@ -11,10 +11,12 @@ class Moderation(commands.Cog):
     def __init__(self: Self, bot: AloneBot) -> None:
         self.bot = bot
 
+
     def cog_check(self, ctx: commands.Context[Any]) -> bool:
         if not ctx.guild:
             return False
         return True
+
 
     @commands.command()
     @commands.bot_has_guild_permissions(ban_members=True)
@@ -33,6 +35,7 @@ class Moderation(commands.Cog):
                     description="You need to provide a member to ban.",
                 )
             )
+
         if ctx.author.top_role <= member.top_role:  # type: ignore
             return await ctx.reply(
                 embed=discord.Embed(
@@ -40,8 +43,10 @@ class Moderation(commands.Cog):
                     description="You do not have permissions to ban this person.",
                 )
             )
+
         await member.ban(reason=reason)
         await ctx.reply(f"Banned {member}{f' for {reason}.' if reason else '.'}")
+
 
     @commands.command()
     @commands.bot_has_guild_permissions(ban_members=True)
@@ -50,10 +55,12 @@ class Moderation(commands.Cog):
         "This command only works with IDs!"
         if not member_id:
             return await ctx.reply("You need to supply a User ID to unban!")
+
         user = await self.bot.fetch_user(member_id)
         assert ctx.guild
         await ctx.guild.unban(user)
         await ctx.message.add_reaction(ctx.Emojis.check)
+
 
     @commands.command()
     @commands.bot_has_guild_permissions(kick_members=True)
@@ -72,6 +79,7 @@ class Moderation(commands.Cog):
                     description="You need to provide a member to kick.",
                 )
             )
+
         if ctx.author.top_role <= member.top_role:  # type: ignore
             return await ctx.reply(
                 embed=discord.Embed(
@@ -79,8 +87,10 @@ class Moderation(commands.Cog):
                     description="You do not have permissions to kick this person.",
                 )
             )
+
         await member.kick(reason=reason)
         await ctx.reply(f"Kicked {member}{f' for {reason}.' if reason else '.'}")
+
 
     @commands.command()
     @commands.bot_has_guild_permissions(manage_messages=True)

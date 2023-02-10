@@ -1,5 +1,6 @@
 import os
 from asyncio import run
+from typing import Literal
 
 from discord import Intents
 from dotenv import load_dotenv
@@ -17,16 +18,14 @@ async def command_counter():
 
 
 @bot.check_once
-async def blacklist(ctx: AloneContext):
-    if not bot.is_blacklisted(ctx.author.id):
-        return True
-    if ctx.author.id in bot.owner_ids:
+async def blacklist(ctx: AloneContext) -> Literal[True]:
+    if not bot.is_blacklisted(ctx.author.id) or ctx.author.id in bot.owner_ids:
         return True
     raise BlacklistedError
 
 
 @bot.check_once
-async def maintenance(ctx: AloneContext):
+async def maintenance(ctx: AloneContext) -> Literal[True]:
     if not bot.maintenance or ctx.author.id in bot.owner_ids:
         return True
     raise MaintenanceError

@@ -82,10 +82,10 @@ class AloneBot(commands.AutoShardedBot):
         prefixes.append(f"<@!{self.user.id}> ")
         return prefixes
 
-    async def get_context(self: Self, message: discord.Message):
+    async def get_context(self: Self, message: discord.Message) -> AloneContext:
         return await super().get_context(message, cls=AloneContext)
 
-    async def process_commands(self: Self, message: discord.Message):
+    async def process_commands(self: Self, message: discord.Message, /) -> None:
         if message.author.bot:
             return
 
@@ -96,7 +96,7 @@ class AloneBot(commands.AutoShardedBot):
         async with ctx.typing():
             await self.invoke(ctx)
 
-    async def setup_hook(self: Self):
+    async def setup_hook(self: Self) -> None:
         self.db: asyncpg.Pool[Any] | Any = await asyncpg.create_pool(
             host=os.environ["database"],
             port=int(os.environ["db_port"]),
@@ -131,7 +131,7 @@ class AloneBot(commands.AutoShardedBot):
         records = await self.db.fetch("SELECT * FROM afk")
         self.afk_users = {user_id: reason for user_id, reason in records}
 
-    async def close(self):
+    async def close(self: Self) -> None:
         await self.session.close()
 
         if self.db:
@@ -139,28 +139,28 @@ class AloneBot(commands.AutoShardedBot):
 
         await super().close()
 
-    async def start(self, token: str, *, reconnect: bool = True) -> None:
+    async def start(self: Self, token: str, *, reconnect: bool = True) -> None:
         discord.utils.setup_logging(handler=logging.FileHandler("bot.log"))
         self.logger = logging.getLogger("discord")
         self.session = aiohttp.ClientSession()
         await super().start(token)
 
-    def get_log_channel(self) -> Any:
+    def get_log_channel(self: Self) -> Any:
         return self.get_channel(906683175571435550)
 
-    def is_blacklisted(self, user_id: int) -> bool:
+    def is_blacklisted(self: Self, user_id: int) -> bool:
         return user_id in self.blacklisted_users
 
-    def add_owner(self, user_id: int):
+    def add_owner(self: Self, user_id: int) -> None:
         self.owner_ids.append(user_id)
 
-    def remove_owner(self, user_id: int):
+    def remove_owner(self: Self, user_id: int) -> str | None:
         try:
             self.owner_ids.remove(user_id)
         except ValueError:
             return "There's no owner with that ID!"
 
-    def format_print(self, text: str) -> str:
+    def format_print(self: Self, text: str) -> str:
         fmt = datetime.datetime.utcnow().strftime("%x | %X") + f" | {text}"
         return fmt
 

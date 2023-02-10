@@ -13,7 +13,7 @@ bot = AloneBot(intents=Intents.all())
 
 
 @bot.after_invoke
-async def command_counter():
+async def command_counter() -> None:
     bot.command_counter += 1
 
 

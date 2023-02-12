@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+        "njpwerner.autodocstring",
+        "bungcip.better-toml",
+        "ms-vscode-remote.vscode-remote-extensionpack",
+        "usernamehw.errorlens",
+        "eamodio.gitlens",
+        "ms-python.vscode-pylance",
+        "ms-python.python",
+        "ms-vsliveshare.vsliveshare"
+    ]
+}

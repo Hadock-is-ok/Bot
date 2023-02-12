@@ -41,7 +41,9 @@ class AloneBot(commands.AutoShardedBot):
         "ext.voice",
     ]
 
+
     owner_ids: List[int]
+
 
     def __init__(self: Self, *args: Any, **kwargs: Any):
         super().__init__(
@@ -60,11 +62,13 @@ class AloneBot(commands.AutoShardedBot):
         self.guild_configs: Dict[int, DEFAULT_GUILD_CONFIG] = {}
         self.bot_messages_cache: TTLCache[discord.Message, discord.Message] = TTLCache(maxsize=2000, ttl=300.0)
 
+        self.cooldown = commands.CooldownMapping.from_cooldown(2.0, 3.0, commands.BucketType.member)
         self.support_server: str = os.environ["bot_guild"]
         self.maintenance: Optional[str] = None
 
         self.command_counter: int = 0
         self.launch_time: datetime.datetime = datetime.datetime.utcnow()
+
 
     async def get_prefix(self: Self, message: discord.Message, /) -> Union[List[str], str]:
         prefixes: List[str] = self.DEFAULT_PREFIXES.copy()
@@ -82,8 +86,10 @@ class AloneBot(commands.AutoShardedBot):
         prefixes.append(f"<@!{self.user.id}> ")
         return prefixes
 
+
     async def get_context(self: Self, message: discord.Message) -> AloneContext:
         return await super().get_context(message, cls=AloneContext)
+
 
     async def process_commands(self: Self, message: discord.Message, /) -> None:
         if message.author.bot:
@@ -95,6 +101,7 @@ class AloneBot(commands.AutoShardedBot):
 
         async with ctx.typing():
             await self.invoke(ctx)
+
 
     async def setup_hook(self: Self) -> None:
         self.db: asyncpg.Pool[Any] | Any = await asyncpg.create_pool(
@@ -131,6 +138,7 @@ class AloneBot(commands.AutoShardedBot):
         records = await self.db.fetch("SELECT * FROM afk")
         self.afk_users = {user_id: reason for user_id, reason in records}
 
+
     async def close(self: Self) -> None:
         await self.session.close()
 
@@ -139,26 +147,32 @@ class AloneBot(commands.AutoShardedBot):
 
         await super().close()
 
+
     async def start(self: Self, token: str, *, reconnect: bool = True) -> None:
         discord.utils.setup_logging(handler=logging.FileHandler("bot.log"))
         self.logger = logging.getLogger("discord")
         self.session = aiohttp.ClientSession()
         await super().start(token)
 
+
     def get_log_channel(self: Self) -> Any:
         return self.get_channel(906683175571435550)
+
 
     def is_blacklisted(self: Self, user_id: int) -> bool:
         return user_id in self.blacklisted_users
 
+
     def add_owner(self: Self, user_id: int) -> None:
         self.owner_ids.append(user_id)
+
 
     def remove_owner(self: Self, user_id: int) -> str | None:
         try:
             self.owner_ids.remove(user_id)
         except ValueError:
             return "There's no owner with that ID!"
+
 
     def format_print(self: Self, text: str) -> str:
         fmt = datetime.datetime.utcnow().strftime("%x | %X") + f" | {text}"

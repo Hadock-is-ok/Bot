@@ -3,7 +3,7 @@ from typing import Any
 import discord
 from discord.ext import commands
 
-from . import AloneContext
+from .context import AloneContext
 
 
 class DeleteView(discord.ui.View):

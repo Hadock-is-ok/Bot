@@ -21,7 +21,9 @@ class DeleteView(discord.ui.View):
         if interaction.user.id == self.ctx.author.id:
             if not interaction.message:
                 return
+
             return await interaction.message.delete()
+
         await interaction.response.send_message(
             f"This command was ran by {self.ctx.author.name}, so you can't delete it!",
             ephemeral=True,
@@ -44,9 +46,10 @@ class CogSelect(discord.ui.View):
         if interaction.user != self.ctx.author:
             await interaction.response.send_message(f"This is {self.ctx.author.display_name}'s command!", ephemeral=True)
             return False
+
         return True
 
-    @discord.ui.select(  # type: ignore
+    @discord.ui.select( # type: ignore
         custom_id="select_cog",
         placeholder="Choose a category",
         min_values=1,
@@ -57,11 +60,14 @@ class CogSelect(discord.ui.View):
         if select.values[0] == "Close":
             if not interaction.message:
                 return
+
             return await interaction.message.delete()
-        cog: commands.Cog = interaction.client.get_cog(select.values[0])  # type: ignore
+
+        cog: commands.Cog = interaction.client.get_cog(select.values[0]) # type: ignore
         command_list = ""
         for command in cog.get_commands():
             command_list += f"{command.name}\n"
+
         embed = discord.Embed(title=cog.qualified_name, description=command_list)
         await interaction.response.edit_message(embed=embed)
 

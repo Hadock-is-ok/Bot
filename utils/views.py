@@ -1,9 +1,10 @@
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 import discord
 from discord.ext import commands
 
-from .context import AloneContext
+if TYPE_CHECKING:
+    from . import AloneContext
 
 
 class DeleteView(discord.ui.View):

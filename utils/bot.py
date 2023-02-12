@@ -62,6 +62,7 @@ class AloneBot(commands.AutoShardedBot):
         self.guild_configs: Dict[int, DEFAULT_GUILD_CONFIG] = {}
         self.bot_messages_cache: TTLCache[discord.Message, discord.Message] = TTLCache(maxsize=2000, ttl=300.0)
 
+        self.cooldown = commands.CooldownMapping.from_cooldown(2.0, 3.0, commands.BucketType.member)
         self.support_server: str = os.environ["bot_guild"]
         self.maintenance: Optional[str] = None
 

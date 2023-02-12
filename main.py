@@ -30,7 +30,7 @@ async def cooldown_check(ctx: AloneContext) -> Literal[True]:
             return True
     if await bot.is_owner(ctx.author) or not retry_after:
         return True
-    raise commands.CommandOnCooldown(discord.app_commands.Cooldown(1, 2.5), retry_after, commands.BucketType.member)
+    raise commands.CommandOnCooldown(discord.app_commands.Cooldown(2.0, 3.0), retry_after, commands.BucketType.member)
 
 @bot.check_once
 async def blacklist(ctx: AloneContext) -> Literal[True]:

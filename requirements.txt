@@ -6,3 +6,4 @@ cachetools
 asyncio
 aiohttp
 python-dotenv
+typing_extensions

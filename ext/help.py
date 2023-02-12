@@ -26,18 +26,13 @@ class _Help(commands.HelpCommand):
         )
 
         view = views.CogSelect(self.context)
-        #assert self.context.command
-        #assert self.context.command.cooldown
         for name, cog in self.context.bot.cogs.items():
-            #cooldown_left: float = self.context.command.get_cooldown_retry_after(self.context)
-            #self.context.command.reset_cooldown(self.context)
             if not await self.filter_commands(cog.get_commands(), sort=True):
                 continue
 
             if not cog.get_commands():
                 continue
 
-            #self.context.command.cooldown.update_rate_limit(cooldown_left, tokens=0)
             view.cog_select.append_option(discord.SelectOption(label=name))
             view.cog_select.add_option(label="Close", description="Closes the help menu.")
         await self.context.reply(embed=embed, add_button_view=False, view=view)

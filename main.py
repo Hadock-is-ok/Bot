@@ -3,7 +3,6 @@ from asyncio import run
 from typing import Literal
 
 import discord
-from discord.ext import commands
 from dotenv import load_dotenv
 
 from utils import AloneBot, AloneContext, BlacklistedError, MaintenanceError
@@ -18,19 +17,6 @@ bot = AloneBot(intents=discord.Intents.all())
 async def command_counter(ctx: AloneContext) -> None:
     ctx.bot.command_counter += 1
 
-
-@bot.check
-async def cooldown_check(ctx: AloneContext) -> Literal[True]:
-    bucket = bot.cooldown.get_bucket(ctx.message)
-    time = ctx.message.created_at.timestamp()
-    assert bucket
-    retry_after = bucket.update_rate_limit(time)
-    if ctx.guild:
-        if ctx.channel.permissions_for(ctx.author): # type: ignore
-            return True
-    if await bot.is_owner(ctx.author) or not retry_after:
-        return True
-    raise commands.CommandOnCooldown(discord.app_commands.Cooldown(2.0, 3.0), retry_after, commands.BucketType.member)
 
 @bot.check_once
 async def blacklist(ctx: AloneContext) -> Literal[True]:

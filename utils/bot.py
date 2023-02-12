@@ -12,7 +12,7 @@ from cachetools import TTLCache
 from discord.ext import commands
 from typing_extensions import Self
 
-from .context import AloneContext
+from . import AloneContext
 
 
 class Todo(NamedTuple):
@@ -120,15 +120,17 @@ class AloneBot(commands.AutoShardedBot):
         self.user_prefixes = {user_id: prefix for user_id, prefix in records}
 
         records = await self.db.fetch("SELECT * FROM guilds")
-        for guild_id, prefix, voice_channel, voice_category in records:
-            self.guild_configs.get(guild_id, {}).setdefault("prefix", prefix)
-            self.guild_configs.get(guild_id, {}).setdefault("voice_channel", voice_channel)
-            self.guild_configs.get(guild_id, {}).setdefault("voice_category", voice_category)
+        for guild_id, prefix, voice_channel, voice_category, enabled in records:
+            guild = self.guild_configs.setdefault(guild_id, {})
+            guild["prefix"] = prefix
+            guild["voice_channel"] = voice_channel
+            guild["voice_category"] = voice_category
+            guild["enabled"] = enabled
 
         records = await self.db.fetch("SELECT * FROM voice")
-        for guild_id, user_id, channel_id, enabled in records:
-            self.guild_configs.get(guild_id, {}).get("community_voice_channels", {})[channel_id] = user_id
-            self.guild_configs.get(guild_id, {}).setdefault("enabled", enabled)
+        for guild_id, user_id, channel_id in records:
+            guild = self.guild_configs.setdefault(guild_id, {})
+            guild.setdefault("community_voice_channels", {})[channel_id] = user_id
 
         records = await self.db.fetch("SELECT * FROM todo")
         for user_id, content, jump_url in records:
@@ -176,11 +178,3 @@ class AloneBot(commands.AutoShardedBot):
     def format_print(self: Self, text: str) -> str:
         fmt = datetime.datetime.utcnow().strftime("%x | %X") + f" | {text}"
         return fmt
-
-
-class BlacklistedError(commands.CheckFailure):
-    pass
-
-
-class MaintenanceError(commands.CheckFailure):
-    pass

@@ -15,8 +15,8 @@ bot = AloneBot(intents=discord.Intents.all())
 
 
 @bot.after_invoke
-async def command_counter() -> None:
-    bot.command_counter += 1
+async def command_counter(ctx: AloneContext) -> None:
+    ctx.bot.command_counter += 1
 
 
 @bot.check

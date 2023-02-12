@@ -121,7 +121,7 @@ class AloneBot(commands.AutoShardedBot):
 
         records = await self.db.fetch("SELECT * FROM guilds")
         for guild_id, prefix, voice_channel, voice_category, enabled in records:
-            guild = self.guild_configs.setdefault(guild_id, {})
+            guild = self.guild_configs.setdefault(guild_id, {}) # type: ignore
             guild["prefix"] = prefix
             guild["voice_channel"] = voice_channel
             guild["voice_category"] = voice_category
@@ -129,7 +129,7 @@ class AloneBot(commands.AutoShardedBot):
 
         records = await self.db.fetch("SELECT * FROM voice")
         for guild_id, user_id, channel_id in records:
-            guild = self.guild_configs.setdefault(guild_id, {})
+            guild = self.guild_configs.setdefault(guild_id, {}) # type: ignore
             guild.setdefault("community_voice_channels", {})[channel_id] = user_id
 
         records = await self.db.fetch("SELECT * FROM todo")

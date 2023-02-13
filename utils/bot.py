@@ -12,7 +12,7 @@ from cachetools import TTLCache
 from discord.ext import commands
 from typing_extensions import Self
 
-from . import AloneContext
+from .context import AloneContext
 
 
 class Todo(NamedTuple):

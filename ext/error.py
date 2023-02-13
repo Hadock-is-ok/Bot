@@ -1,3 +1,6 @@
+import io
+from contextlib import redirect_stdout
+
 from discord import Embed
 from discord.ext import commands
 from typing_extensions import Self
@@ -8,7 +11,13 @@ from utils import AloneBot, AloneContext, BlacklistedError, MaintenanceError
 class Error(commands.Cog):
     def __init__(self: Self, bot: AloneBot) -> None:
         self.bot = bot
+        self.bot.on_error = self.on_event_error
 
+    async def on_event_error(self, event):
+        with redirect_stdout(io.StringIO()) as error:
+            channel = self.bot.get_log_channel()
+            await channel.send(error.getvalue())
+    
     @commands.Cog.listener()
     async def on_command_error(self: Self, ctx: AloneContext, error: Exception):
         if isinstance(error, commands.CommandNotFound):

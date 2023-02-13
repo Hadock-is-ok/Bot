@@ -25,7 +25,6 @@ class Events(commands.Cog):
             "|--------------------------------------------------|",
             sep="\n",
         )
-        assert self.bot.guild
 
     @commands.Cog.listener()
     async def on_guild_join(self: Self, guild: discord.Guild) -> None:

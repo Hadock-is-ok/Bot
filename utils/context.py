@@ -29,6 +29,7 @@ class AloneContext(commands.Context[Any]):
         add_button_view: bool = True,
         **kwargs: Any,
     ):
+
         embed: Optional[discord.Embed] = kwargs.get("embed")
         if embed:
             if not embed.color:
@@ -51,6 +52,7 @@ class AloneContext(commands.Context[Any]):
             else:
                 view = kwargs["view"] = views.DeleteView(self)
                 view.add_item(_view.children[0])
+
 
         if not self.bot.bot_messages_cache.get(self.message):
             self.bot.bot_messages_cache[self.message] = message = await super().send(content, **kwargs)

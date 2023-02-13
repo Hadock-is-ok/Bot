@@ -1,0 +1,5 @@
+Add voice commands
+Fix help command
+Add cooldown
+utils/paginator.py
+Refactor code

@@ -83,8 +83,8 @@ class AloneBot(commands.AutoShardedBot):
         prefixes.append(f"<@!{self.user.id}> ")
         return prefixes
 
-    async def get_context(self: Self, message: discord.Message, cls=AloneContext) -> AloneContext:
-        return await super().get_context(message)
+    async def get_context(self, message: discord.Message, *, cls: Any = AloneContext):
+        return await super().get_context(message, cls=cls)
 
     async def process_commands(self: Self, message: discord.Message, /) -> None:
         if message.author.bot:

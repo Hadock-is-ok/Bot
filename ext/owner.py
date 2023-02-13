@@ -11,10 +11,8 @@ class Owner(commands.Cog):
     def __init__(self: Self, bot: AloneBot) -> None:
         self.bot = bot
 
-
     def cog_check(self: Self, ctx: commands.Context[Any]) -> bool:
         return ctx.author.id in self.bot.owner_ids
-
 
     @commands.command()
     async def maintenance(self: Self, ctx: AloneContext, *, reason: Optional[str]) -> None:
@@ -30,7 +28,6 @@ class Owner(commands.Cog):
         channel = self.bot.get_log_channel()
         await channel.send("The maintenance break is over. All commands should be up now.")
 
-
     @commands.group(invoke_without_command=True)
     async def blacklist(self: Self, ctx: AloneContext) -> None:
         fmt: List[str] = []
@@ -42,7 +39,6 @@ class Owner(commands.Cog):
             fmt.append(f"{user} - {reason}")
 
         await ctx.reply(embed=discord.Embed(title="Blacklisted users", description="\n".join(fmt)))
-
 
     @blacklist.command()
     async def add(
@@ -57,7 +53,6 @@ class Owner(commands.Cog):
 
         await ctx.message.add_reaction(ctx.Emojis.check)
 
-
     @blacklist.command()
     async def remove(self: Self, ctx: AloneContext, *, member: discord.Member):
         try:
@@ -68,7 +63,6 @@ class Owner(commands.Cog):
             return await ctx.reply("That user isn't blacklisted!")
 
         await ctx.message.add_reaction(ctx.Emojis.check)
-
 
     @commands.command()
     async def disable(self: Self, ctx: AloneContext, name: str):
@@ -84,7 +78,6 @@ class Owner(commands.Cog):
         command.enabled = False
         await ctx.reply(f"Disabled {name}.")
 
-
     @commands.command()
     async def enable(self: Self, ctx: AloneContext, name: str):
         command = self.bot.get_command(name)
@@ -99,14 +92,12 @@ class Owner(commands.Cog):
         command.enabled = True
         await ctx.reply(f"Enabled {name}.")
 
-
     @commands.command()
     async def say(self: Self, ctx: AloneContext, *, text: Optional[str]) -> None:
         if not text:
             return await ctx.message.add_reaction(ctx.Emojis.slash)
 
         await ctx.reply(text)
-
 
     @commands.command(aliases=["d", "delete"])
     async def delmsg(self: Self, ctx: AloneContext, message: Optional[discord.Message]) -> None:
@@ -116,19 +107,16 @@ class Owner(commands.Cog):
 
         await message.delete()
 
-
     @commands.command()
     @commands.guild_only()
     async def nick(self: Self, ctx: AloneContext, *, name: Optional[str] = None) -> None:
         await ctx.guild.me.edit(nick=name)  # type: ignore
         await ctx.message.add_reaction(ctx.Emojis.check)
 
-
     @commands.command(aliases=["shutdown", "fuckoff", "quit"])
     async def logout(self: Self, ctx: AloneContext) -> None:
         await ctx.message.add_reaction(ctx.Emojis.check)
         await self.bot.close()
-
 
     @commands.command()
     async def load(self: Self, ctx: AloneContext, cog: str) -> None:
@@ -139,7 +127,6 @@ class Owner(commands.Cog):
             message = f"Error! {error}"
         await ctx.reply(message)
 
-
     @commands.command()
     async def unload(self: Self, ctx: AloneContext, cog: str) -> None:
         try:
@@ -148,7 +135,6 @@ class Owner(commands.Cog):
         except Exception as error:
             message = f"Error! {error}"
         await ctx.reply(message)
-
 
     @commands.command()
     async def reload(self: Self, ctx: AloneContext) -> None:

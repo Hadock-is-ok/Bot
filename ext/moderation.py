@@ -11,12 +11,10 @@ class Moderation(commands.Cog):
     def __init__(self: Self, bot: AloneBot) -> None:
         self.bot = bot
 
-
     def cog_check(self, ctx: commands.Context[Any]) -> bool:
         if not ctx.guild:
             return False
         return True
-
 
     @commands.command()
     @commands.bot_has_guild_permissions(ban_members=True)
@@ -47,7 +45,6 @@ class Moderation(commands.Cog):
         await member.ban(reason=reason)
         await ctx.reply(f"Banned {member}{f' for {reason}.' if reason else '.'}")
 
-
     @commands.command()
     @commands.bot_has_guild_permissions(ban_members=True)
     @commands.has_guild_permissions(ban_members=True)
@@ -60,7 +57,6 @@ class Moderation(commands.Cog):
         assert ctx.guild
         await ctx.guild.unban(user)
         await ctx.message.add_reaction(ctx.Emojis.check)
-
 
     @commands.command()
     @commands.bot_has_guild_permissions(kick_members=True)
@@ -90,7 +86,6 @@ class Moderation(commands.Cog):
 
         await member.kick(reason=reason)
         await ctx.reply(f"Kicked {member}{f' for {reason}.' if reason else '.'}")
-
 
     @commands.command()
     @commands.bot_has_guild_permissions(manage_messages=True)

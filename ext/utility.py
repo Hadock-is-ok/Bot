@@ -14,7 +14,6 @@ class Utility(commands.Cog):
     def __init__(self, bot: AloneBot):
         self.bot = bot
 
-
     @commands.command()
     async def afk(self, ctx: AloneContext, *, reason: Optional[str] = "no reason") -> None:
         assert reason
@@ -29,7 +28,6 @@ class Utility(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
         await ctx.reply(f"**AFK**\nYou are now afk{fmt}")
 
-
     @commands.command(aliases=["av", "pfp"])
     async def avatar(self, ctx: AloneContext, member: Optional[discord.Member]) -> None:
         member = member or ctx.author  # type: ignore
@@ -39,11 +37,9 @@ class Utility(commands.Cog):
 
         await ctx.reply(embed=embed)
 
-
     @commands.command()
     async def choose(self, ctx: AloneContext, choices: commands.Greedy[Union[str, int]]) -> None:
         await ctx.reply(str(choice(choices)))
-
 
     @commands.command()
     async def cleanup(self, ctx: AloneContext, limit: Optional[int] = 50) -> None:
@@ -55,14 +51,12 @@ class Utility(commands.Cog):
         await ctx.channel.purge(bulk=bulk, check=is_bot, limit=limit)  # type: ignore
         await ctx.message.add_reaction(ctx.Emojis.check)
 
-
     @commands.command()
     async def invite(self, ctx: AloneContext) -> None:
         assert self.bot.user
         link = discord.utils.oauth_url(self.bot.user.id)
         embed = discord.Embed(title="Thank you for supporting me!", description=f"[Invite Me!]({link})")
         await ctx.reply(embed=embed, view=InviteView(ctx))
-
 
     @commands.command()
     async def ping(self, ctx: AloneContext) -> None:
@@ -94,13 +88,11 @@ class Utility(commands.Cog):
 
         await message.edit(content=None, embed=embed)
 
-
     @commands.group(invoke_without_command=True)
     async def prefix(self, ctx: AloneContext) -> None:
         prefix_list = "\n".join(await self.bot.get_prefix(ctx.message))
         embed = discord.Embed(title="Prefixes you can use", description=prefix_list)
         await ctx.reply(embed=embed)
-
 
     @prefix.command(name="add")
     async def prefix_add(self, ctx: AloneContext, *, prefix: Optional[str] = ""):
@@ -113,7 +105,6 @@ class Utility(commands.Cog):
 
         await self.bot.db.execute("INSERT INTO prefix VALUES ($1, $2)", ctx.author.id, prefix)
         await ctx.message.add_reaction(ctx.Emojis.check)
-
 
     @prefix.command(name="guild")
     async def prefix_guild(self, ctx: AloneContext, *, prefix: Optional[str]):
@@ -139,7 +130,6 @@ class Utility(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
         await ctx.reply(f"The prefix for this guild is now `{prefix}`")
 
-
     @prefix.command(name="remove")
     async def prefix_remove(self, ctx: AloneContext, *, prefix: Optional[str]):
         user_prefixes = self.bot.user_prefixes.get(ctx.author.id, [])
@@ -163,7 +153,6 @@ class Utility(commands.Cog):
             await ctx.message.add_reaction(ctx.Emojis.x)
             await ctx.reply("That's not one of your prefixes!")
 
-
     @commands.command()
     async def quote(self, ctx: AloneContext, message: Optional[discord.Message]):
         message = message or ctx.message.reference.resolved  # type: ignore
@@ -175,7 +164,6 @@ class Utility(commands.Cog):
             description=f"> {message.content}\n - {message.author.mention}",
         )
         await ctx.reply(embed=embed)
-
 
     @commands.command(aliases=["server_info", "server info", "si", "guildinfo"])
     @commands.guild_only()
@@ -191,7 +179,6 @@ class Utility(commands.Cog):
         )
         embed.set_thumbnail(url=guild.icon.url)
         await ctx.reply(embed=embed)
-
 
     @commands.command()
     async def source(self, ctx: AloneContext, *, command_name: Optional[str]):
@@ -209,7 +196,6 @@ class Utility(commands.Cog):
         )
         await ctx.reply(embed=embed)
 
-
     @commands.command()
     async def support(self, ctx: AloneContext) -> None:
         embed = discord.Embed(
@@ -217,7 +203,6 @@ class Utility(commands.Cog):
             description="Join my [support server]({self.bot.support_server})!",
         )
         await ctx.reply(embed=embed, view=SupportView(ctx))
-
 
     @commands.group(invoke_without_command=True)
     async def todo(self, ctx: AloneContext):
@@ -232,7 +217,6 @@ class Utility(commands.Cog):
         embed = discord.Embed(title="Todo", description=todo_list)
         await ctx.reply(embed=embed)
 
-
     @todo.command(name="add")
     async def todo_add(self, ctx: AloneContext, *, text: Optional[str]) -> None:
         assert text
@@ -246,7 +230,6 @@ class Utility(commands.Cog):
             ctx.message.jump_url,
         )
         await ctx.message.add_reaction(ctx.Emojis.check)
-
 
     @todo.command(name="remove")
     async def todo_remove(self, ctx: AloneContext, todo_number: Optional[int]):
@@ -268,7 +251,6 @@ class Utility(commands.Cog):
                 except KeyError:
                     await ctx.reply("That's not a task in your todo list!")
 
-
     @commands.command()
     async def uptime(self, ctx: AloneContext) -> None:
         uptime = datetime.utcnow() - self.bot.launch_time
@@ -282,7 +264,6 @@ class Utility(commands.Cog):
             color=0x88FF44,
         )
         await ctx.reply(embed=embed)
-
 
     @commands.command()
     async def userinfo(self, ctx: AloneContext, member: Union[discord.Member, discord.User]) -> None:

@@ -48,7 +48,10 @@ class Error(commands.Cog):
                 color=0xF02E2E,
             )
             embed.set_author(name=f"{ctx.author.name}", icon_url=ctx.author.display_avatar)
-            embed.add_field(name="Information", value=f"Error Name: {type(error).__name__}\nError Type: {type(error)}\nMessage: {ctx.message.content}\nGuild ID: {ctx.guild.id}\nChannel ID: {ctx.channel.id}")
+            embed.add_field(
+                name="Information",
+                value=f"Error Name: {type(error).__name__}\nError Type: {type(error)}\nMessage: {ctx.message.content}\nGuild ID: {ctx.guild.id}\nChannel ID: {ctx.channel.id}",
+            )
 
             await channel.send(
                 f"This error came from {ctx.author} using {ctx.command} in {ctx.guild}.",

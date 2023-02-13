@@ -12,7 +12,6 @@ class Fun(commands.Cog):
     def __init__(self: Self, bot: AloneBot) -> None:
         self.bot = bot
 
-
     async def fetch_subreddit(self: Self, subreddit: str, sort: str = "hot") -> Dict[str, Any]:
         async with self.bot.session.get(
             f"https://www.reddit.com/r/{subreddit}/{sort}.json",
@@ -21,7 +20,6 @@ class Fun(commands.Cog):
             data = await response.json()
 
         return random.choice(data["data"]["children"])["data"]
-
 
     @commands.command(aliases=["define"])
     async def urban(self: Self, ctx: AloneContext, *, word: str) -> None:
@@ -32,7 +30,6 @@ class Fun(commands.Cog):
 
         await ctx.reply(embed=discord.Embed(title=name, description=definition))
 
-
     @commands.command()
     async def pp(self: Self, ctx: AloneContext, member: Optional[discord.Member] = None) -> None:
         member = member or ctx.author  # type: ignore
@@ -40,14 +37,12 @@ class Fun(commands.Cog):
 
         await ctx.reply(embed=discord.Embed(title=f"{member}'s pp", description=f"8{pp}D\n({len(pp)}cm)"))
 
-
     @commands.command()
     async def meme(self: Self, ctx: AloneContext) -> None:
         data = await self.fetch_subreddit("dankmemes")
         embed = discord.Embed(title=data["title"], url=data["url"]).set_image(url=data["url"])
 
         await ctx.reply(embed=embed)
-
 
     @commands.command()
     async def waifu(self: Self, ctx: AloneContext) -> None:
@@ -63,7 +58,6 @@ class Fun(commands.Cog):
 
         embed.set_image(url=waifu_url)
         await ctx.reply(embed=embed)
-
 
     @commands.command()
     async def reddit(self: Self, ctx: AloneContext, subreddit: Optional[str]):

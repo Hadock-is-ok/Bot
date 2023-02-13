@@ -26,7 +26,6 @@ class Events(commands.Cog):
             sep="\n",
         )
 
-
     @commands.Cog.listener()
     async def on_guild_join(self: Self, guild: discord.Guild) -> None:
         channel = self.bot.get_log_channel()
@@ -43,7 +42,6 @@ Nitro Tier: {guild.premium_tier}""",
         )
 
         await channel.send(embed=embed)
-
 
     @commands.Cog.listener()
     async def on_guild_remove(self: Self, guild: discord.Guild) -> None:
@@ -62,13 +60,11 @@ Nitro Tier: {guild.premium_tier}""",
 
         await channel.send(embed=embed)
 
-
     @commands.Cog.listener()
     async def on_message(self: Self, message: discord.Message) -> None:
         assert self.bot.user
         if message.content == f"<@{self.bot.user.id}>" and not message.author.bot:
             await message.reply("Hello, I am Alone Bot, my prefix is alone.")
-
 
     @commands.Cog.listener("on_message")
     async def afk_check(self: Self, message: discord.Message) -> None:
@@ -89,7 +85,6 @@ Nitro Tier: {guild.premium_tier}""",
 
             await message.reply(f"Welcome back {message.author.display_name}!", mention_author=False)
 
-
     @commands.Cog.listener()
     async def on_message_edit(self: Self, before: discord.Message, after: discord.Message) -> None:
         if not self.bot.bot_messages_cache.get(before):
@@ -104,13 +99,11 @@ Nitro Tier: {guild.premium_tier}""",
         else:
             await self.bot.process_commands(after)
 
-
     @commands.Cog.listener()
     async def on_message_delete(self: Self, message: discord.Message) -> None:
         if self.bot.bot_messages_cache.get(message):
             bot_message = self.bot.bot_messages_cache.pop(message)
             await bot_message.delete()
-
 
     @commands.Cog.listener()
     async def on_voice_state_update(

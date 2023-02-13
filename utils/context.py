@@ -29,7 +29,6 @@ class AloneContext(commands.Context[Any]):
         add_button_view: bool = True,
         **kwargs: Any,
     ):
-
         embed: Optional[discord.Embed] = kwargs.get("embed")
         if embed:
             if not embed.color:
@@ -53,7 +52,6 @@ class AloneContext(commands.Context[Any]):
                 view = kwargs["view"] = views.DeleteView(self)
                 view.add_item(_view.children[0])
 
-
         if not self.bot.bot_messages_cache.get(self.message):
             self.bot.bot_messages_cache[self.message] = message = await super().send(content, **kwargs)
             return message
@@ -66,7 +64,6 @@ class AloneContext(commands.Context[Any]):
                 [kwargs.pop("embed")] if kwargs.get("embed", None) else []
             )
 
-
             try:
                 self.bot.bot_messages_cache[self.message] = message = await self.bot.bot_messages_cache[self.message].edit(
                     **edit_kwargs
@@ -77,14 +74,11 @@ class AloneContext(commands.Context[Any]):
                 self.bot.bot_messages_cache[self.message] = message = await super().send(content, **kwargs)
                 return message
 
-
     async def reply(self, content: Optional[str] = None, **kwargs: Any) -> discord.Message:
         return await super().reply(content, mention_author=False, **kwargs)
-
 
     async def create_codeblock(self, content: str):
         fmt = "`" * 3
         return f"{fmt}py\n{content}{fmt}"
-
 
     Emojis = _Emojis()

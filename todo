@@ -3,3 +3,4 @@ Fix help command
 Add cooldown
 utils/paginator.py
 Refactor code
+Change importing AloneContext for all files into TYPE_CHECKING

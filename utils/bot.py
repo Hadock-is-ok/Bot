@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import logging
 import os
-from typing import Any, ClassVar, Dict, List, NamedTuple, Optional, TypedDict, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, NamedTuple, Optional, TypedDict, Union
 
 import aiohttp
 import asyncpg
@@ -12,7 +12,8 @@ from cachetools import TTLCache
 from discord.ext import commands
 from typing_extensions import Self
 
-from . import AloneContext
+if TYPE_CHECKING:
+    from . import AloneContext
 
 
 class Todo(NamedTuple):

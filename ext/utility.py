@@ -52,8 +52,12 @@ class Utility(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command()
-    async def invite(self, ctx: AloneContext) -> None:
-        assert self.bot.user
+    async def invite(self, ctx: AloneContext, bot_id: Optional[int]) -> None:
+        if bot_id:
+            link = discord.utils.oauth_url(bot_id)
+            embed = discord.Embed(title="Invite", description=f"[Invite]({link})")
+            return await ctx.reply(embed=embed)
+
         link = discord.utils.oauth_url(self.bot.user.id)
         embed = discord.Embed(title="Thank you for supporting me!", description=f"[Invite Me!]({link})")
         await ctx.reply(embed=embed, view=InviteView(ctx))

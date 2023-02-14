@@ -21,3 +21,4 @@ profile = "black"
 
 [tool.pyright]
 pythonversion = "^3.9"
+reportImportCycles = false

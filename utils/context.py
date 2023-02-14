@@ -4,7 +4,7 @@ import discord
 from discord import PartialEmoji
 from discord.ext import commands
 
-from . import views
+from .views import DeleteView
 
 BASE_KWARGS: dict[str, Any] = {
     "content": None,
@@ -46,10 +46,10 @@ class AloneContext(commands.Context[Any]):
         if add_button_view:
             _view: discord.ui.View | None = kwargs.get("view")
             if not _view:
-                kwargs["view"] = views.DeleteView(self)
+                kwargs["view"] = DeleteView(self)
 
             else:
-                view = kwargs["view"] = views.DeleteView(self)
+                view = kwargs["view"] = DeleteView(self)
                 view.add_item(_view.children[0])
 
         if not self.bot.bot_messages_cache.get(self.message):

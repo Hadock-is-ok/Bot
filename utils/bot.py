@@ -31,7 +31,6 @@ class DEFAULT_GUILD_CONFIG(TypedDict):
 
 class AloneBot(commands.AutoShardedBot):
     DEFAULT_PREFIXES: ClassVar[List[str]] = ["Alone", "alone"]
-
     owner_ids: List[int]
 
     def __init__(self: Self, *args: Any, **kwargs: Any):

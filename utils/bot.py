@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime
 import logging
 import os
+import pathlib
 from typing import Any, ClassVar, Dict, List, NamedTuple, Optional, TypedDict, Union
 
 import aiohttp
@@ -30,16 +31,6 @@ class DEFAULT_GUILD_CONFIG(TypedDict):
 
 class AloneBot(commands.AutoShardedBot):
     DEFAULT_PREFIXES: ClassVar[List[str]] = ["Alone", "alone"]
-    INITIAL_EXTENSIONS: ClassVar[List[str]] = [
-        "ext.events",
-        "ext.error",
-        "ext.fun",
-        "ext.help",
-        "ext.moderation",
-        "ext.owner",
-        "ext.utility",
-        "ext.voice",
-    ]
 
     owner_ids: List[int]
 
@@ -60,6 +51,7 @@ class AloneBot(commands.AutoShardedBot):
         self.guild_configs: Dict[int, DEFAULT_GUILD_CONFIG] = {}
         self.bot_messages_cache: TTLCache[discord.Message, discord.Message] = TTLCache(maxsize=2000, ttl=300.0)
 
+        self.cooldown: commands.CooldownMapping[discord.Message] = commands.CooldownMapping.from_cooldown(1, 1.5, commands.BucketType.member)
         self.support_server: str = os.environ["bot_guild"]
         self.maintenance: Optional[str] = None
 
@@ -107,8 +99,12 @@ class AloneBot(commands.AutoShardedBot):
 
         assert self.db
         await self.load_extension("jishaku")
-        for extension in self.INITIAL_EXTENSIONS:
-            await self.load_extension(extension)
+        for file in pathlib.Path('ext').glob('**/*.py'):
+            *tree, _ = file.parts
+            try:
+                await self.load_extension(f"{'.'.join(tree)}.{file.stem}")
+            except Exception as error:
+                self.logger.error(error, exc_info=error)
 
         records = await self.db.fetch("SELECT user_id, array_agg(prefix) AS prefixes FROM prefix GROUP BY user_id")
         self.user_prefixes = {user_id: prefix for user_id, prefix in records}

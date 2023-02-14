@@ -29,7 +29,7 @@ class Utility(commands.Cog):
         await ctx.reply(f"**AFK**\nYou are now afk{fmt}")
 
     @commands.command(aliases=["av", "pfp"])
-    async def avatar(self, ctx: AloneContext, member: Optional[discord.Member]) -> None:
+    async def avatar(self, ctx: AloneContext, member: Optional[Union[discord.Member, discord.User]]) -> None:
         member = member or ctx.author  # type: ignore
         assert member
         embed = discord.Embed(title=f"{member.display_name}'s avatar")

@@ -3,6 +3,7 @@ from asyncio import run
 from typing import Literal
 
 import discord
+from discord.ext import commands
 from dotenv import load_dotenv
 
 from utils import AloneBot, AloneContext, BlacklistedError, MaintenanceError
@@ -30,6 +31,20 @@ async def maintenance(ctx: AloneContext) -> Literal[True]:
     if not bot.maintenance or ctx.author.id in bot.owner_ids:
         return True
     raise MaintenanceError
+
+
+@bot.check_once
+async def cooldown(ctx: AloneContext) -> Literal[True]:
+    if ctx.author.id in bot.owner_ids:
+        return True
+
+    bucket: commands.Cooldown | None = bot.cooldown.get_bucket(ctx.message)
+    assert bucket
+    retry_after = bucket.update_rate_limit()
+    if retry_after:
+        raise commands.CommandOnCooldown(bucket, retry_after, commands.BucketType.member)
+
+    return True
 
 
 async def main():

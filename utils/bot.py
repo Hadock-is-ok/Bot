@@ -50,7 +50,9 @@ class AloneBot(commands.AutoShardedBot):
         self.guild_configs: Dict[int, DEFAULT_GUILD_CONFIG] = {}
         self.bot_messages_cache: TTLCache[discord.Message, discord.Message] = TTLCache(maxsize=2000, ttl=300.0)
 
-        self.cooldown: commands.CooldownMapping[discord.Message] = commands.CooldownMapping.from_cooldown(1, 1.5, commands.BucketType.member)
+        self.cooldown: commands.CooldownMapping[discord.Message] = commands.CooldownMapping.from_cooldown(
+            1, 1.5, commands.BucketType.member
+        )
         self.support_server: str = os.environ["bot_guild"]
         self.maintenance: Optional[str] = None
 
@@ -73,7 +75,7 @@ class AloneBot(commands.AutoShardedBot):
         prefixes.append(f"<@!{self.user.id}> ")
         return prefixes
 
-    async def get_context(self, message: discord.Message, *, cls: Any = AloneContext):
+    async def get_context(self: Self, message: discord.Message, *, cls: Any = AloneContext):
         return await super().get_context(message, cls=cls)
 
     async def process_commands(self: Self, message: discord.Message, /) -> None:

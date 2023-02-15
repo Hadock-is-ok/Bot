@@ -2,16 +2,17 @@ import asyncio
 
 import discord
 from discord.ext import commands
+from typing_extensions import Self
 
 from utils import AloneBot
 
 
 class Voice(commands.Cog):
-    def __init__(self, bot: AloneBot):
+    def __init__(self: Self, bot: AloneBot):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_voice_join(self, member: discord.Member, state: discord.VoiceState):
+    async def on_voice_join(self: Self, member: discord.Member, state: discord.VoiceState):
         assert state.channel
         vc = self.bot.guild_configs.get(state.channel.guild.id, {}).get("voice_channel", None)
         category_channel_id = self.bot.guild_configs.get(state.channel.guild.id, {}).get("voice_category", None)
@@ -46,7 +47,7 @@ class Voice(commands.Cog):
         await member.send("Welcome to your own voice chat! Here, you lay the rules. your house, your magic. Have fun!")
 
     @commands.Cog.listener()
-    async def on_voice_leave(self, member: discord.Member, state: discord.VoiceState):
+    async def on_voice_leave(self: Self, member: discord.Member, state: discord.VoiceState):
         assert state.channel
 
         vc = self.bot.guild_configs.get(member.guild.id, {}).get("community_voice_channels", {})

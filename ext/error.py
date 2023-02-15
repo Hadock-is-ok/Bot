@@ -8,7 +8,7 @@ from utils import AloneBot, AloneContext, BlacklistedError, MaintenanceError
 class Error(commands.Cog):
     def __init__(self: Self, bot: AloneBot) -> None:
         self.bot = bot
-    
+
     @commands.Cog.listener()
     async def on_command_error(self: Self, ctx: AloneContext, error: Exception):
         if isinstance(error, commands.CommandNotFound):

@@ -66,7 +66,7 @@ class Fun(commands.Cog):
 
         data = await self.fetch_subreddit(subreddit)
         if data["over_18"]:
-            if not ctx.channel.is_nsfw(): # type: ignore
+            if not ctx.channel.is_nsfw():  # type: ignore
                 return await ctx.reply("This post is nsfw! I cannot send this in a normal channel!")
 
         embed = discord.Embed(title=data["title"], url=data["url"]).set_image(url=data["url"])

@@ -11,7 +11,7 @@ class Moderation(commands.Cog):
     def __init__(self: Self, bot: AloneBot) -> None:
         self.bot = bot
 
-    def cog_check(self, ctx: commands.Context[Any]) -> bool:
+    def cog_check(self: Self, ctx: commands.Context[Any]) -> bool:
         if not ctx.guild:
             return False
         return True

@@ -44,6 +44,7 @@ class AloneBot(commands.AutoShardedBot):
         )
 
         self.blacklisted_users: Dict[int, str] = {}
+        self.bypass_cooldown_users: List[int] = []
         self.afk_users: Dict[int, str] = {}
         self.todos: Dict[int, List[Todo]] = {}
         self.user_prefixes: Dict[int, List[str]] = {}
@@ -129,6 +130,10 @@ class AloneBot(commands.AutoShardedBot):
 
         records = await self.db.fetch("SELECT * FROM afk")
         self.afk_users = {user_id: reason for user_id, reason in records}
+
+        records = await self.db.fetch("SELECT * FROM mentions")
+        for user_id in records:
+            self.bypass_cooldown_users.append(user_id)
 
     async def close(self: Self) -> None:
         await self.session.close()

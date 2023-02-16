@@ -35,7 +35,12 @@ async def maintenance(ctx: AloneContext) -> Literal[True]:
 
 @bot.check_once
 async def cooldown(ctx: AloneContext) -> Literal[True]:
-    if ctx.author.id in bot.owner_ids:
+    if (
+        ctx.author.id in bot.owner_ids
+        or ctx.author.id in bot.bypass_cooldown_users
+        or isinstance(ctx.author, discord.User)
+        or ctx.channel.permissions_for(ctx.author).manage_messages
+    ):
         return True
 
     bucket: commands.Cooldown | None = bot.cooldown.get_bucket(ctx.message)

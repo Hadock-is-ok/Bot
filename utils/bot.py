@@ -95,6 +95,7 @@ class AloneBot(commands.AutoShardedBot):
             host=os.environ["database"],
             port=int(os.environ["db_port"]),
             user=os.environ["db_user"],
+            password=os.environ["db_pwd"],
             database="postgres",
         )
 

@@ -139,7 +139,7 @@ class Owner(commands.Cog):
     @commands.command()
     async def reload(self: Self, ctx: AloneContext) -> None:
         cog_status = ""
-        for extension in list(self.bot.extensions.keys()):
+        for extension in self.bot.INITAL_EXTENSIONS:
             await self.bot.reload_extension(extension)
             cog_status += f"\U0001f504 {extension} Reloaded!\n\n"
 

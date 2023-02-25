@@ -30,6 +30,7 @@ class DEFAULT_GUILD_CONFIG(TypedDict):
 
 
 class AloneBot(commands.AutoShardedBot):
+    INITAL_EXTENSIONS: List[str] = []
     DEFAULT_PREFIXES: ClassVar[List[str]] = ["Alone", "alone"]
     owner_ids: List[int]
 
@@ -103,8 +104,12 @@ class AloneBot(commands.AutoShardedBot):
         await self.load_extension("jishaku")
         for file in pathlib.Path('ext').glob('**/*.py'):
             *tree, _ = file.parts
+            if file.stem == "__init__":
+                continue
+
             try:
                 await self.load_extension(f"{'.'.join(tree)}.{file.stem}")
+                self.INITAL_EXTENSIONS.append(f"{'.'.join(tree)}.{file.stem}")
             except Exception as error:
                 self.logger.error(error, exc_info=error)
 

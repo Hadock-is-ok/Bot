@@ -97,8 +97,8 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @prefix.command(name="add")
-    async def prefix_add(self: Self, ctx: AloneContext, *, prefix: Optional[str] = ""):
-        assert prefix
+    async def prefix_add(self: Self, ctx: AloneContext, *, prefix: Optional[str]):
+        prefix = prefix or ""
         if len(prefix) > 5:
             return await ctx.reply("You can't have a prefix that's longer than 5 characters, sorry!")
 

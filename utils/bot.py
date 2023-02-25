@@ -93,11 +93,11 @@ class AloneBot(commands.AutoShardedBot):
 
     async def setup_hook(self: Self) -> None:
         self.db: asyncpg.Pool[Any] | Any = await asyncpg.create_pool(
-            host=os.environ["database"],
+            host=os.environ["db_ip"],
             port=int(os.environ["db_port"]),
             user=os.environ["db_user"],
             password=os.environ["db_pwd"],
-            database="postgres",
+            database=os.environ["database"],
         )
 
         assert self.db

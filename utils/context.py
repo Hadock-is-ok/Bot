@@ -75,9 +75,6 @@ class AloneContext(commands.Context[Any]):
                 self.bot.bot_messages_cache[self.message] = message = await super().send(content, **kwargs)
                 return message
 
-    async def reply(self: Self, content: Optional[str] = None, **kwargs: Any) -> discord.Message:
-        return await super().reply(content, mention_author=False, **kwargs)
-
     async def create_codeblock(self: Self, content: str):
         fmt = "`" * 3
         return f"{fmt}py\n{content}{fmt}"

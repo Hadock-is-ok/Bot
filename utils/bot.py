@@ -38,6 +38,7 @@ class AloneBot(commands.AutoShardedBot):
         super().__init__(
             command_prefix=self.get_prefix,  # type: ignore
             strip_after_prefix=True,
+            allowed_mentions = discord.AllowedMentions(replied_user=False),
             case_insensitive=True,
             owner_ids=[412734157819609090],
             *args,

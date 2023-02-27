@@ -1,3 +1,5 @@
+from typing import Any
+
 import discord
 from discord.ext import commands
 from typing_extensions import Self
@@ -7,11 +9,11 @@ from utils import AloneBot
 
 class Events(commands.Cog):
     def __init__(self: Self, bot: AloneBot) -> None:
-        self.bot = bot
+        self.bot: AloneBot = bot
 
     @commands.Cog.listener()
     async def on_ready(self: Self) -> None:
-        fmt = self.bot.format_print("Alone Bot")
+        fmt: str = self.bot.format_print("Alone Bot")
         assert self.bot.user
 
         print(
@@ -28,9 +30,9 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self: Self, guild: discord.Guild) -> None:
-        channel = self.bot.get_log_channel()
-        bots = sum(member.bot for member in guild.members)
-        embed = discord.Embed(
+        channel: Any = self.bot.get_log_channel()
+        bots: int = sum(member.bot for member in guild.members)
+        embed: discord.Embed = discord.Embed(
             title="I joined a new guild!",
             description=f"""
 Owner: {guild.owner}
@@ -45,9 +47,9 @@ Nitro Tier: {guild.premium_tier}""",
 
     @commands.Cog.listener()
     async def on_guild_remove(self: Self, guild: discord.Guild) -> None:
-        channel = self.bot.get_log_channel()
-        bots = sum(member.bot for member in guild.members)
-        embed = discord.Embed(
+        channel: Any = self.bot.get_log_channel()
+        bots: int = sum(member.bot for member in guild.members)
+        embed: discord.Embed = discord.Embed(
             title="I have left a guild",
             description=f"""
 Owner: {guild.owner}
@@ -90,7 +92,7 @@ Nitro Tier: {guild.premium_tier}""",
         if not self.bot.bot_messages_cache.get(before):
             return await self.bot.process_commands(after)
 
-        message = self.bot.bot_messages_cache.get(before)
+        message: discord.Message | None = self.bot.bot_messages_cache.get(before)
 
         if not after.content.startswith(tuple(await self.bot.get_prefix(before))):
             assert message
@@ -102,7 +104,7 @@ Nitro Tier: {guild.premium_tier}""",
     @commands.Cog.listener()
     async def on_message_delete(self: Self, message: discord.Message) -> None:
         if self.bot.bot_messages_cache.get(message):
-            bot_message = self.bot.bot_messages_cache.pop(message)
+            bot_message: discord.Message = self.bot.bot_messages_cache.pop(message)
             await bot_message.delete()
 
     @commands.Cog.listener()

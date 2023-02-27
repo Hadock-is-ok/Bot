@@ -1,3 +1,5 @@
+from typing import Any
+
 from discord import Embed
 from discord.ext import commands
 from typing_extensions import Self
@@ -7,10 +9,10 @@ from utils import AloneBot, AloneContext, BlacklistedError, MaintenanceError
 
 class Error(commands.Cog):
     def __init__(self: Self, bot: AloneBot) -> None:
-        self.bot = bot
+        self.bot: AloneBot = bot
 
     @commands.Cog.listener()
-    async def on_command_error(self: Self, ctx: AloneContext, error: Exception):
+    async def on_command_error(self: Self, ctx: AloneContext, error: Exception) -> None:
         if isinstance(error, commands.CommandNotFound):
             return
 
@@ -40,9 +42,9 @@ class Error(commands.Cog):
 
         else:
             assert ctx.guild
-            channel = self.bot.get_log_channel()
+            channel: Any = self.bot.get_log_channel()
             self.bot.logger.error("An error occurred", exc_info=error)
-            embed = Embed(
+            embed: Embed = Embed(
                 title=f"Ignoring exception in {ctx.command}:",
                 description=f"```py\n{error}```\nThe developers have receieved this error and will fix it.",
                 color=0xF02E2E,

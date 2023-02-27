@@ -9,7 +9,7 @@ from utils import AloneBot, AloneContext
 
 class Owner(commands.Cog):
     def __init__(self: Self, bot: AloneBot) -> None:
-        self.bot = bot
+        self.bot: AloneBot = bot
 
     def cog_check(self: Self, ctx: commands.Context[Any]) -> bool:
         return ctx.author.id in self.bot.owner_ids
@@ -20,7 +20,7 @@ class Owner(commands.Cog):
             await ctx.message.add_reaction(ctx.Emojis.check)
             self.bot.maintenance = reason or "no reason provided"
 
-            channel = self.bot.get_log_channel()
+            channel: Any = self.bot.get_log_channel()
             return await channel.send("I am going on maintenance break, all commands will not work during the downtime.")
         await ctx.reply("Maintenance mode is now off.")
         self.bot.maintenance = None
@@ -32,7 +32,7 @@ class Owner(commands.Cog):
     async def blacklist(self: Self, ctx: AloneContext) -> None:
         fmt: List[str] = []
         for user_id, reason in self.bot.blacklisted_users.items():
-            user = self.bot.get_user(user_id)
+            user: discord.User | None = self.bot.get_user(user_id)
             if not user:
                 continue
 
@@ -54,7 +54,7 @@ class Owner(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @blacklist.command()
-    async def remove(self: Self, ctx: AloneContext, *, member: discord.Member):
+    async def remove(self: Self, ctx: AloneContext, *, member: discord.Member) -> discord.Message | None:
         try:
             self.bot.blacklisted_users.pop(member.id)
             await self.bot.db.execute("DELETE FROM blacklist WHERE user_id = $1", member.id)
@@ -65,7 +65,7 @@ class Owner(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command()
-    async def disable(self: Self, ctx: AloneContext, name: str):
+    async def disable(self: Self, ctx: AloneContext, name: str) -> discord.Message | None:
         command = self.bot.get_command(name)
         if not command:
             await ctx.message.add_reaction(ctx.Emojis.x)
@@ -79,7 +79,7 @@ class Owner(commands.Cog):
         await ctx.reply(f"Disabled {name}.")
 
     @commands.command()
-    async def enable(self: Self, ctx: AloneContext, name: str):
+    async def enable(self: Self, ctx: AloneContext, name: str) -> discord.Message | None:
         command = self.bot.get_command(name)
         if not command:
             await ctx.message.add_reaction(ctx.Emojis.x)
@@ -100,8 +100,8 @@ class Owner(commands.Cog):
         await ctx.reply(text)
 
     @commands.command(aliases=["d", "delete"])
-    async def delmsg(self: Self, ctx: AloneContext, message: Optional[discord.Message]) -> None:
-        message = message or ctx.message.reference  # type: ignore
+    async def delmsg(self: Self, ctx: AloneContext, message: Optional[discord.Message]) -> None: # type: ignore
+        message: discord.Message | None = message or ctx.message.reference  # type: ignore
         if not message:
             return await ctx.message.add_reaction(ctx.Emojis.slash)
 
@@ -122,7 +122,7 @@ class Owner(commands.Cog):
     async def load(self: Self, ctx: AloneContext, cog: str) -> None:
         try:
             await self.bot.load_extension(cog)
-            message = "Loaded!"
+            message: str = "Loaded!"
         except Exception as error:
             message = f"Error! {error}"
         await ctx.reply(message)
@@ -131,14 +131,14 @@ class Owner(commands.Cog):
     async def unload(self: Self, ctx: AloneContext, cog: str) -> None:
         try:
             await self.bot.unload_extension(cog)
-            message = "Unloaded!"
+            message: str = "Unloaded!"
         except Exception as error:
             message = f"Error! {error}"
         await ctx.reply(message)
 
     @commands.command()
     async def reload(self: Self, ctx: AloneContext) -> None:
-        cog_status = ""
+        cog_status: str = ""
         for extension in self.bot.INITAL_EXTENSIONS:
             await self.bot.reload_extension(extension)
             cog_status += f"\U0001f504 {extension} Reloaded!\n\n"
@@ -147,5 +147,5 @@ class Owner(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
 
 
-async def setup(bot: AloneBot):
+async def setup(bot: AloneBot) -> None:
     await bot.add_cog(Owner(bot))

@@ -3,7 +3,7 @@ from typing import Any, Optional
 import discord
 from discord import PartialEmoji
 from discord.ext import commands
-from typing_extensions import Self
+from typing_extensions import Self, LiteralString
 
 from .views import DeleteView
 
@@ -18,9 +18,9 @@ BASE_KWARGS: dict[str, Any] = {
 
 
 class _Emojis:
-    x = PartialEmoji(name="cross", id=1019436205269602354)
-    check = PartialEmoji(name="tick", id=1019436222260723744)
-    slash = PartialEmoji(name="slash", id=1041021694682349569)
+    x: PartialEmoji = PartialEmoji(name="cross", id=1019436205269602354)
+    check: PartialEmoji = PartialEmoji(name="tick", id=1019436222260723744)
+    slash: PartialEmoji = PartialEmoji(name="slash", id=1041021694682349569)
 
 
 class AloneContext(commands.Context[Any]):
@@ -29,7 +29,7 @@ class AloneContext(commands.Context[Any]):
         content: str | None = None,
         add_button_view: bool = True,
         **kwargs: Any,
-    ):
+    ) -> discord.Message | Any:
         embed: Optional[discord.Embed] = kwargs.get("embed")
         if embed:
             if not embed.color:
@@ -58,8 +58,8 @@ class AloneContext(commands.Context[Any]):
             return message
 
         else:
-            message = self.bot.bot_messages_cache.get(self.message)
-            edit_kwargs = {key: value for key, value in kwargs.items() if key in BASE_KWARGS}
+            message: Any = self.bot.bot_messages_cache.get(self.message)
+            edit_kwargs: dict[str, Any] = {key: value for key, value in kwargs.items() if key in BASE_KWARGS}
             edit_kwargs["content"] = content
             edit_kwargs["embeds"] = (kwargs.pop("embeds", [])) or (
                 [kwargs.pop("embed")] if kwargs.get("embed", None) else []
@@ -75,8 +75,8 @@ class AloneContext(commands.Context[Any]):
                 self.bot.bot_messages_cache[self.message] = message = await super().send(content, **kwargs)
                 return message
 
-    async def create_codeblock(self: Self, content: str):
-        fmt = "`" * 3
+    async def create_codeblock(self: Self, content: str) -> str:
+        fmt: LiteralString = "`" * 3
         return f"{fmt}py\n{content}{fmt}"
 
-    Emojis = _Emojis()
+    Emojis: _Emojis = _Emojis()

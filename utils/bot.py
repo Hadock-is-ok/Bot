@@ -34,7 +34,7 @@ class AloneBot(commands.AutoShardedBot):
     DEFAULT_PREFIXES: ClassVar[List[str]] = ["Alone", "alone"]
     owner_ids: List[int]
 
-    def __init__(self: Self, *args: Any, **kwargs: Any):
+    def __init__(self: Self, *args: Any, **kwargs: Any) -> None:
         super().__init__(
             command_prefix=self.get_prefix,  # type: ignore
             strip_after_prefix=True,
@@ -78,14 +78,14 @@ class AloneBot(commands.AutoShardedBot):
         prefixes.append(f"<@!{self.user.id}> ")
         return prefixes
 
-    async def get_context(self: Self, message: discord.Message, *, cls: Any = AloneContext):
+    async def get_context(self: Self, message: discord.Message, *, cls: Any = AloneContext) -> Any:
         return await super().get_context(message, cls=cls)
 
     async def process_commands(self: Self, message: discord.Message, /) -> None:
         if message.author.bot:
             return
 
-        ctx = await self.get_context(message)
+        ctx: Any = await self.get_context(message)
         if not ctx.valid:
             return
 
@@ -114,6 +114,7 @@ class AloneBot(commands.AutoShardedBot):
             except Exception as error:
                 self.logger.error(error, exc_info=error)
 
+        records: list[Any]
         records = await self.db.fetch("SELECT user_id, array_agg(prefix) AS prefixes FROM prefix GROUP BY user_id")
         self.user_prefixes = {user_id: prefix for user_id, prefix in records}
 
@@ -127,7 +128,7 @@ class AloneBot(commands.AutoShardedBot):
 
         records = await self.db.fetch("SELECT * FROM voice")
         for guild_id, user_id, channel_id in records:
-            guild = self.guild_configs.setdefault(guild_id, {})  # type: ignore
+            guild: DEFAULT_GUILD_CONFIG = self.guild_configs.setdefault(guild_id, {})  # type: ignore
             guild.setdefault("community_voice_channels", {})[channel_id] = user_id
 
         records = await self.db.fetch("SELECT * FROM todo")
@@ -151,8 +152,8 @@ class AloneBot(commands.AutoShardedBot):
 
     async def start(self: Self, token: str, *, reconnect: bool = True) -> None:
         discord.utils.setup_logging(handler=logging.FileHandler("bot.log"))
-        self.logger = logging.getLogger("discord")
-        self.session = aiohttp.ClientSession()
+        self.logger: logging.Logger = logging.getLogger("discord")
+        self.session: aiohttp.ClientSession = aiohttp.ClientSession()
         await super().start(token)
 
     def get_log_channel(self: Self) -> Any:
@@ -171,5 +172,5 @@ class AloneBot(commands.AutoShardedBot):
             return "There's no owner with that ID!"
 
     def format_print(self: Self, text: str) -> str:
-        fmt = datetime.datetime.utcnow().strftime("%x | %X") + f" | {text}"
+        fmt: str = datetime.datetime.utcnow().strftime("%x | %X") + f" | {text}"
         return fmt

@@ -9,7 +9,7 @@ from utils import AloneBot, AloneContext
 
 class Moderation(commands.Cog):
     def __init__(self: Self, bot: AloneBot) -> None:
-        self.bot = bot
+        self.bot: AloneBot = bot
 
     def cog_check(self: Self, ctx: commands.Context[Any]) -> bool:
         if not ctx.guild:
@@ -25,7 +25,7 @@ class Moderation(commands.Cog):
         member: discord.Member,
         *,
         reason: str = "No reason provided.",
-    ):
+    ) -> discord.Message | None:
         if not member:
             return await ctx.reply(
                 embed=discord.Embed(
@@ -48,14 +48,13 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.bot_has_guild_permissions(ban_members=True)
     @commands.has_guild_permissions(ban_members=True)
-    async def unban(self: Self, ctx: AloneContext, member_id: Optional[int]):
+    async def unban(self: Self, ctx: AloneContext, member_id: Optional[int]) -> discord.Message | None:
         "This command only works with IDs!"
         if not member_id:
             return await ctx.reply("You need to supply a User ID to unban!")
 
-        user = await self.bot.fetch_user(member_id)
-        assert ctx.guild
-        await ctx.guild.unban(user)
+        user: discord.User = await self.bot.fetch_user(member_id)
+        await ctx.guild.unban(user) # type: ignore
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command()
@@ -67,7 +66,7 @@ class Moderation(commands.Cog):
         member: discord.Member,
         *,
         reason: str = "No reason provided.",
-    ):
+    ) -> discord.Message | None:
         if not member:
             return await ctx.reply(
                 embed=discord.Embed(

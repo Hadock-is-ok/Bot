@@ -2,7 +2,7 @@ from datetime import datetime
 from inspect import getsource
 from random import choice
 from time import perf_counter
-from typing import Optional, Union
+from typing import Any, List, Optional, Union
 
 import discord
 from discord.ext import commands
@@ -12,8 +12,8 @@ from utils import AloneBot, AloneContext, InviteView, SupportView, Todo as Todo_
 
 
 class Utility(commands.Cog):
-    def __init__(self: Self, bot: AloneBot):
-        self.bot = bot
+    def __init__(self: Self, bot: AloneBot) -> None:
+        self.bot: AloneBot = bot
 
     @commands.command()
     async def afk(self: Self, ctx: AloneContext, *, reason: Optional[str] = "no reason") -> None:
@@ -22,7 +22,7 @@ class Utility(commands.Cog):
         self.bot.afk_users[ctx.author.id] = reason
 
         if reason != "no reason":
-            fmt = f" for {reason}."
+            fmt: str = f" for {reason}."
         else:
             fmt = "!"
 
@@ -30,10 +30,10 @@ class Utility(commands.Cog):
         await ctx.reply(f"**AFK**\nYou are now afk{fmt}")
 
     @commands.command(aliases=["av", "pfp"])
-    async def avatar(self: Self, ctx: AloneContext, member: Optional[Union[discord.Member, discord.User]]) -> None:
-        member = member or ctx.author  # type: ignore
+    async def avatar(self: Self, ctx: AloneContext, member: Optional[Union[discord.Member, discord.User]]) -> None: # type: ignore
+        member: discord.Member | discord.User = member or ctx.author  # type: ignore
         assert member
-        embed = discord.Embed(title=f"{member.display_name}'s avatar")
+        embed: discord.Embed = discord.Embed(title=f"{member.display_name}'s avatar")
         embed.set_image(url=member.avatar.url)  # type: ignore
 
         await ctx.reply(embed=embed)
@@ -44,7 +44,7 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def cleanup(self: Self, ctx: AloneContext, limit: Optional[int] = 50) -> None:
-        bulk = ctx.channel.permissions_for(ctx.me).manage_messages  # type: ignore
+        bulk: bool = ctx.channel.permissions_for(ctx.me).manage_messages  # type: ignore
         await ctx.channel.purge(bulk=bulk, check=lambda m: m.author == ctx.me, limit=limit)  # type: ignore
         await ctx.message.add_reaction(ctx.Emojis.check)
 
@@ -52,8 +52,8 @@ class Utility(commands.Cog):
     async def invite(self: Self, ctx: AloneContext, bot_id: Optional[int]) -> discord.Message | None:
         assert self.bot.user
         if bot_id:
-            link = discord.utils.oauth_url(bot_id)
-            embed = discord.Embed(title="Invite", description=f"[Invite]({link})")
+            link: str = discord.utils.oauth_url(bot_id)
+            embed: discord.Embed = discord.Embed(title="Invite", description=f"[Invite]({link})")
             return await ctx.reply(embed=embed)
 
         link = discord.utils.oauth_url(self.bot.user.id)
@@ -62,19 +62,19 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def ping(self: Self, ctx: AloneContext) -> None:
-        websocket_ping = self.bot.latency * 1000
+        websocket_ping: float = self.bot.latency * 1000
 
-        start = perf_counter()
-        message = await ctx.reply("Pong!")
-        end = perf_counter()
-        typing_ping = end - start
+        start: float = perf_counter()
+        message: discord.Message = await ctx.reply("Pong!")
+        end: float = perf_counter()
+        typing_ping: float = end - start
 
         start = perf_counter()
         await self.bot.db.execute("SELECT 1")
         end = perf_counter()
-        database_ping = end - start
+        database_ping: float = end - start
 
-        embed = discord.Embed(title="Ping", color=discord.Color.random())
+        embed: discord.Embed = discord.Embed(title="Ping", color=discord.Color.random())
         embed.add_field(
             name="<a:typing:1041021440352337991> | Typing",
             value=await ctx.create_codeblock(f"{typing_ping:.2f}ms"),
@@ -92,27 +92,27 @@ class Utility(commands.Cog):
 
     @commands.group(invoke_without_command=True)
     async def prefix(self: Self, ctx: AloneContext) -> None:
-        prefix_list = "\n".join(await self.bot.get_prefix(ctx.message))
-        embed = discord.Embed(title="Prefixes you can use", description=prefix_list)
+        prefix_list: str = "\n".join(await self.bot.get_prefix(ctx.message))
+        embed: discord.Embed = discord.Embed(title="Prefixes you can use", description=prefix_list)
         await ctx.reply(embed=embed)
 
     @prefix.command(name="add")
-    async def prefix_add(self: Self, ctx: AloneContext, *, prefix: Optional[str]):
-        prefix = prefix or ""
+    async def prefix_add(self: Self, ctx: AloneContext, *, prefix: Optional[str]) -> discord.Message | None: # type: ignore
+        prefix: str = prefix or ""
         if len(prefix) > 5:
             return await ctx.reply("You can't have a prefix that's longer than 5 characters, sorry!")
 
-        prefix_list = self.bot.user_prefixes.get(ctx.author.id, [])
+        prefix_list: List[str] = self.bot.user_prefixes.get(ctx.author.id, [])
         prefix_list.append(prefix)
 
         await self.bot.db.execute("INSERT INTO prefix VALUES ($1, $2)", ctx.author.id, prefix)
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @prefix.command(name="guild")
-    async def prefix_guild(self: Self, ctx: AloneContext, *, prefix: Optional[str]):
+    async def prefix_guild(self: Self, ctx: AloneContext, *, prefix: Optional[str]) -> discord.Message | None:
         assert ctx.guild
         if not prefix or "remove" in prefix.lower():
-            guild_config = self.bot.guild_configs.get(ctx.guild.id, None)
+            guild_config: Any = self.bot.guild_configs.get(ctx.guild.id, None)
             if not guild_config or not guild_config.get("prefix", None):
                 return await ctx.reply("There is no guild prefix to remove!")
 
@@ -133,8 +133,8 @@ class Utility(commands.Cog):
         await ctx.reply(f"The prefix for this guild is now `{prefix}`")
 
     @prefix.command(name="remove")
-    async def prefix_remove(self: Self, ctx: AloneContext, *, prefix: Optional[str]):
-        user_prefixes = self.bot.user_prefixes.get(ctx.author.id, [])
+    async def prefix_remove(self: Self, ctx: AloneContext, *, prefix: Optional[str]) -> discord.Message | None:
+        user_prefixes: List[str] = self.bot.user_prefixes.get(ctx.author.id, [])
         if not user_prefixes:
             return await ctx.reply("You don't have custom prefixes setup!")
 
@@ -156,12 +156,12 @@ class Utility(commands.Cog):
             await ctx.reply("That's not one of your prefixes!")
 
     @commands.command()
-    async def quote(self: Self, ctx: AloneContext, message: Optional[discord.Message]):
-        message = message or ctx.message.reference.resolved  # type: ignore
+    async def quote(self: Self, ctx: AloneContext, message: Optional[discord.Message]) -> discord.Message | None: # type: ignore
+        message: discord.Message | None = message or ctx.message.reference.resolved  # type: ignore
         if not message:
             return await ctx.reply("You need to give me a message to quote!")
 
-        embed = discord.Embed(
+        embed: discord.Embed = discord.Embed(
             title=f"{message.author} sent:",
             description=f"> {message.content}\n - {message.author.mention}",
         )
@@ -169,12 +169,12 @@ class Utility(commands.Cog):
 
     @commands.command(aliases=["server_info", "server info", "si", "guildinfo"])
     @commands.guild_only()
-    async def serverinfo(self: Self, ctx: AloneContext, guild: Optional[discord.Guild]) -> None:
-        guild = guild or ctx.guild
+    async def serverinfo(self: Self, ctx: AloneContext, guild: Optional[discord.Guild]) -> None: # type: ignore
+        guild: discord.Guild | None = guild or ctx.guild
         assert guild
         assert guild.icon
-        bots = sum(member.bot for member in guild.members)
-        embed = discord.Embed(
+        bots: int = sum(member.bot for member in guild.members)
+        embed: discord.Embed = discord.Embed(
             title=f"Server Info for {guild.name}",
             description=f"Owner: {guild.owner}\nID: {guild.id}"
             f"Members: {guild.member_count}\nBots: {bots}\nNitro Level: {guild.premium_tier}",
@@ -183,7 +183,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def source(self: Self, ctx: AloneContext, *, command_name: Optional[str]):
+    async def source(self: Self, ctx: AloneContext, *, command_name: Optional[str]) -> discord.Message | None:
         if not command_name:
             return await ctx.reply("https://github.com/Alone-Discord-Bot/Bot")
 
@@ -191,8 +191,8 @@ class Utility(commands.Cog):
         if not command:
             return await ctx.reply("That command doesn't exist!")
 
-        source = getsource(command.callback)
-        embed = discord.Embed(
+        source: str = getsource(command.callback)
+        embed: discord.Embed = discord.Embed(
             title=f"Source for {command.name}",
             description=await ctx.create_codeblock(source),
         )
@@ -200,23 +200,23 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def support(self: Self, ctx: AloneContext) -> None:
-        embed = discord.Embed(
+        embed: discord.Embed = discord.Embed(
             title="Support",
             description="Join my [support server]({self.bot.support_server})!",
         )
         await ctx.reply(embed=embed, view=SupportView(ctx))
 
     @commands.group(invoke_without_command=True)
-    async def todo(self: Self, ctx: AloneContext):
-        user_todo = self.bot.todos.get(ctx.author.id)
+    async def todo(self: Self, ctx: AloneContext) -> discord.Message | None:
+        user_todo: List[Todo_class] | None = self.bot.todos.get(ctx.author.id)
         if not user_todo:
             return await ctx.reply("You don't have a to-do list!")
 
-        todo_list = ""
+        todo_list: str = ""
         for number, todo in enumerate(user_todo, start=1):
             todo_list = "".join(f"**__[{number}]({todo.jump_url})__**: **{todo.content}**\n")
 
-        embed = discord.Embed(title="Todo", description=todo_list)
+        embed: discord.Embed = discord.Embed(title="Todo", description=todo_list)
         await ctx.reply(embed=embed)
 
     @todo.command(name="add")
@@ -234,8 +234,8 @@ class Utility(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @todo.command(name="remove")
-    async def todo_remove(self: Self, ctx: AloneContext, todo_number: Optional[int]):
-        user_todo = self.bot.todos.get(ctx.author.id)
+    async def todo_remove(self: Self, ctx: AloneContext, todo_number: Optional[int]) -> discord.Message | None:
+        user_todo: List[Todo_class] | None = self.bot.todos.get(ctx.author.id)
         if not user_todo:
             return await ctx.reply("You don't have a to-do list!")
 
@@ -259,8 +259,8 @@ class Utility(commands.Cog):
         hours, remainder = divmod(int(uptime.total_seconds()), 3600)
         minutes, seconds = divmod(remainder, 60)
         days, hours = divmod(hours, 24)
-        timestamp = int(self.bot.launch_time.timestamp())
-        embed = discord.Embed(
+        timestamp: int = int(self.bot.launch_time.timestamp())
+        embed: discord.Embed = discord.Embed(
             title="Current Uptime",
             description=f"Uptime: {days}d, {hours}h, {minutes}m, {seconds}s\n\nStartup Time: <t:{timestamp}:F>",
             color=0x88FF44,
@@ -268,16 +268,16 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def userinfo(self: Self, ctx: AloneContext, member: Union[discord.Member, discord.User]) -> None:
-        member = member or ctx.author
+    async def userinfo(self: Self, ctx: AloneContext, member: Union[discord.Member, discord.User]) -> None: # type: ignore
+        member: discord.Member | discord.User = member or ctx.author
 
         if ctx.guild:
-            joined_at = f"Joined At: <t:{int(member.joined_at.timestamp())}:F>\n"  # type: ignore
+            joined_at: str = f"Joined At: <t:{int(member.joined_at.timestamp())}:F>\n"  # type: ignore
         else:
             joined_at = ""
-        created_at = f"Created At: <t:{int(member.created_at.timestamp())}:F>\n"
+        created_at: str = f"Created At: <t:{int(member.created_at.timestamp())}:F>\n"
 
-        embed = discord.Embed(
+        embed: discord.Embed = discord.Embed(
             title="Userinfo",
             description=f"Name: {member.name}\n{joined_at}{created_at}"
             f"Avatar: [Click Here]({(member.avatar or member.default_avatar).url})"
@@ -290,5 +290,5 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
 
-async def setup(bot: AloneBot):
+async def setup(bot: AloneBot) -> None:
     await bot.add_cog(Utility(bot))

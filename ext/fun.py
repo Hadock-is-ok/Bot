@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional
 
 import discord
 from discord.ext import commands
-from typing_extensions import Self, LiteralString
+from typing_extensions import LiteralString, Self
 
 from utils import AloneBot, AloneContext
 
@@ -31,7 +31,7 @@ class Fun(commands.Cog):
         await ctx.reply(embed=discord.Embed(title=name, description=definition))
 
     @commands.command()
-    async def pp(self: Self, ctx: AloneContext, member: Optional[discord.Member] = None) -> None: # type: ignore
+    async def pp(self: Self, ctx: AloneContext, member: Optional[discord.Member] = None) -> None:  # type: ignore
         member: discord.Member | None = member or ctx.author  # type: ignore
         pp: LiteralString = "=" * random.randint(1, 50)
 

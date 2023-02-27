@@ -100,7 +100,7 @@ class Owner(commands.Cog):
         await ctx.reply(text)
 
     @commands.command(aliases=["d", "delete"])
-    async def delmsg(self: Self, ctx: AloneContext, message: Optional[discord.Message]) -> None: # type: ignore
+    async def delmsg(self: Self, ctx: AloneContext, message: Optional[discord.Message]) -> None:  # type: ignore
         message: discord.Message | None = message or ctx.message.reference  # type: ignore
         if not message:
             return await ctx.message.add_reaction(ctx.Emojis.slash)

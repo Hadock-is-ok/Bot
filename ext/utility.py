@@ -30,7 +30,7 @@ class Utility(commands.Cog):
         await ctx.reply(f"**AFK**\nYou are now afk{fmt}")
 
     @commands.command(aliases=["av", "pfp"])
-    async def avatar(self: Self, ctx: AloneContext, member: Optional[Union[discord.Member, discord.User]]) -> None: # type: ignore
+    async def avatar(self: Self, ctx: AloneContext, member: Optional[Union[discord.Member, discord.User]]) -> None:  # type: ignore
         member: discord.Member | discord.User = member or ctx.author  # type: ignore
         assert member
         embed: discord.Embed = discord.Embed(title=f"{member.display_name}'s avatar")
@@ -97,7 +97,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @prefix.command(name="add")
-    async def prefix_add(self: Self, ctx: AloneContext, *, prefix: Optional[str]) -> discord.Message | None: # type: ignore
+    async def prefix_add(self: Self, ctx: AloneContext, *, prefix: Optional[str]) -> discord.Message | None:  # type: ignore
         prefix: str = prefix or ""
         if len(prefix) > 5:
             return await ctx.reply("You can't have a prefix that's longer than 5 characters, sorry!")
@@ -156,7 +156,7 @@ class Utility(commands.Cog):
             await ctx.reply("That's not one of your prefixes!")
 
     @commands.command()
-    async def quote(self: Self, ctx: AloneContext, message: Optional[discord.Message]) -> discord.Message | None: # type: ignore
+    async def quote(self: Self, ctx: AloneContext, message: Optional[discord.Message]) -> discord.Message | None:  # type: ignore
         message: discord.Message | None = message or ctx.message.reference.resolved  # type: ignore
         if not message:
             return await ctx.reply("You need to give me a message to quote!")
@@ -169,7 +169,7 @@ class Utility(commands.Cog):
 
     @commands.command(aliases=["server_info", "server info", "si", "guildinfo"])
     @commands.guild_only()
-    async def serverinfo(self: Self, ctx: AloneContext, guild: Optional[discord.Guild]) -> None: # type: ignore
+    async def serverinfo(self: Self, ctx: AloneContext, guild: Optional[discord.Guild]) -> None:  # type: ignore
         guild: discord.Guild | None = guild or ctx.guild
         assert guild
         assert guild.icon
@@ -268,7 +268,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def userinfo(self: Self, ctx: AloneContext, member: Union[discord.Member, discord.User]) -> None: # type: ignore
+    async def userinfo(self: Self, ctx: AloneContext, member: Union[discord.Member, discord.User]) -> None:  # type: ignore
         member: discord.Member | discord.User = member or ctx.author
 
         if ctx.guild:

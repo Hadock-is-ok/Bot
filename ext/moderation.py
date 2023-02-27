@@ -54,7 +54,7 @@ class Moderation(commands.Cog):
             return await ctx.reply("You need to supply a User ID to unban!")
 
         user: discord.User = await self.bot.fetch_user(member_id)
-        await ctx.guild.unban(user) # type: ignore
+        await ctx.guild.unban(user)  # type: ignore
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command()

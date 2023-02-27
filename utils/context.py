@@ -3,7 +3,7 @@ from typing import Any, Optional
 import discord
 from discord import PartialEmoji
 from discord.ext import commands
-from typing_extensions import Self, LiteralString
+from typing_extensions import LiteralString, Self
 
 from .views import DeleteView
 

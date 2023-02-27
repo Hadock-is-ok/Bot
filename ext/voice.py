@@ -16,7 +16,9 @@ class Voice(commands.Cog):
     async def on_voice_join(self: Self, member: discord.Member, state: discord.VoiceState) -> discord.Message | None:
         assert state.channel
         vc: int | Any | None = self.bot.guild_configs.get(state.channel.guild.id, {}).get("voice_channel", None)
-        category_channel_id: int | Any | None = self.bot.guild_configs.get(state.channel.guild.id, {}).get("voice_category", None)
+        category_channel_id: int | Any | None = self.bot.guild_configs.get(state.channel.guild.id, {}).get(
+            "voice_category", None
+        )
 
         if not category_channel_id:
             return

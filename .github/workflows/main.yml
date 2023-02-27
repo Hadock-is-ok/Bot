@@ -38,5 +38,5 @@ jobs:
           black .
         continue-on-error: true
 
-      #- name: Lint with Pyright
-      #  run: pyright --lib --warnings .
+      - name: Lint with Pyright
+        run: pyright --lib --warnings .

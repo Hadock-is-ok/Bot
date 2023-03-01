@@ -57,7 +57,7 @@ Name: {guild.name}
 Members: {guild.member_count}
 Bots: {bots}
 Nitro Tier: {guild.premium_tier}""",
-            color=0x5FAD68,
+            color=0xFF0000,
         )
 
         await channel.send(embed=embed)

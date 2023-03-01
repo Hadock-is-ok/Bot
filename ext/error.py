@@ -13,6 +13,7 @@ class Error(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self: Self, ctx: AloneContext, error: Exception) -> None:
+        "The error handler for the bot."
         if isinstance(error, commands.CommandNotFound):
             return
 

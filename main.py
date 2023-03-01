@@ -11,7 +11,7 @@ from utils import AloneBot, AloneContext, BlacklistedError, MaintenanceError
 load_dotenv()
 
 
-bot = AloneBot(intents=discord.Intents.all())
+bot: AloneBot = AloneBot(intents=discord.Intents.all())
 
 
 @bot.after_invoke
@@ -21,6 +21,7 @@ async def command_counter(ctx: AloneContext) -> None:
 
 @bot.check_once
 async def blacklist(ctx: AloneContext) -> Literal[True]:
+    "A check that gets applied before commands to make sure a blacklisted user can't use commands."
     if not bot.is_blacklisted(ctx.author.id) or ctx.author.id in bot.owner_ids:
         return True
     raise BlacklistedError
@@ -28,6 +29,7 @@ async def blacklist(ctx: AloneContext) -> Literal[True]:
 
 @bot.check_once
 async def maintenance(ctx: AloneContext) -> Literal[True]:
+    "A check that gets applied before commands to make sure that the bot isn't in maintenance."
     if not bot.maintenance or ctx.author.id in bot.owner_ids:
         return True
     raise MaintenanceError
@@ -35,6 +37,7 @@ async def maintenance(ctx: AloneContext) -> Literal[True]:
 
 @bot.check_once
 async def cooldown(ctx: AloneContext) -> Literal[True]:
+    "A check that gets applied before commands to make sure a user hasn't ran too many commands in X amount of time."
     if (
         ctx.author.id in bot.owner_ids
         or ctx.author.id in bot.bypass_cooldown_users
@@ -45,14 +48,14 @@ async def cooldown(ctx: AloneContext) -> Literal[True]:
 
     bucket: commands.Cooldown | None = bot.cooldown.get_bucket(ctx.message)
     assert bucket
-    retry_after = bucket.update_rate_limit()
+    retry_after: float | None = bucket.update_rate_limit()
     if retry_after:
         raise commands.CommandOnCooldown(bucket, retry_after, commands.BucketType.member)
 
     return True
 
 
-async def main():
+async def main() -> None:
     async with bot:
         await bot.start(os.environ["token"])
 

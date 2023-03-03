@@ -5,7 +5,7 @@ import discord
 from discord.ext import commands
 from typing_extensions import Self
 
-from ..utils import AloneBot
+from utils import AloneBot
 
 
 class Voice(commands.Cog):

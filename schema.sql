@@ -15,6 +15,10 @@ CREATE TABLE IF NOT EXISTS afk (
     reason TEXT
 );
 
+CREATE TABLE IF NOT EXISTS mentions (
+    user_id BIGINT PRIMARY KEY
+);
+
 CREATE TABLE IF NOT EXISTS todo (
     user_id BIGINT,
     task TEXT,

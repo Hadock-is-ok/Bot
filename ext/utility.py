@@ -72,7 +72,7 @@ class Utility(commands.Cog):
         start = perf_counter()
         await self.bot.db.execute("SELECT 1")
         end = perf_counter()
-        database_ping: float = end - start
+        database_ping: float = (end - start) * 1000
 
         embed: discord.Embed = discord.Embed(title="Ping", color=discord.Color.random())
         embed.add_field(

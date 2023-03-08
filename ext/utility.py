@@ -62,7 +62,7 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def ping(self: Self, ctx: AloneContext) -> None:
-        websocket_ping: float = self.bot.latency * 1000
+        websocket_ping: float = self.bot.latency
 
         start: float = perf_counter()
         message: discord.Message = await ctx.reply("Pong!")

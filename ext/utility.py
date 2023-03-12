@@ -2,7 +2,7 @@ from datetime import datetime
 from inspect import getsource
 from random import choice
 from time import perf_counter
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Union, Callable
 
 import discord
 from discord.ext import commands
@@ -180,7 +180,7 @@ class Utility(commands.Cog):
         bots: int = sum(member.bot for member in guild.members)
         embed: discord.Embed = discord.Embed(
             title=f"Server Info for {guild.name}",
-            description=f"Owner: {guild.owner}\nID: {guild.id}"
+            description=f"Owner: {guild.owner}\nID: {guild.id}\n"
             f"Members: {guild.member_count}\nBots: {bots}\nNitro Level: {guild.premium_tier}",
         )
         embed.set_thumbnail(url=guild.icon.url)
@@ -272,7 +272,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def userinfo(self: Self, ctx: AloneContext, member: Union[discord.Member, discord.User]) -> None:  # type: ignore
+    async def userinfo(self: Self, ctx: AloneContext, member: Optional[Union[discord.Member, discord.User]]) -> None:  # type: ignore
         member: discord.Member | discord.User = member or ctx.author
 
         if ctx.guild:

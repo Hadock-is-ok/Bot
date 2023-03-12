@@ -230,7 +230,7 @@ class Utility(commands.Cog):
         self.bot.todos.setdefault(ctx.author.id, []).append(task)
 
         await self.bot.db.execute(
-            "INSERT INTO todos VALUES ($1, $2, $3)",
+            "INSERT INTO todo VALUES ($1, $2, $3)",
             ctx.author.id,
             text,
             ctx.message.jump_url,
@@ -284,7 +284,7 @@ class Utility(commands.Cog):
         if isinstance(member, discord.User):
             status: str | discord.Status = ""
         else:
-            status = f"{member.status}\n"
+            status = f"Status: {member.status}\n"
 
         embed: discord.Embed = discord.Embed(
             title="Userinfo",

@@ -281,11 +281,16 @@ class Utility(commands.Cog):
             joined_at = ""
         created_at: str = f"Created At: <t:{int(member.created_at.timestamp())}:F>\n"
 
+        if isinstance(member, discord.User):
+            status: str | discord.Status = ""
+        else:
+            status = f"{member.status}\n"
+
         embed: discord.Embed = discord.Embed(
             title="Userinfo",
             description=f"Name: {member.name}\n{joined_at}{created_at}"
             f"Avatar: [Click Here]({(member.avatar or member.default_avatar).url})\n"
-            f"{f'Status: {member.status}\n' if member.status else ''}{'Banner' if member.banner else ''}",  # type: ignore
+            f"{status}{'Banner' if member.banner else ''}",  # type: ignore
         )
         if member.banner:
             embed.set_image(url=member.banner)

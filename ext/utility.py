@@ -252,7 +252,7 @@ class Utility(commands.Cog):
             if todo_number == number:
                 try:
                     user_todo.remove(todo)
-                    await self.bot.db.execute("DELETE FROM todo WHERE user_id = $1")
+                    await self.bot.db.execute("DELETE FROM todo WHERE user_id = $1", ctx.author.id)
                     await ctx.message.add_reaction(ctx.Emojis.check)
                 except KeyError:
                     await ctx.reply("That's not a task in your todo list!")

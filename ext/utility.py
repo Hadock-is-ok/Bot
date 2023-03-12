@@ -284,8 +284,8 @@ class Utility(commands.Cog):
         embed: discord.Embed = discord.Embed(
             title="Userinfo",
             description=f"Name: {member.name}\n{joined_at}{created_at}"
-            f"Avatar: [Click Here]({(member.avatar or member.default_avatar).url})"
-            f"Status: {member.status}\n{'Banner' if member.banner else ''}",  # type: ignore
+            f"Avatar: [Click Here]({(member.avatar or member.default_avatar).url})\n"
+            f"{f'Status: {member.status}\n' if member.status else ''}{'Banner' if member.banner else ''}",  # type: ignore
         )
         if member.banner:
             embed.set_image(url=member.banner)

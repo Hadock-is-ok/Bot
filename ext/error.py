@@ -42,8 +42,11 @@ class Error(commands.Cog):
             await ctx.reply(f"You are on cooldown. Try again in {error.retry_after:.2f}s")
 
         else:
-            assert ctx.guild
             channel: Any = self.bot.get_log_channel()
+            if ctx.guild:
+                guild: str = f"Guild ID: {ctx.guild.id}\n"
+            else:
+                guild: str = ""
             self.bot.logger.error("An error occurred", exc_info=error)
             embed: Embed = Embed(
                 title=f"Ignoring exception in {ctx.command}:",
@@ -53,7 +56,7 @@ class Error(commands.Cog):
             embed.set_author(name=f"{ctx.author.name}", icon_url=ctx.author.display_avatar)
             embed.add_field(
                 name="Information",
-                value=f"Error Name: {type(error).__name__}\nError Type: {type(error)}\nMessage: {ctx.message.content}\nGuild ID: {ctx.guild.id}\nChannel ID: {ctx.channel.id}",
+                value=f"Error Name: {type(error).__name__}\nError Type: {type(error)}\nMessage: {ctx.message.content}\n{guild}Channel ID: {ctx.channel.id}",
             )
 
             await channel.send(

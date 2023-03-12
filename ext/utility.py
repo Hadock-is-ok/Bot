@@ -218,7 +218,7 @@ class Utility(commands.Cog):
 
         todo_list: str = ""
         for number, todo in enumerate(user_todo, start=1):
-            todo_list = "".join(f"**__[{number}]({todo.jump_url})__**: **{todo.content}**\n")
+            todo_list += f"**__[{number}]({todo.jump_url})__**: **{todo.content}**\n"
 
         embed: discord.Embed = discord.Embed(title="Todo", description=todo_list)
         await ctx.reply(embed=embed)

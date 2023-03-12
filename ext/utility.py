@@ -227,7 +227,8 @@ class Utility(commands.Cog):
     async def todo_add(self: Self, ctx: AloneContext, *, text: Optional[str]) -> None:
         assert text
         task: Todo_class = Todo_class(text, ctx.message.jump_url)
-        self.bot.todos.setdefault(ctx.author.id, []).append(task)
+        user_todo: List[Todo_class] = self.bot.todos.setdefault(ctx.author.id, [])
+        user_todo.append(task)
 
         await self.bot.db.execute(
             "INSERT INTO todo VALUES ($1, $2, $3)",

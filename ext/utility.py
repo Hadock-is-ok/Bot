@@ -52,8 +52,12 @@ class Utility(commands.Cog):
     async def invite(self: Self, ctx: AloneContext, bot_id: Optional[int]) -> discord.Message | None:
         assert self.bot.user
         if bot_id:
-            link: str = discord.utils.oauth_url(bot_id)
-            embed: discord.Embed = discord.Embed(title="Invite", description=f"[Invite]({link})")
+            user: discord.User | None = await self.bot.fetch_user(bot_id)
+            if not user.bot:
+                return await ctx.reply("You can't invite someone who isn't a bot!")
+
+            link: str = discord.utils.oauth_url(user.id)
+            embed: discord.Embed = discord.Embed(title=f"Invite {user.name}", description=f"[Invite]({link})")
             return await ctx.reply(embed=embed)
 
         link = discord.utils.oauth_url(self.bot.user.id)
@@ -102,7 +106,7 @@ class Utility(commands.Cog):
         if len(prefix) > 5:
             return await ctx.reply("You can't have a prefix that's longer than 5 characters, sorry!")
 
-        prefix_list: List[str] = self.bot.user_prefixes.get(ctx.author.id, [])
+        prefix_list: List[str] = self.bot.user_prefixes.setdefault(ctx.author.id, [])
         prefix_list.append(prefix)
 
         await self.bot.db.execute("INSERT INTO prefix VALUES ($1, $2)", ctx.author.id, prefix)

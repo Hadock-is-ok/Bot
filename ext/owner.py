@@ -101,7 +101,7 @@ class Owner(commands.Cog):
 
     @commands.command(aliases=["d", "delete"])
     async def delmsg(self: Self, ctx: AloneContext, message: Optional[discord.Message]) -> None:  # type: ignore
-        message: discord.Message | None = message or ctx.message.reference.resolved  # type: ignore
+        message: discord.Message | None = message or ctx.message.reference.resolved or None  # type: ignore
         if not message:
             return await ctx.message.add_reaction(ctx.Emojis.slash)
 

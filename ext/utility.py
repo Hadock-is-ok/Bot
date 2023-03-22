@@ -155,7 +155,7 @@ class Utility(commands.Cog):
                 prefix,
             )
             await ctx.message.add_reaction(ctx.Emojis.check)
-        except KeyError:
+        except ValueError:
             await ctx.message.add_reaction(ctx.Emojis.x)
             await ctx.reply("That's not one of your prefixes!")
 

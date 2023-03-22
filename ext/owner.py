@@ -140,7 +140,11 @@ class Owner(commands.Cog):
     async def reload(self: Self, ctx: AloneContext) -> None:
         cog_status: str = ""
         for extension in self.bot.INITAL_EXTENSIONS:
-            await self.bot.reload_extension(extension)
+            try:
+                await self.bot.reload_extension(extension)
+            except commands.ExtensionNotLoaded:
+                cog_status += f"{ctx.Emojis.x} {extension} not loaded!\n\n"
+                continue
             cog_status += f"\U0001f504 {extension} Reloaded!\n\n"
 
         await ctx.reply(embed=discord.Embed(title="Reload", description=cog_status))

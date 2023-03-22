@@ -160,10 +160,17 @@ class Utility(commands.Cog):
             await ctx.reply("That's not one of your prefixes!")
 
     @commands.command()
-    async def quote(self: Self, ctx: AloneContext, message: Optional[discord.Message]) -> discord.Message | None:  # type: ignore
-        message: discord.Message | None = message or ctx.message.reference.resolved  # type: ignore
+    async def quote(self: Self, ctx: AloneContext, message: Optional[Union[discord.Message, str]]) -> discord.Message | None:
+        message: discord.Message | None = message or ctx.message.reference.resolved
         if not message:
             return await ctx.reply("You need to give me a message to quote!")
+
+        if isinstance(message, str):
+            embed: discord.Embed = discord.Embed(
+                title=f"{ctx.author} said:", 
+                description=f"> {message}",
+            )
+            return await ctx.reply(embed=embed)
 
         embed: discord.Embed = discord.Embed(
             title=f"{message.author} sent:",
@@ -276,16 +283,13 @@ class Utility(commands.Cog):
     async def userinfo(self: Self, ctx: AloneContext, member: Optional[Union[discord.Member, discord.User]]) -> None:  # type: ignore
         member: discord.Member | discord.User = member or ctx.author
 
-        if ctx.guild:
+        if isinstance(member, discord.Member):
             joined_at: str = f"Joined At: <t:{int(member.joined_at.timestamp())}:F>\n"  # type: ignore
+            status = f"Status: {member.status}\n"
         else:
             joined_at = ""
+            status: str = ""
         created_at: str = f"Created At: <t:{int(member.created_at.timestamp())}:F>\n"
-
-        if isinstance(member, discord.User):
-            status: str | discord.Status = ""
-        else:
-            status = f"Status: {member.status}\n"
 
         embed: discord.Embed = discord.Embed(
             title="Userinfo",

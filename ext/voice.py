@@ -35,7 +35,7 @@ class Voice(commands.Cog):
 
         new_vc: discord.VoiceChannel = await member.guild.create_voice_channel(
             name=member.display_name,
-            category=member.guild.get_channel(category_channel_id), # type: ignore
+            category=member.guild.get_channel(category_channel_id),  # type: ignore
             reason="Made by the personal voice chat module",
         )
 

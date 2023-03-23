@@ -32,7 +32,7 @@ class Utility(commands.Cog):
     @commands.command(aliases=["av", "pfp"])
     async def avatar(self: Self, ctx: AloneContext, member: Union[discord.Member, discord.User] = commands.Author) -> None:
         embed: discord.Embed = discord.Embed(title=f"{member.display_name}'s avatar")
-        embed.set_image(url=member.avatar.url) # type: ignore
+        embed.set_image(url=member.avatar.url)  # type: ignore
 
         await ctx.reply(embed=embed)
 
@@ -42,8 +42,8 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def cleanup(self: Self, ctx: AloneContext, limit: Optional[int] = 50) -> None:
-        bulk: bool = ctx.channel.permissions_for(ctx.me).manage_messages # type: ignore
-        await ctx.channel.purge(bulk=bulk, check=lambda m: m.author == ctx.me, limit=limit) # type: ignore
+        bulk: bool = ctx.channel.permissions_for(ctx.me).manage_messages  # type: ignore
+        await ctx.channel.purge(bulk=bulk, check=lambda m: m.author == ctx.me, limit=limit)  # type: ignore
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command()
@@ -152,15 +152,22 @@ class Utility(commands.Cog):
                 prefix,
             )
             await ctx.message.add_reaction(ctx.Emojis.check)
-        except KeyError:
+        except ValueError:
             await ctx.message.add_reaction(ctx.Emojis.x)
             await ctx.reply("That's not one of your prefixes!")
 
     @commands.command()
     async def quote(self: Self, ctx: AloneContext, _message: Optional[discord.Message]) -> discord.Message | None:
-        message: discord.Message | None = _message or ctx.message.reference.resolved or None # type: ignore
+        message: discord.Message | None = _message or ctx.message.reference.resolved  # type: ignore
         if not message:
             return await ctx.reply("You need to give me a message to quote!")
+
+        if isinstance(message, str):
+            embed: discord.Embed = discord.Embed(
+                title=f"{ctx.author} said:",
+                description=f"> {message}",
+            )
+            return await ctx.reply(embed=embed)
 
         embed: discord.Embed = discord.Embed(
             title=f"{message.author} sent:",
@@ -273,14 +280,11 @@ class Utility(commands.Cog):
     async def userinfo(self: Self, ctx: AloneContext, member: discord.Member = commands.Author) -> None:
         if member.joined_at:
             joined_at: str = f"Joined At: <t:{int(member.joined_at.timestamp())}:F>\n"
+            status: str = f"Status: {member.status}\n"
         else:
             joined_at = ""
+            status: str = ""
         created_at: str = f"Created At: <t:{int(member.created_at.timestamp())}:F>\n"
-
-        if isinstance(member, discord.User):
-            status: str | discord.Status = ""
-        else:
-            status = f"Status: {member.status}\n"
 
         embed: discord.Embed = discord.Embed(
             title="Userinfo",

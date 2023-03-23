@@ -101,7 +101,7 @@ class Owner(commands.Cog):
 
     @commands.command(aliases=["d", "delete"])
     async def delmsg(self: Self, ctx: AloneContext, _message: Optional[discord.Message]) -> None:
-        message: discord.Message | None = _message or ctx.message.reference.resolved # type: ignore
+        message: discord.Message | None = _message or ctx.message.reference.resolved  # type: ignore
         if not message:
             return await ctx.message.add_reaction(ctx.Emojis.slash)
 
@@ -110,7 +110,7 @@ class Owner(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def nick(self: Self, ctx: AloneContext, *, name: Optional[str]) -> None:
-        await ctx.guild.me.edit(nick=name) # type: ignore
+        await ctx.guild.me.edit(nick=name)  # type: ignore
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command(aliases=["shutdown", "fuckoff", "quit"])
@@ -140,7 +140,11 @@ class Owner(commands.Cog):
     async def reload(self: Self, ctx: AloneContext) -> None:
         cog_status: str = ""
         for extension in self.bot.INITAL_EXTENSIONS:
-            await self.bot.reload_extension(extension)
+            try:
+                await self.bot.reload_extension(extension)
+            except commands.ExtensionNotLoaded:
+                cog_status += f"{ctx.Emojis.x} {extension} not loaded!\n\n"
+                continue
             cog_status += f"\U0001f504 {extension} Reloaded!\n\n"
 
         await ctx.reply(embed=discord.Embed(title="Reload", description=cog_status))

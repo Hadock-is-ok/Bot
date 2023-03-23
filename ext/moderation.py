@@ -34,7 +34,7 @@ class Moderation(commands.Cog):
                 )
             )
 
-        if ctx.author.top_role <= member.top_role: # type: ignore
+        if ctx.author.top_role <= member.top_role:  # type: ignore
             return await ctx.reply(
                 embed=discord.Embed(
                     title="An error occured",
@@ -54,7 +54,7 @@ class Moderation(commands.Cog):
             return await ctx.reply("You need to supply a User ID to unban!")
 
         user: discord.User = await self.bot.fetch_user(member_id)
-        await ctx.guild.unban(user) # type: ignore
+        await ctx.guild.unban(user)  # type: ignore
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command()
@@ -75,7 +75,7 @@ class Moderation(commands.Cog):
                 )
             )
 
-        if ctx.author.top_role <= member.top_role: # type: ignore
+        if ctx.author.top_role <= member.top_role:  # type: ignore
             return await ctx.reply(
                 embed=discord.Embed(
                     title="An error occured",
@@ -91,7 +91,7 @@ class Moderation(commands.Cog):
     @commands.has_guild_permissions(manage_messages=True)
     async def purge(self: Self, ctx: AloneContext, limit: int = 20) -> None:
         await ctx.message.delete()
-        messages: Any = await ctx.channel.purge(limit=limit) # type: ignore
+        messages: Any = await ctx.channel.purge(limit=limit)  # type: ignore
         await ctx.send(f"{len(messages)} messages deleted.")
 
 

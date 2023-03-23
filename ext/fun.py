@@ -64,7 +64,7 @@ class Fun(commands.Cog):
             return await ctx.reply("You should give me a subreddit to search!")
 
         data: Dict[str, Any] = await self.fetch_subreddit(subreddit)
-        if data["over_18"] and not ctx.channel.is_nsfw(): # type: ignore
+        if data["over_18"] and not ctx.channel.is_nsfw():  # type: ignore
             return await ctx.reply("This post is nsfw! I cannot send this in a normal channel!")
 
         embed: discord.Embed = discord.Embed(title=data["title"], url=data["url"]).set_image(url=data["url"])

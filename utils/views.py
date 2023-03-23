@@ -54,7 +54,7 @@ class CogSelect(discord.ui.View):
 
         return True
 
-    @discord.ui.select( # type: ignore
+    @discord.ui.select(  # type: ignore
         custom_id="select_cog",
         placeholder="Choose a category",
         min_values=1,
@@ -68,7 +68,7 @@ class CogSelect(discord.ui.View):
 
             return await interaction.message.delete()
 
-        cog: commands.Cog = interaction.client.get_cog(select.values[0]) # type: ignore
+        cog: commands.Cog = interaction.client.get_cog(select.values[0])  # type: ignore
         command_list: str = ""
         for command in cog.get_commands():
             command_list += f"{command.name}\n"

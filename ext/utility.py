@@ -30,11 +30,9 @@ class Utility(commands.Cog):
         await ctx.reply(f"**AFK**\nYou are now afk{fmt}")
 
     @commands.command(aliases=["av", "pfp"])
-    async def avatar(self: Self, ctx: AloneContext, member: Optional[Union[discord.Member, discord.User]]) -> None:  # type: ignore
-        member: discord.Member | discord.User = member or ctx.author  # type: ignore
-        assert member
+    async def avatar(self: Self, ctx: AloneContext, member: Union[discord.Member, discord.User] = commands.Author) -> None:
         embed: discord.Embed = discord.Embed(title=f"{member.display_name}'s avatar")
-        embed.set_image(url=member.avatar.url)  # type: ignore
+        embed.set_image(url=member.avatar.url) # type: ignore
 
         await ctx.reply(embed=embed)
 
@@ -44,8 +42,8 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def cleanup(self: Self, ctx: AloneContext, limit: Optional[int] = 50) -> None:
-        bulk: bool = ctx.channel.permissions_for(ctx.me).manage_messages  # type: ignore
-        await ctx.channel.purge(bulk=bulk, check=lambda m: m.author == ctx.me, limit=limit)  # type: ignore
+        bulk: bool = ctx.channel.permissions_for(ctx.me).manage_messages # type: ignore
+        await ctx.channel.purge(bulk=bulk, check=lambda m: m.author == ctx.me, limit=limit) # type: ignore
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command()
@@ -71,12 +69,12 @@ class Utility(commands.Cog):
         start: float = perf_counter()
         message: discord.Message = await ctx.reply("Pong!")
         end: float = perf_counter()
-        typing_ping: float = (end - start)
+        typing_ping: float = end - start
 
         start = perf_counter()
         await self.bot.db.execute("SELECT 1")
         end = perf_counter()
-        database_ping: float = (end - start)
+        database_ping: float = end - start
 
         embed: discord.Embed = discord.Embed(title="Ping", color=discord.Color.random())
         embed.add_field(
@@ -101,8 +99,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @prefix.command(name="add")
-    async def prefix_add(self: Self, ctx: AloneContext, *, prefix: Optional[str]) -> discord.Message | None:  # type: ignore
-        prefix: str = prefix or ""
+    async def prefix_add(self: Self, ctx: AloneContext, *, prefix: str = "") -> discord.Message | None:
         if len(prefix) > 5:
             return await ctx.reply("You can't have a prefix that's longer than 5 characters, sorry!")
 
@@ -160,8 +157,8 @@ class Utility(commands.Cog):
             await ctx.reply("That's not one of your prefixes!")
 
     @commands.command()
-    async def quote(self: Self, ctx: AloneContext, message: Optional[discord.Message]) -> discord.Message | None:  # type: ignore
-        message: discord.Message | None = message or ctx.message.reference.resolved  # type: ignore
+    async def quote(self: Self, ctx: AloneContext, _message: Optional[discord.Message]) -> discord.Message | None:
+        message: discord.Message | None = _message or ctx.message.reference.resolved or None # type: ignore
         if not message:
             return await ctx.reply("You need to give me a message to quote!")
 
@@ -173,9 +170,7 @@ class Utility(commands.Cog):
 
     @commands.command(aliases=["server_info", "server info", "si", "guildinfo"])
     @commands.guild_only()
-    async def serverinfo(self: Self, ctx: AloneContext, guild: Optional[discord.Guild]) -> None:  # type: ignore
-        guild: discord.Guild | None = guild or ctx.guild
-        assert guild
+    async def serverinfo(self: Self, ctx: AloneContext, guild: discord.Guild = commands.CurrentGuild) -> None:
         assert guild.icon
         bots: int = sum(member.bot for member in guild.members)
         embed: discord.Embed = discord.Embed(
@@ -253,7 +248,9 @@ class Utility(commands.Cog):
             if todo_number == number:
                 try:
                     user_todo.remove(todo)
-                    await self.bot.db.execute("DELETE FROM todo WHERE user_id = $1 AND task = $2", ctx.author.id, todo.content)
+                    await self.bot.db.execute(
+                        "DELETE FROM todo WHERE user_id = $1 AND task = $2", ctx.author.id, todo.content
+                    )
                     await ctx.message.add_reaction(ctx.Emojis.check)
                 except KeyError:
                     await ctx.reply("That's not a task in your todo list!")
@@ -273,11 +270,9 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def userinfo(self: Self, ctx: AloneContext, member: Optional[Union[discord.Member, discord.User]]) -> None:  # type: ignore
-        member: discord.Member | discord.User = member or ctx.author
-
-        if ctx.guild:
-            joined_at: str = f"Joined At: <t:{int(member.joined_at.timestamp())}:F>\n"  # type: ignore
+    async def userinfo(self: Self, ctx: AloneContext, member: discord.Member = commands.Author) -> None:
+        if member.joined_at:
+            joined_at: str = f"Joined At: <t:{int(member.joined_at.timestamp())}:F>\n"
         else:
             joined_at = ""
         created_at: str = f"Created At: <t:{int(member.created_at.timestamp())}:F>\n"
@@ -291,7 +286,7 @@ class Utility(commands.Cog):
             title="Userinfo",
             description=f"Name: {member.name}\n{joined_at}{created_at}"
             f"Avatar: [Click Here]({(member.avatar or member.default_avatar).url})\n"
-            f"{status}{'Banner' if member.banner else ''}",  # type: ignore
+            f"{status}{'Banner' if member.banner else ''}",
         )
         if member.banner:
             embed.set_image(url=member.banner)

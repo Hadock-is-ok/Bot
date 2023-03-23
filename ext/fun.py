@@ -31,8 +31,7 @@ class Fun(commands.Cog):
         await ctx.reply(embed=discord.Embed(title=name, description=definition))
 
     @commands.command()
-    async def pp(self: Self, ctx: AloneContext, member: Optional[discord.Member] = None) -> None:  # type: ignore
-        member: discord.Member | None = member or ctx.author  # type: ignore
+    async def pp(self: Self, ctx: AloneContext, member: Optional[discord.Member] = commands.Author) -> None:
         pp: LiteralString = "=" * random.randint(1, 50)
 
         await ctx.reply(embed=discord.Embed(title=f"{member}'s pp", description=f"8{pp}D\n({len(pp)}cm)"))
@@ -65,9 +64,8 @@ class Fun(commands.Cog):
             return await ctx.reply("You should give me a subreddit to search!")
 
         data: Dict[str, Any] = await self.fetch_subreddit(subreddit)
-        if data["over_18"]:
-            if not ctx.channel.is_nsfw():  # type: ignore
-                return await ctx.reply("This post is nsfw! I cannot send this in a normal channel!")
+        if data["over_18"] and not ctx.channel.is_nsfw(): # type: ignore
+            return await ctx.reply("This post is nsfw! I cannot send this in a normal channel!")
 
         embed: discord.Embed = discord.Embed(title=data["title"], url=data["url"]).set_image(url=data["url"])
         await ctx.reply(embed=embed)

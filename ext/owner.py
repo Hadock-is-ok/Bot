@@ -100,8 +100,8 @@ class Owner(commands.Cog):
         await ctx.reply(text)
 
     @commands.command(aliases=["d", "delete"])
-    async def delmsg(self: Self, ctx: AloneContext, message: Optional[discord.Message]) -> None:  # type: ignore
-        message: discord.Message | None = message or ctx.message.reference  # type: ignore
+    async def delmsg(self: Self, ctx: AloneContext, _message: Optional[discord.Message]) -> None:
+        message: discord.Message | None = _message or ctx.message.reference.resolved # type: ignore
         if not message:
             return await ctx.message.add_reaction(ctx.Emojis.slash)
 
@@ -109,8 +109,8 @@ class Owner(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def nick(self: Self, ctx: AloneContext, *, name: Optional[str] = None) -> None:
-        await ctx.guild.me.edit(nick=name)  # type: ignore
+    async def nick(self: Self, ctx: AloneContext, *, name: Optional[str]) -> None:
+        await ctx.guild.me.edit(nick=name) # type: ignore
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command(aliases=["shutdown", "fuckoff", "quit"])

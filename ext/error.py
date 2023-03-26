@@ -1,10 +1,16 @@
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 from discord import Embed
 from discord.ext import commands
 from typing_extensions import Self
 
-from utils import AloneBot, AloneContext, BlacklistedError, MaintenanceError
+from utils import BlacklistedError, MaintenanceError
+
+if TYPE_CHECKING:
+    from bot import AloneBot
+    from utils import AloneContext
 
 
 class Error(commands.Cog):

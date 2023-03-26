@@ -21,4 +21,9 @@ profile = "black"
 
 [tool.pyright]
 pythonversion = "^3.9"
+typeCheckingMode = "strict"
 reportImportCycles = false
+reportUnusedImport = "error"
+reportUnnecessaryTypeIgnoreComment = "error"
+reportIncompatibleMethodOverride = "none"
+reportPrivateUsage = "none"

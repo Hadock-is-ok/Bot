@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .error import *
 from .events import *
 from .fun import *

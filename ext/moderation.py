@@ -1,17 +1,21 @@
-from typing import Any, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Optional
 
 import discord
 from discord.ext import commands
 from typing_extensions import Self
 
-from utils import AloneBot, AloneContext
+if TYPE_CHECKING:
+    from bot import AloneBot
+    from utils import AloneContext
 
 
 class Moderation(commands.Cog):
     def __init__(self: Self, bot: AloneBot) -> None:
         self.bot: AloneBot = bot
 
-    def cog_check(self: Self, ctx: commands.Context[Any]) -> bool:
+    def cog_check(self: Self, ctx: AloneContext) -> bool:
         if not ctx.guild:
             return False
         return True

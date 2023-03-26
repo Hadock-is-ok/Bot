@@ -1,11 +1,15 @@
+from __future__ import annotations
+
 import random
-from typing import Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 import discord
 from discord.ext import commands
 from typing_extensions import LiteralString, Self
 
-from utils import AloneBot, AloneContext
+if TYPE_CHECKING:
+    from bot import AloneBot
+    from utils import AloneContext
 
 
 class Fun(commands.Cog):

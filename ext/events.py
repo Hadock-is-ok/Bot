@@ -1,10 +1,13 @@
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 import discord
 from discord.ext import commands
 from typing_extensions import Self
 
-from utils import AloneBot
+if TYPE_CHECKING:
+    from bot import AloneBot
 
 
 class Events(commands.Cog):
@@ -32,14 +35,18 @@ class Events(commands.Cog):
     async def on_guild_join(self: Self, guild: discord.Guild) -> None:
         channel: Any = self.bot.get_log_channel()
         bots: int = sum(member.bot for member in guild.members)
+
+        guild_metadata = [
+            f'Owner: {guild.owner}',
+            f'Name: {guild.name}',
+            f'Members: {guild.member_count}',
+            f'Bots: {bots}',
+            f'Nitro Tier: {guild.premium_tier}',
+        ]
+
         embed: discord.Embed = discord.Embed(
             title="I joined a new guild!",
-            description=f"""
-Owner: {guild.owner}
-Name: {guild.name}
-Members: {guild.member_count}
-Bots: {bots}
-Nitro Tier: {guild.premium_tier}""",
+            description='\n'.join(guild_metadata),
             color=0x5FAD68,
         )
 
@@ -49,14 +56,18 @@ Nitro Tier: {guild.premium_tier}""",
     async def on_guild_remove(self: Self, guild: discord.Guild) -> None:
         channel: Any = self.bot.get_log_channel()
         bots: int = sum(member.bot for member in guild.members)
+
+        guild_metadata = [
+            f'Owner: {guild.owner}',
+            f'Name: {guild.name}',
+            f'Members: {guild.member_count}',
+            f'Bots: {bots}',
+            f'Nitro Tier: {guild.premium_tier}',
+        ]
+
         embed: discord.Embed = discord.Embed(
             title="I have left a guild",
-            description=f"""
-Owner: {guild.owner}
-Name: {guild.name}
-Members: {guild.member_count}
-Bots: {bots}
-Nitro Tier: {guild.premium_tier}""",
+            description='\n'.join(guild_metadata),
             color=0xFF0000,
         )
 
@@ -64,7 +75,11 @@ Nitro Tier: {guild.premium_tier}""",
 
     @commands.Cog.listener()
     async def on_message(self: Self, message: discord.Message) -> None:
-        assert self.bot.user
+        if not self.bot.user:
+            # Asserting here will break as the client can receieve events before it has hit
+            # on_ready and cached the user.
+            return
+
         if message.content == f"<@{self.bot.user.id}>" and not message.author.bot:
             await message.reply("Hello, I am Alone Bot, my prefix is alone.")
 

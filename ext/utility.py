@@ -1,14 +1,21 @@
+from __future__ import annotations
+
 from datetime import datetime
 from inspect import getsource
 from random import choice
 from time import perf_counter
-from typing import Any, List, Optional, Union
+from typing import TYPE_CHECKING, Any, List, Optional, Union
 
 import discord
 from discord.ext import commands
 from typing_extensions import Self
 
-from utils import AloneBot, AloneContext, InviteView, SupportView, Todo as Todo_class
+from bot import Todo as Todo_class
+from utils import InviteView, SupportView
+
+if TYPE_CHECKING:
+    from bot import AloneBot
+    from utils import AloneContext
 
 
 class Utility(commands.Cog):

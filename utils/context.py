@@ -1,4 +1,6 @@
-from typing import Any, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Optional
 
 import discord
 from discord import PartialEmoji
@@ -6,6 +8,9 @@ from discord.ext import commands
 from typing_extensions import LiteralString, Self
 
 from .views import DeleteView
+
+if TYPE_CHECKING:
+    from bot import AloneBot
 
 BASE_KWARGS: dict[str, Any] = {
     "content": None,
@@ -23,7 +28,10 @@ class _Emojis:
     slash: PartialEmoji = PartialEmoji(name="slash", id=1041021694682349569)
 
 
-class AloneContext(commands.Context[Any]):
+class AloneContext(commands.Context['AloneBot']):
+
+    Emojis: _Emojis = _Emojis()
+
     async def send(
         self: Self,
         content: str | None = None,
@@ -78,5 +86,3 @@ class AloneContext(commands.Context[Any]):
     async def create_codeblock(self: Self, content: str) -> str:
         fmt: LiteralString = "`" * 3
         return f"{fmt}py\n{content}{fmt}"
-
-    Emojis: _Emojis = _Emojis()

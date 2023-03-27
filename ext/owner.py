@@ -1,10 +1,14 @@
-from typing import Any, List, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, List, Optional
 
 import discord
 from discord.ext import commands
 from typing_extensions import Self
 
-from utils import AloneBot, AloneContext
+if TYPE_CHECKING:
+    from bot import AloneBot
+    from utils import AloneContext
 
 
 class Owner(commands.Cog):

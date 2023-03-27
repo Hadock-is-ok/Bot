@@ -5,5 +5,5 @@ asyncpg_stubs
 cachetools
 discord.py
 jishaku
-python-dotenv
+python - dotenv
 typing_extensions

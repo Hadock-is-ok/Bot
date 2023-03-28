@@ -36,7 +36,7 @@ class _Help(commands.HelpCommand):
         )
 
         cog_names: List[str] = []
-        view = views.CogSelect(self.context.bot, cog_names=cog_names)
+        view = views.CogSelect(self.context, cog_names)
 
         await self.context.reply(embed=embed, add_button_view=False, view=view)
 

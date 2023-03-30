@@ -35,9 +35,16 @@ class _Help(commands.HelpCommand):
             value="You can also use `alone help [command|category]` to see more information about a specific command or category.",
         )
 
-        cog_names: List[str] = [cog for cog in self.context.bot.cogs]
-        view = views.CogSelect(self.context, cog_names=cog_names)
+        view: views.CogSelect = views.CogSelect(self.context)  # type: ignore
+        for name, cog in self.context.bot.cogs.items():
+            if not await self.filter_commands(cog.get_commands(), sort=True):
+                continue
 
+            if not cog.get_commands():
+                continue
+
+            view.cog_select.append_option(discord.SelectOption(label=name))
+        view.cog_select.add_option(label="Close", description="Closes the help menu.")
         await self.context.reply(embed=embed, add_button_view=False, view=view)
 
     async def send_command_help(self: Self, command: commands.Command[Any, ..., Any], /) -> None:

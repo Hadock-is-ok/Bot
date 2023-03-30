@@ -5,8 +5,9 @@ from typing import Literal
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+from bot import AloneBot
 
-from utils import AloneBot, AloneContext, BlacklistedError, MaintenanceError
+from utils import AloneContext, BlacklistedError, MaintenanceError
 
 load_dotenv()
 

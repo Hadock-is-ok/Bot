@@ -35,7 +35,7 @@ class _Help(commands.HelpCommand):
             value="You can also use `alone help [command|category]` to see more information about a specific command or category.",
         )
 
-        cog_names: List[str] = [cog.qualified_name for cog in self.context.bot.cogs]
+        cog_names: List[str] = [cog for cog in self.context.bot.cogs]
         view = views.CogSelect(self.context, cog_names=cog_names)
 
         await self.context.reply(embed=embed, add_button_view=False, view=view)

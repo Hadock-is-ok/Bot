@@ -123,6 +123,11 @@ class AloneBot(commands.AutoShardedBot):
             except Exception as error:
                 self.logger.error(error, exc_info=error)
 
+        log_webhook: str | None = os.getenv("webhook_url")
+        if not log_webhook:
+            raise RuntimeError("Webhook isn't set in .env!")
+        self.log_webhook: str = log_webhook
+
         records: list[Any]
         records = await self.db.fetch("SELECT user_id, array_agg(prefix) AS prefixes FROM prefix GROUP BY user_id")
         self.user_prefixes = {user_id: prefix for user_id, prefix in records}
@@ -165,8 +170,8 @@ class AloneBot(commands.AutoShardedBot):
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
         await super().start(token)
 
-    def get_log_channel(self: Self) -> Any:
-        return self.get_channel(906683175571435550)
+    def get_log_webhook(self: Self) -> discord.Webhook:
+        return discord.Webhook.from_url(self.log_webhook)
 
     def is_blacklisted(self: Self, user_id: int) -> bool:
         return user_id in self.blacklisted_users

@@ -48,7 +48,7 @@ class Error(commands.Cog):
             await ctx.reply(f"You are on cooldown. Try again in {error.retry_after:.2f}s")
 
         else:
-            channel: Any = self.bot.get_log_channel()
+            channel: Any = self.bot.get_log_webhook()
             if ctx.guild:
                 guild: str = f"Guild ID: {ctx.guild.id}\n"
             else:

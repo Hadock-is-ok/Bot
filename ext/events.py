@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, List
 
 import discord
 from discord.ext import commands
@@ -33,10 +33,10 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self: Self, guild: discord.Guild) -> None:
-        channel: Any = self.bot.get_log_channel()
+        channel: Any = self.bot.get_log_webhook()
         bots: int = sum(member.bot for member in guild.members)
 
-        guild_metadata = [
+        guild_metadata: list[str] = [
             f'Owner: {guild.owner}',
             f'Name: {guild.name}',
             f'Members: {guild.member_count}',
@@ -54,10 +54,10 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_remove(self: Self, guild: discord.Guild) -> None:
-        channel: Any = self.bot.get_log_channel()
+        channel: Any = self.bot.get_log_webhook()
         bots: int = sum(member.bot for member in guild.members)
 
-        guild_metadata = [
+        guild_metadata: List[str] = [
             f'Owner: {guild.owner}',
             f'Name: {guild.name}',
             f'Members: {guild.member_count}',

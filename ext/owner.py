@@ -24,12 +24,12 @@ class Owner(commands.Cog):
             await ctx.message.add_reaction(ctx.Emojis.check)
             self.bot.maintenance = reason or "no reason provided"
 
-            channel: Any = self.bot.get_log_channel()
+            channel: Any = self.bot.get_log_webhook()
             return await channel.send("I am going on maintenance break, all commands will not work during the downtime.")
         await ctx.reply("Maintenance mode is now off.")
         self.bot.maintenance = None
 
-        channel = self.bot.get_log_channel()
+        channel = self.bot.get_log_webhook()
         await channel.send("The maintenance break is over. All commands should be up now.")
 
     @commands.group(invoke_without_command=True)

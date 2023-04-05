@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, List
+from typing import TYPE_CHECKING, Any
 
 import discord
+from discord.ext import commands
 
 if TYPE_CHECKING:
     from . import AloneContext
@@ -54,27 +55,31 @@ class CogSelect(discord.ui.View):
 
         return True
 
-    @discord.ui.select(  # type: ignore
+    @discord.ui.select(
         custom_id="select_cog",
         placeholder="Choose a category",
         min_values=1,
         max_values=1,
         row=1,
     )
-    async def cog_select(self: Self, interaction: discord.Interaction, select: discord.ui.Select[Any]) -> None:
+    async def cog_select(self: Self, interaction: discord.Interaction[AloneBot], select: discord.ui.Select[Any]) -> None:
         if select.values[0] == "Close":
             if not interaction.message:
                 return
 
             return await interaction.message.delete()
 
-        cog: commands.Cog = interaction.client.get_cog(select.values[0])  # type: ignore
+        cog: commands.Cog | None = interaction.client.get_cog(select.values[0])
+        if not cog:
+            return await interaction.followup.send("Somehow, this cog doesn't exist. Please report this in my support server.")
+
         command_list: str = ""
         for command in cog.get_commands():
             command_list += f"{command.name}\n"
 
         embed: discord.Embed = discord.Embed(title=cog.qualified_name, description=command_list)
         await interaction.response.edit_message(embed=embed)
+
 
 class InviteView(discord.ui.View):
     def __init__(self: Self, ctx: AloneContext) -> None:

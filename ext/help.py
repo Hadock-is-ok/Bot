@@ -35,7 +35,7 @@ class _Help(commands.HelpCommand):
             value="You can also use `alone help [command|category]` to see more information about a specific command or category.",
         )
 
-        view: views.CogSelect = views.CogSelect(self.context)  # type: ignore
+        view: views.CogSelect = views.CogSelect(self.context)
         for name, cog in self.context.bot.cogs.items():
             if not await self.filter_commands(cog.get_commands(), sort=True):
                 continue

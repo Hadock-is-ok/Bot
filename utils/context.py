@@ -29,7 +29,6 @@ class _Emojis:
 
 
 class AloneContext(commands.Context['AloneBot']):
-
     Emojis: _Emojis = _Emojis()
 
     async def send(

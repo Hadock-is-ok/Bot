@@ -71,7 +71,9 @@ class CogSelect(discord.ui.View):
 
         cog: commands.Cog | None = interaction.client.get_cog(select.values[0])
         if not cog:
-            return await interaction.followup.send("Somehow, this cog doesn't exist. Please report this in my support server.")
+            return await interaction.followup.send(
+                "Somehow, this cog doesn't exist. Please report this in my support server."
+            )
 
         command_list: str = ""
         for command in cog.get_commands():

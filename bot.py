@@ -29,6 +29,15 @@ class DEFAULT_GUILD_CONFIG(TypedDict):
     community_voice_channels: dict[int, int]
 
 
+BOILERPLATE_GUILD_CONFIG: DEFAULT_GUILD_CONFIG = {
+    "prefix": "Alone",
+    "enabled": False,
+    "voice_channel": 0,
+    "voice_category": 0,
+    "community_voice_channels": {},
+}
+
+
 class AloneBot(commands.AutoShardedBot):
     INITAL_EXTENSIONS: List[str] = []
     DEFAULT_PREFIXES: ClassVar[List[str]] = ["Alone", "alone"]
@@ -120,7 +129,7 @@ class AloneBot(commands.AutoShardedBot):
 
         records = await self.db.fetch("SELECT * FROM guilds")
         for guild_id, prefix, voice_channel, voice_category, enabled in records:
-            guild = self.guild_configs.setdefault(guild_id, {})  # type: ignore
+            guild = self.guild_configs.setdefault(guild_id, BOILERPLATE_GUILD_CONFIG)
             guild["prefix"] = prefix
             guild["voice_channel"] = voice_channel
             guild["voice_category"] = voice_category
@@ -128,7 +137,7 @@ class AloneBot(commands.AutoShardedBot):
 
         records = await self.db.fetch("SELECT * FROM voice")
         for guild_id, user_id, channel_id in records:
-            guild: DEFAULT_GUILD_CONFIG = self.guild_configs.setdefault(guild_id, {})  # type: ignore
+            guild: DEFAULT_GUILD_CONFIG = self.guild_configs.setdefault(guild_id, BOILERPLATE_GUILD_CONFIG)
             guild.setdefault("community_voice_channels", {})[channel_id] = user_id
 
         records = await self.db.fetch("SELECT * FROM todo")

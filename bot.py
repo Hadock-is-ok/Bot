@@ -171,7 +171,7 @@ class AloneBot(commands.AutoShardedBot):
         await super().start(token)
 
     def get_log_webhook(self: Self) -> discord.Webhook:
-        return discord.Webhook.from_url(self.log_webhook)
+        return discord.Webhook.from_url(self.log_webhook, session=self.session, bot_token=os.getenv("token"))
 
     def is_blacklisted(self: Self, user_id: int) -> bool:
         return user_id in self.blacklisted_users

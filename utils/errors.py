@@ -7,3 +7,7 @@ class BlacklistedError(commands.CheckFailure):
 
 class MaintenanceError(commands.CheckFailure):
     pass
+
+
+class NoSubredditFound(commands.CheckFailure):
+    pass

@@ -6,7 +6,7 @@ from discord import Embed
 from discord.ext import commands
 from typing_extensions import Self
 
-from utils import BlacklistedError, MaintenanceError
+from utils import BlacklistedError, MaintenanceError, NoSubredditFound
 
 if TYPE_CHECKING:
     from bot import AloneBot
@@ -34,6 +34,9 @@ class Error(commands.Cog):
             await ctx.reply(
                 f"The bot is currently in maintenance mode for {self.bot.maintenance}, please wait. If you have any issues, you can join my support server for help."
             )
+
+        elif isinstance(error, NoSubredditFound):
+            await ctx.reply("I couldn't find a subreddit by that name, maybe you should double check the name?")
 
         elif isinstance(error, commands.CheckFailure):
             await ctx.reply(

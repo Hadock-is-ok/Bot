@@ -7,6 +7,8 @@ import discord
 from discord.ext import commands
 from typing_extensions import LiteralString, Self
 
+from utils import NoSubredditFound
+
 if TYPE_CHECKING:
     from bot import AloneBot
     from utils import AloneContext
@@ -22,6 +24,11 @@ class Fun(commands.Cog):
             headers={"User-Agent": "Alone Bot"},
         ) as response:
             data: Any = await response.json()
+            try:
+                data["data"]
+                print(data["data"])
+            except KeyError:
+                raise NoSubredditFound("No subreddit by that name.")
 
         return random.choice(data["data"]["children"])["data"]
 

@@ -48,7 +48,8 @@ async def cooldown(ctx: AloneContext) -> Literal[True]:
         return True
 
     bucket: commands.Cooldown | None = bot.cooldown.get_bucket(ctx.message)
-    assert bucket
+    if not bucket:
+        raise RuntimeError("Cooldown Bucket does not exist!")
     retry_after: float | None = bucket.update_rate_limit()
     if retry_after:
         raise commands.CommandOnCooldown(bucket, retry_after, commands.BucketType.member)

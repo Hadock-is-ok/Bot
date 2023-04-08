@@ -91,5 +91,4 @@ class InviteView(discord.ui.View):
         if not user:
             raise RuntimeError("Cannot create instance of invite view without a bot user.")
 
-        self.ctx: AloneContext = ctx
         self.add_item(discord.ui.Button(label="Invite", url=discord.utils.oauth_url(user.id)))

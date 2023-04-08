@@ -84,7 +84,7 @@ class AloneBot(commands.AutoShardedBot):
             prefixes.append("")
 
         assert self.user
-        prefixes.append(f"<@!{self.user.id}> ")
+        prefixes.append(f"<@!{self.user.id}>")
         return prefixes
 
     async def get_context(self: Self, message: discord.Message, *, cls: Any = AloneContext) -> Any:

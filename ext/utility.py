@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from inspect import getsource
+from io import BytesIO
 from random import choice
 from time import perf_counter
 from typing import TYPE_CHECKING, Any, List, Optional, Union
@@ -210,6 +211,31 @@ class Utility(commands.Cog):
         )
         await ctx.reply(embed=embed)
 
+    @commands.command()
+    async def spotify(self: Self, ctx: AloneContext, member: discord.Member = commands.Author):
+        spotify: discord.Spotify | None = discord.utils.find(lambda activity: isinstance(activity, discord.Spotify), member.activities) # type: ignore
+        if not spotify:
+            return await ctx.reply(f"{member.display_name} isn't listening to Spotify!")
+        
+        params: dict[str, Any] = {
+            "title": spotify.title,
+            "cover_url": spotify.album_cover_url,
+            "duration_seconds": spotify.duration.seconds,
+            "start_timestamp": spotify.start.timestamp(),
+            "artists": spotify.artists,
+        }
+        async with self.bot.session.get("https://api.jeyy.xyz/discord/spotify", params=params) as response:
+            bytes = BytesIO(await response.read())
+            
+        file: discord.File = discord.File(bytes, "spotify.png")
+        artists: str = ", ".join(spotify.artists)
+
+        embed: discord.Embed = discord.Embed(description=f"**{spotify.title}** by **{artists}**")
+        embed.set_author(name=f"{member.display_name}'s Spotify", icon_url=member.display_avatar.url)
+        embed.set_image(url="attachment://spotify.png")
+
+        await ctx.reply(embed=embed, file=file)
+    
     @commands.command()
     async def support(self: Self, ctx: AloneContext) -> None:
         embed: discord.Embed = discord.Embed(

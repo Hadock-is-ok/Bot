@@ -83,9 +83,7 @@ class AloneBot(commands.AutoShardedBot):
         if not message.guild or message.author.id in self.owner_ids:
             prefixes.append("")
 
-        assert self.user
-        prefixes.append(f"<@!{self.user.id}>")
-        return prefixes
+        return commands.when_mentioned_or(*prefixes)(self, message)
 
     async def get_context(self: Self, message: discord.Message, *, cls: Any = AloneContext) -> Any:
         return await super().get_context(message, cls=cls)

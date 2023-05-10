@@ -87,12 +87,9 @@ class Events(commands.Cog):
     async def afk_check(self: Self, message: discord.Message) -> None:
         for mention in message.mentions:
             if mention.id in self.bot.afk_users and not message.author.bot:
-                assert message.guild
-                user: discord.Member | None = message.guild.get_member(mention.id)
-                assert user
 
                 await message.reply(
-                    f"I'm sorry, but {user.display_name} went afk for {self.bot.afk_users[mention.id]}.",
+                    f"I'm sorry, but <@{mention.id}> went afk for {self.bot.afk_users[mention.id]}.",
                     mention_author=False,
                 )
 
@@ -110,7 +107,9 @@ class Events(commands.Cog):
         message: discord.Message | None = self.bot.bot_messages_cache.get(before)
 
         if not after.content.startswith(tuple(await self.bot.get_prefix(before))):
-            assert message
+            if not message:
+                return
+
             await message.delete()
             self.bot.bot_messages_cache.pop(before)
         else:

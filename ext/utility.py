@@ -55,7 +55,8 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def invite(self: Self, ctx: AloneContext, bot_id: Optional[int]) -> discord.Message | None:
-        assert self.bot.user
+        if not self.bot.user:
+            raise RuntimeError("Bot is not ready yet.")
         if bot_id:
             user: discord.User | None = await self.bot.fetch_user(bot_id)
             if not user.bot:
@@ -117,8 +118,8 @@ class Utility(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @prefix.command(name="guild")
+    @commands.guild_only()
     async def prefix_guild(self: Self, ctx: AloneContext, *, prefix: Optional[str]) -> discord.Message | None:
-        assert ctx.guild
         if not prefix or "remove" in prefix.lower():
             guild_config: Any = self.bot.guild_configs.get(ctx.guild.id, None)
             if not guild_config or not guild_config.get("prefix", None):

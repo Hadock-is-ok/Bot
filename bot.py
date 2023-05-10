@@ -119,9 +119,10 @@ class AloneBot(commands.AutoShardedBot):
 
             try:
                 await self.load_extension(f"{'.'.join(tree)}.{file.stem}")
-                self.INITAL_EXTENSIONS.append(f"{'.'.join(tree)}.{file.stem}")
             except Exception as error:
                 self.logger.error(error, exc_info=error)
+            else:
+                self.INITAL_EXTENSIONS.append(f"{'.'.join(tree)}.{file.stem}")
 
         log_webhook: str | None = os.getenv("webhook_url")
         if not log_webhook:

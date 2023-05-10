@@ -107,8 +107,10 @@ class AloneBot(commands.AutoShardedBot):
             password=os.environ["db_pwd"],
             database=os.environ["database"],
         )
+        if not self.db:
+            raise RuntimeError("Couldn't connect to database!")
 
-        assert self.db
+
         await self.load_extension("jishaku")
         for file in pathlib.Path('ext').glob('**/*.py'):
             *tree, _ = file.parts

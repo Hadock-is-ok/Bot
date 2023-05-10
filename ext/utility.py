@@ -118,8 +118,10 @@ class Utility(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @prefix.command(name="guild")
-    @commands.guild_only()
     async def prefix_guild(self: Self, ctx: AloneContext, *, prefix: Optional[str]) -> discord.Message | None:
+        if not ctx.guild:
+            raise commands.NoPrivateMessage("This is a guild only command!")
+
         if not prefix or "remove" in prefix.lower():
             guild_config: Any = self.bot.guild_configs.get(ctx.guild.id, None)
             if not guild_config or not guild_config.get("prefix", None):
@@ -232,7 +234,7 @@ class Utility(commands.Cog):
         artists: str = ", ".join(spotify.artists)
 
         embed: discord.Embed = discord.Embed(description=f"**{spotify.title}** by **{artists}**")
-        embed.set_author(name=f"{member.display_name}'s Spotify", icon_url=member.display_avatar.url)
+        embed.set_author(name=f"{discord.utils.escape_markdown(member.display_name)}'s Spotify", icon_url=member.display_avatar.url)
         embed.set_image(url="attachment://spotify.png")
 
         await ctx.reply(embed=embed, file=file)

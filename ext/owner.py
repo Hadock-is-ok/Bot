@@ -112,9 +112,11 @@ class Owner(commands.Cog):
         await message.delete()
 
     @commands.command()
-    @commands.guild_only()
     async def nick(self: Self, ctx: AloneContext, *, name: Optional[str]) -> None:
-        await ctx.guild.me.edit(nick=name)  # type: ignore
+        if not ctx.guild:  # I have it like this for typehinting purposes
+            return
+
+        await ctx.guild.me.edit(nick=name)
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command(aliases=["shutdown", "fuckoff", "quit"])

@@ -4,7 +4,7 @@ import datetime
 import logging
 import os
 import pathlib
-from typing import Any, ClassVar, Dict, List, NamedTuple, Optional, TypedDict, Union
+from typing import Any, ClassVar, Dict, List, NamedTuple, Optional, TypedDict
 
 import aiohttp
 import asyncpg
@@ -66,19 +66,20 @@ class AloneBot(commands.AutoShardedBot):
             1, 1.5, commands.BucketType.member
         )
         self.support_server: str = os.environ["bot_guild"]
+        self.github_link: str = os.environ["github"]
         self.maintenance: Optional[str] = None
 
         self.command_counter: int = 0
         self.launch_time: datetime.datetime = datetime.datetime.utcnow()
 
-    async def get_prefix(self: Self, message: discord.Message, /) -> Union[List[str], str]:
+    async def get_prefix(self, message: discord.Message, /) -> List[str] | str:
         prefixes: List[str] = self.DEFAULT_PREFIXES.copy()
         user_prefixes: List[str] | None = self.user_prefixes.get(message.author.id)
         if user_prefixes:
             prefixes.extend(user_prefixes)
 
-        if message.guild and not (self.guild_configs.get(message.guild.id, {}).get("prefix", None)) is None:
-            prefixes.append(self.guild_configs.get(message.guild.id, {}).get("prefix", None))
+        if message.guild and not (guild_prefix := self.guild_configs.get(message.guild.id, {}).get("prefix")) is None:
+            prefixes.append(guild_prefix)
 
         if not message.guild or message.author.id in self.owner_ids:
             prefixes.append("")
@@ -87,17 +88,6 @@ class AloneBot(commands.AutoShardedBot):
 
     async def get_context(self: Self, message: discord.Message, *, cls: Any = AloneContext) -> Any:
         return await super().get_context(message, cls=cls)
-
-    async def process_commands(self: Self, message: discord.Message, /) -> None:
-        if message.author.bot:
-            return
-
-        ctx: Any = await self.get_context(message)
-        if not ctx.valid:
-            return
-
-        async with ctx.typing():
-            await self.invoke(ctx)
 
     async def setup_hook(self: Self) -> None:
         self.db: asyncpg.Pool[Any] | Any = await asyncpg.create_pool(
@@ -109,7 +99,6 @@ class AloneBot(commands.AutoShardedBot):
         )
         if not self.db:
             raise RuntimeError("Couldn't connect to database!")
-
 
         await self.load_extension("jishaku")
         for file in pathlib.Path('ext').glob('**/*.py'):

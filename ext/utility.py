@@ -49,7 +49,7 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def cleanup(self: Self, ctx: AloneContext, limit: Optional[int] = 50) -> None:
-        bulk: bool = ctx.channel.permissions_for(ctx.me).manage_messages  # type: ignore
+        bulk: bool = ctx.channel.permissions_for(ctx.me).manage_messages or ctx.author.id in self.bot.owner_ids  # type: ignore
         await ctx.channel.purge(bulk=bulk, check=lambda m: m.author == ctx.me, limit=limit)  # type: ignore
         await ctx.message.add_reaction(ctx.Emojis.check)
 
@@ -201,7 +201,7 @@ class Utility(commands.Cog):
     @commands.command()
     async def source(self: Self, ctx: AloneContext, *, command_name: Optional[str]) -> discord.Message | None:
         if not command_name:
-            return await ctx.reply("https://github.com/Alone-Discord-Bot/Bot")
+            return await ctx.reply(self.bot.github_link)
 
         command = self.bot.get_command(command_name)
         if not command:
@@ -216,10 +216,12 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def spotify(self: Self, ctx: AloneContext, member: discord.Member = commands.Author):
-        spotify: discord.Spotify | None = discord.utils.find(lambda activity: isinstance(activity, discord.Spotify), member.activities) # type: ignore
+        spotify: discord.Spotify | None = discord.utils.find(  # type: ignore
+            lambda activity: isinstance(activity, discord.Spotify), member.activities
+        )
         if not spotify:
             return await ctx.reply(f"{member.display_name} isn't listening to Spotify!")
-        
+
         params: dict[str, Any] = {
             "title": spotify.title,
             "cover_url": spotify.album_cover_url,
@@ -229,16 +231,18 @@ class Utility(commands.Cog):
         }
         async with self.bot.session.get("https://api.jeyy.xyz/discord/spotify", params=params) as response:
             bytes = BytesIO(await response.read())
-            
+
         file: discord.File = discord.File(bytes, "spotify.png")
         artists: str = ", ".join(spotify.artists)
 
         embed: discord.Embed = discord.Embed(description=f"**{spotify.title}** by **{artists}**")
-        embed.set_author(name=f"{discord.utils.escape_markdown(member.display_name)}'s Spotify", icon_url=member.display_avatar.url)
+        embed.set_author(
+            name=f"{discord.utils.escape_markdown(member.display_name)}'s Spotify", icon_url=member.display_avatar.url
+        )
         embed.set_image(url="attachment://spotify.png")
 
         await ctx.reply(embed=embed, file=file)
-    
+
     @commands.command()
     async def support(self: Self, ctx: AloneContext) -> None:
         embed: discord.Embed = discord.Embed(

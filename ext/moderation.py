@@ -30,6 +30,9 @@ class Moderation(commands.Cog):
         *,
         reason: str = "No reason provided.",
     ) -> discord.Message | None:
+        if isinstance(ctx.author, discord.User):
+            return
+
         if not member:
             return await ctx.reply(
                 embed=discord.Embed(
@@ -38,7 +41,7 @@ class Moderation(commands.Cog):
                 )
             )
 
-        if ctx.author.top_role <= member.top_role:  # type: ignore
+        if ctx.author.top_role <= member.top_role:
             return await ctx.reply(
                 embed=discord.Embed(
                     title="An error occured",
@@ -57,8 +60,9 @@ class Moderation(commands.Cog):
         if not member_id:
             return await ctx.reply("You need to supply a User ID to unban!")
 
+        assert ctx.guild
         user: discord.User = await self.bot.fetch_user(member_id)
-        await ctx.guild.unban(user)  # type: ignore
+        await ctx.guild.unban(user)
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command()
@@ -71,6 +75,9 @@ class Moderation(commands.Cog):
         *,
         reason: str = "No reason provided.",
     ) -> discord.Message | None:
+        if isinstance(ctx.author, discord.User):
+            return
+
         if not member:
             return await ctx.reply(
                 embed=discord.Embed(
@@ -79,7 +86,7 @@ class Moderation(commands.Cog):
                 )
             )
 
-        if ctx.author.top_role <= member.top_role:  # type: ignore
+        if ctx.author.top_role <= member.top_role:
             return await ctx.reply(
                 embed=discord.Embed(
                     title="An error occured",

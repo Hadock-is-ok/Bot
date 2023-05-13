@@ -87,7 +87,6 @@ class Events(commands.Cog):
     async def afk_check(self: Self, message: discord.Message) -> None:
         for mention in message.mentions:
             if mention.id in self.bot.afk_users and not message.author.bot:
-
                 await message.reply(
                     f"I'm sorry, but <@{mention.id}> went afk for {self.bot.afk_users[mention.id]}.",
                     mention_author=False,

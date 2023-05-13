@@ -10,7 +10,7 @@ from typing_extensions import Self
 if TYPE_CHECKING:
     from bot import AloneBot
 
-# TODO: FINISH THIS PIECE OF SHIT FUNCTION REEEEEEE
+
 class Voice(commands.Cog):
     def __init__(self: Self, bot: AloneBot) -> None:
         self.bot: AloneBot = bot

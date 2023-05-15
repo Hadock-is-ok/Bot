@@ -4,18 +4,17 @@ from typing import TYPE_CHECKING, Any, List
 
 import discord
 from discord.ext import commands
-from typing_extensions import Self
 
 if TYPE_CHECKING:
     from bot import AloneBot
 
 
 class Events(commands.Cog):
-    def __init__(self: Self, bot: AloneBot) -> None:
+    def __init__(self, bot: AloneBot) -> None:
         self.bot: AloneBot = bot
 
     @commands.Cog.listener()
-    async def on_ready(self: Self) -> None:
+    async def on_ready(self) -> None:
         fmt: str = self.bot.format_print("Alone Bot")
         assert self.bot.user
 
@@ -32,7 +31,7 @@ class Events(commands.Cog):
         )
 
     @commands.Cog.listener()
-    async def on_guild_join(self: Self, guild: discord.Guild) -> None:
+    async def on_guild_join(self, guild: discord.Guild) -> None:
         channel: Any = self.bot.get_log_webhook()
         bots: int = sum(member.bot for member in guild.members)
 
@@ -53,7 +52,7 @@ class Events(commands.Cog):
         await channel.send(embed=embed)
 
     @commands.Cog.listener()
-    async def on_guild_remove(self: Self, guild: discord.Guild) -> None:
+    async def on_guild_remove(self, guild: discord.Guild) -> None:
         channel: Any = self.bot.get_log_webhook()
         bots: int = sum(member.bot for member in guild.members)
 
@@ -74,7 +73,7 @@ class Events(commands.Cog):
         await channel.send(embed=embed)
 
     @commands.Cog.listener()
-    async def on_message(self: Self, message: discord.Message) -> None:
+    async def on_message(self, message: discord.Message) -> None:
         if not self.bot.user:
             # Asserting here will break as the client can receieve events before it has hit
             # on_ready and cached the user.
@@ -84,7 +83,7 @@ class Events(commands.Cog):
             await message.reply("Hello, I am Alone Bot, my prefix is alone.")
 
     @commands.Cog.listener("on_message")
-    async def afk_check(self: Self, message: discord.Message) -> None:
+    async def afk_check(self, message: discord.Message) -> None:
         for mention in message.mentions:
             if mention.id in self.bot.afk_users and not message.author.bot:
                 await message.reply(
@@ -99,7 +98,7 @@ class Events(commands.Cog):
             await message.reply(f"Welcome back {message.author.display_name}!", mention_author=False)
 
     @commands.Cog.listener()
-    async def on_message_edit(self: Self, before: discord.Message, after: discord.Message) -> None:
+    async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:
         if not self.bot.bot_messages_cache.get(before):
             return await self.bot.process_commands(after)
 
@@ -115,14 +114,14 @@ class Events(commands.Cog):
             await self.bot.process_commands(after)
 
     @commands.Cog.listener()
-    async def on_message_delete(self: Self, message: discord.Message) -> None:
+    async def on_message_delete(self, message: discord.Message) -> None:
         if self.bot.bot_messages_cache.get(message):
             bot_message: discord.Message = self.bot.bot_messages_cache.pop(message)
             await bot_message.delete()
 
     @commands.Cog.listener()
     async def on_voice_state_update(
-        self: Self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
+        self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
     ) -> None:
         if not before.channel:
             return self.bot.dispatch("voice_join", member, after)

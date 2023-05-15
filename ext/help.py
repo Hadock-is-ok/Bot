@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Any, List, Mapping, Optional, Tuple
 
 import discord
 from discord.ext import commands
-from typing_extensions import Self
 
 from utils import AloneContext, views
 
@@ -17,11 +16,11 @@ class _Help(commands.HelpCommand):
     if TYPE_CHECKING:
         context: AloneContext
 
-    def get_command_signature(self: Self, command: commands.Command[Any, ..., Any], /) -> str:
+    def get_command_signature(self, command: commands.Command[Any, ..., Any], /) -> str:
         return f"{command.qualified_name}"
 
     async def send_bot_help(
-        self: Self, mapping: Mapping[Optional[commands.Cog], List[commands.Command[Any, ..., Any]]], /
+        self, mapping: Mapping[Optional[commands.Cog], List[commands.Command[Any, ..., Any]]], /
     ) -> None:
         embed: discord.Embed = discord.Embed(
             title="Help",
@@ -47,7 +46,7 @@ class _Help(commands.HelpCommand):
         view.cog_select.add_option(label="Close", description="Closes the help menu.")
         await self.context.reply(embed=embed, add_button_view=False, view=view)
 
-    async def send_command_help(self: Self, command: commands.Command[Any, ..., Any], /) -> None:
+    async def send_command_help(self, command: commands.Command[Any, ..., Any], /) -> None:
         command_name: str = self.get_command_signature(command)
         embed: discord.Embed = discord.Embed(title=command_name, color=discord.Color.blurple())
         embed.add_field(name="Description of the command", value=command.help)
@@ -57,13 +56,13 @@ class _Help(commands.HelpCommand):
 
         await self.context.reply(embed=embed)
 
-    async def send_error_message(self: Self, error: str, /) -> None:
+    async def send_error_message(self, error: str, /) -> None:
         embed: discord.Embed = discord.Embed(title="Error", description=error, color=0xF02E2E)
         assert isinstance(self.context, AloneContext)
         await self.context.message.add_reaction(self.context.Emojis.x)
         await self.context.reply(embed=embed)
 
-    async def send_group_help(self: Self, group: commands.Group[Any, ..., Any], /) -> None:
+    async def send_group_help(self, group: commands.Group[Any, ..., Any], /) -> None:
         embed: discord.Embed = discord.Embed(title=group, color=discord.Color.blurple())
         embed.add_field(
             name="Subcommands",
@@ -71,7 +70,7 @@ class _Help(commands.HelpCommand):
         )
         await self.context.reply(embed=embed)
 
-    async def send_cog_help(self: Self, cog: commands.Cog, /) -> None:
+    async def send_cog_help(self, cog: commands.Cog, /) -> None:
         embed: discord.Embed = discord.Embed(
             title=cog.qualified_name,
             description=cog.description,
@@ -85,7 +84,7 @@ class _Help(commands.HelpCommand):
 
 
 class Help(commands.Cog):
-    def __init__(self: Self, bot: AloneBot) -> None:
+    def __init__(self, bot: AloneBot) -> None:
         self.bot: AloneBot = bot
         self._original_help_command: commands.HelpCommand | None = bot.help_command
         help_command: _Help = _Help()

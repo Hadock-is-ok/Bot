@@ -11,7 +11,6 @@ import asyncpg
 import discord
 from cachetools import TTLCache
 from discord.ext import commands
-from typing_extensions import Self
 
 from utils.context import AloneContext
 
@@ -43,7 +42,7 @@ class AloneBot(commands.AutoShardedBot):
     DEFAULT_PREFIXES: ClassVar[List[str]] = ["Alone", "alone"]
     owner_ids: List[int]
 
-    def __init__(self: Self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(
             command_prefix=self.get_prefix,  # type: ignore
             strip_after_prefix=True,
@@ -86,10 +85,10 @@ class AloneBot(commands.AutoShardedBot):
 
         return commands.when_mentioned_or(*prefixes)(self, message)
 
-    async def get_context(self: Self, message: discord.Message, *, cls: Any = AloneContext) -> Any:
+    async def get_context(self, message: discord.Message, *, cls: Any = AloneContext) -> Any:
         return await super().get_context(message, cls=cls)
 
-    async def setup_hook(self: Self) -> None:
+    async def setup_hook(self) -> None:
         self.db: asyncpg.Pool[Any] | Any = await asyncpg.create_pool(
             host=os.environ["db_ip"],
             port=int(os.environ["db_port"]),
@@ -146,7 +145,7 @@ class AloneBot(commands.AutoShardedBot):
         for user_id in records:
             self.bypass_cooldown_users.append(user_id)
 
-    async def close(self: Self) -> None:
+    async def close(self) -> None:
         await self.session.close()
 
         if self.db:
@@ -154,27 +153,27 @@ class AloneBot(commands.AutoShardedBot):
 
         await super().close()
 
-    async def start(self: Self, token: str, *, reconnect: bool = True) -> None:
+    async def start(self, token: str, *, reconnect: bool = True) -> None:
         discord.utils.setup_logging(handler=logging.FileHandler("bot.log"))
         self.logger: logging.Logger = logging.getLogger("discord")
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
         await super().start(token)
 
-    def get_log_webhook(self: Self) -> discord.Webhook:
+    def get_log_webhook(self) -> discord.Webhook:
         return discord.Webhook.from_url(self.log_webhook, session=self.session, bot_token=os.getenv("token"))
 
-    def is_blacklisted(self: Self, user_id: int) -> bool:
+    def is_blacklisted(self, user_id: int) -> bool:
         return user_id in self.blacklisted_users
 
-    def add_owner(self: Self, user_id: int) -> None:
+    def add_owner(self, user_id: int) -> None:
         self.owner_ids.append(user_id)
 
-    def remove_owner(self: Self, user_id: int) -> str | None:
+    def remove_owner(self, user_id: int) -> str | None:
         try:
             self.owner_ids.remove(user_id)
         except ValueError:
             return "There's no owner with that ID!"
 
-    def format_print(self: Self, text: str) -> str:
+    def format_print(self, text: str) -> str:
         fmt: str = datetime.datetime.utcnow().strftime("%x | %X") + f" | {text}"
         return fmt

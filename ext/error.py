@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Any
 
 from discord import Embed
 from discord.ext import commands
-from typing_extensions import Self
 
 from utils import BlacklistedError, MaintenanceError, NoSubredditFound
 
@@ -14,11 +13,11 @@ if TYPE_CHECKING:
 
 
 class Error(commands.Cog):
-    def __init__(self: Self, bot: AloneBot) -> None:
+    def __init__(self, bot: AloneBot) -> None:
         self.bot: AloneBot = bot
 
     @commands.Cog.listener()
-    async def on_command_error(self: Self, ctx: AloneContext, error: Exception) -> None:
+    async def on_command_error(self, ctx: AloneContext, error: Exception) -> None:
         "The error handler for the bot."
         if isinstance(error, commands.CommandNotFound):
             return

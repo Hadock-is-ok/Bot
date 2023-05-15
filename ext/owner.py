@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Any, List, Optional
 
 import discord
 from discord.ext import commands
-from typing_extensions import Self
 
 if TYPE_CHECKING:
     from bot import AloneBot
@@ -12,14 +11,14 @@ if TYPE_CHECKING:
 
 
 class Owner(commands.Cog):
-    def __init__(self: Self, bot: AloneBot) -> None:
+    def __init__(self, bot: AloneBot) -> None:
         self.bot: AloneBot = bot
 
-    def cog_check(self: Self, ctx: commands.Context[Any]) -> bool:
+    def cog_check(self, ctx: commands.Context[Any]) -> bool:
         return ctx.author.id in self.bot.owner_ids
 
     @commands.command()
-    async def maintenance(self: Self, ctx: AloneContext, *, reason: Optional[str]) -> None:
+    async def maintenance(self, ctx: AloneContext, *, reason: Optional[str]) -> None:
         if not self.bot.maintenance:
             await ctx.message.add_reaction(ctx.Emojis.check)
             self.bot.maintenance = reason or "no reason provided"
@@ -33,7 +32,7 @@ class Owner(commands.Cog):
         await channel.send("The maintenance break is over. All commands should be up now.")
 
     @commands.group(invoke_without_command=True)
-    async def blacklist(self: Self, ctx: AloneContext) -> None:
+    async def blacklist(self, ctx: AloneContext) -> None:
         fmt: List[str] = []
         for user_id, reason in self.bot.blacklisted_users.items():
             user: discord.User | None = self.bot.get_user(user_id)
@@ -46,7 +45,7 @@ class Owner(commands.Cog):
 
     @blacklist.command()
     async def add(
-        self: Self,
+        self,
         ctx: AloneContext,
         member: discord.Member,
         *,
@@ -58,7 +57,7 @@ class Owner(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @blacklist.command()
-    async def remove(self: Self, ctx: AloneContext, *, member: discord.Member) -> discord.Message | None:
+    async def remove(self, ctx: AloneContext, *, member: discord.Member) -> discord.Message | None:
         try:
             self.bot.blacklisted_users.pop(member.id)
             await self.bot.db.execute("DELETE FROM blacklist WHERE user_id = $1", member.id)
@@ -69,7 +68,7 @@ class Owner(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command()
-    async def disable(self: Self, ctx: AloneContext, name: str) -> discord.Message | None:
+    async def disable(self, ctx: AloneContext, name: str) -> discord.Message | None:
         command = self.bot.get_command(name)
         if not command:
             await ctx.message.add_reaction(ctx.Emojis.x)
@@ -83,7 +82,7 @@ class Owner(commands.Cog):
         await ctx.reply(f"Disabled {name}.")
 
     @commands.command()
-    async def enable(self: Self, ctx: AloneContext, name: str) -> discord.Message | None:
+    async def enable(self, ctx: AloneContext, name: str) -> discord.Message | None:
         command = self.bot.get_command(name)
         if not command:
             await ctx.message.add_reaction(ctx.Emojis.x)
@@ -97,14 +96,14 @@ class Owner(commands.Cog):
         await ctx.reply(f"Enabled {name}.")
 
     @commands.command()
-    async def say(self: Self, ctx: AloneContext, *, text: Optional[str]) -> None:
+    async def say(self, ctx: AloneContext, *, text: Optional[str]) -> None:
         if not text:
             return await ctx.message.add_reaction(ctx.Emojis.slash)
 
         await ctx.reply(text)
 
     @commands.command(aliases=["d", "delete"])
-    async def delmsg(self: Self, ctx: AloneContext, _message: Optional[discord.Message]) -> None:
+    async def delmsg(self, ctx: AloneContext, _message: Optional[discord.Message]) -> None:
         message: discord.Message | None = _message or ctx.message.reference.resolved  # type: ignore
         if not message:
             return await ctx.message.add_reaction(ctx.Emojis.slash)
@@ -112,7 +111,7 @@ class Owner(commands.Cog):
         await message.delete()
 
     @commands.command()
-    async def nick(self: Self, ctx: AloneContext, *, name: Optional[str]) -> None:
+    async def nick(self, ctx: AloneContext, *, name: Optional[str]) -> None:
         if not ctx.guild:  # I have it like this for typehinting purposes
             return
 
@@ -120,12 +119,12 @@ class Owner(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command(aliases=["shutdown", "fuckoff", "quit"])
-    async def logout(self: Self, ctx: AloneContext) -> None:
+    async def logout(self, ctx: AloneContext) -> None:
         await ctx.message.add_reaction(ctx.Emojis.check)
         await self.bot.close()
 
     @commands.command()
-    async def load(self: Self, ctx: AloneContext, cog: str) -> None:
+    async def load(self, ctx: AloneContext, cog: str) -> None:
         try:
             await self.bot.load_extension(cog)
             message: str = "Loaded!"
@@ -134,7 +133,7 @@ class Owner(commands.Cog):
         await ctx.reply(message)
 
     @commands.command()
-    async def unload(self: Self, ctx: AloneContext, cog: str) -> None:
+    async def unload(self, ctx: AloneContext, cog: str) -> None:
         try:
             await self.bot.unload_extension(cog)
             message: str = "Unloaded!"
@@ -143,7 +142,7 @@ class Owner(commands.Cog):
         await ctx.reply(message)
 
     @commands.command()
-    async def reload(self: Self, ctx: AloneContext) -> None:
+    async def reload(self, ctx: AloneContext) -> None:
         cog_status: str = ""
         for extension in self.bot.INITAL_EXTENSIONS:
             try:

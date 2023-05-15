@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING, Any, List, Optional, Union
 
 import discord
 from discord.ext import commands
-from typing_extensions import Self
 
 from bot import Todo as Todo_class
 from utils import InviteView, SupportView
@@ -20,11 +19,11 @@ if TYPE_CHECKING:
 
 
 class Utility(commands.Cog):
-    def __init__(self: Self, bot: AloneBot) -> None:
+    def __init__(self, bot: AloneBot) -> None:
         self.bot: AloneBot = bot
 
     @commands.command()
-    async def afk(self: Self, ctx: AloneContext, *, reason: str = "no reason") -> None:
+    async def afk(self, ctx: AloneContext, *, reason: str = "no reason") -> None:
         await self.bot.db.execute("INSERT INTO afk VALUES ($1, $2)", ctx.author.id, reason)
         self.bot.afk_users[ctx.author.id] = reason
 
@@ -37,24 +36,24 @@ class Utility(commands.Cog):
         await ctx.reply(f"**AFK**\nYou are now afk{fmt}")
 
     @commands.command(aliases=["av", "pfp"])
-    async def avatar(self: Self, ctx: AloneContext, member: Union[discord.Member, discord.User] = commands.Author) -> None:
+    async def avatar(self, ctx: AloneContext, member: Union[discord.Member, discord.User] = commands.Author) -> None:
         embed: discord.Embed = discord.Embed(title=f"{member.display_name}'s avatar")
         embed.set_image(url=member.avatar.url)  # type: ignore
 
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def choose(self: Self, ctx: AloneContext, choices: commands.Greedy[Union[str, int]]) -> None:
+    async def choose(self, ctx: AloneContext, choices: commands.Greedy[Union[str, int]]) -> None:
         await ctx.reply(str(choice(choices)))
 
     @commands.command()
-    async def cleanup(self: Self, ctx: AloneContext, limit: Optional[int] = 50) -> None:
+    async def cleanup(self, ctx: AloneContext, limit: Optional[int] = 50) -> None:
         bulk: bool = ctx.channel.permissions_for(ctx.me).manage_messages or ctx.author.id in self.bot.owner_ids  # type: ignore
         await ctx.channel.purge(bulk=bulk, check=lambda m: m.author == ctx.me, limit=limit)  # type: ignore
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @commands.command()
-    async def invite(self: Self, ctx: AloneContext, bot_id: Optional[int]) -> discord.Message | None:
+    async def invite(self, ctx: AloneContext, bot_id: Optional[int]) -> discord.Message | None:
         if not self.bot.user:
             raise RuntimeError("Bot is not ready yet.")
         if bot_id:
@@ -71,7 +70,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed, view=InviteView(ctx))
 
     @commands.command()
-    async def ping(self: Self, ctx: AloneContext) -> None:
+    async def ping(self, ctx: AloneContext) -> None:
         websocket_ping: float = self.bot.latency
 
         start: float = perf_counter()
@@ -101,13 +100,13 @@ class Utility(commands.Cog):
         await message.edit(content=None, embed=embed)
 
     @commands.group(invoke_without_command=True)
-    async def prefix(self: Self, ctx: AloneContext) -> None:
+    async def prefix(self, ctx: AloneContext) -> None:
         prefix_list: str = "\n".join(await self.bot.get_prefix(ctx.message))
         embed: discord.Embed = discord.Embed(title="Prefixes you can use", description=prefix_list)
         await ctx.reply(embed=embed)
 
     @prefix.command(name="add")
-    async def prefix_add(self: Self, ctx: AloneContext, *, prefix: str = "") -> discord.Message | None:
+    async def prefix_add(self, ctx: AloneContext, *, prefix: str = "") -> discord.Message | None:
         if len(prefix) > 5:
             return await ctx.reply("You can't have a prefix that's longer than 5 characters, sorry!")
 
@@ -118,7 +117,7 @@ class Utility(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @prefix.command(name="guild")
-    async def prefix_guild(self: Self, ctx: AloneContext, *, prefix: Optional[str]) -> discord.Message | None:
+    async def prefix_guild(self, ctx: AloneContext, *, prefix: Optional[str]) -> discord.Message | None:
         if not ctx.guild:
             raise commands.NoPrivateMessage("This is a guild only command!")
 
@@ -144,7 +143,7 @@ class Utility(commands.Cog):
         await ctx.reply(f"The prefix for this guild is now `{prefix}`")
 
     @prefix.command(name="remove")
-    async def prefix_remove(self: Self, ctx: AloneContext, *, prefix: Optional[str]) -> discord.Message | None:
+    async def prefix_remove(self, ctx: AloneContext, *, prefix: Optional[str]) -> discord.Message | None:
         user_prefixes: List[str] = self.bot.user_prefixes.get(ctx.author.id, [])
         if not user_prefixes:
             return await ctx.reply("You don't have custom prefixes setup!")
@@ -167,7 +166,7 @@ class Utility(commands.Cog):
             await ctx.reply("That's not one of your prefixes!")
 
     @commands.command()
-    async def quote(self: Self, ctx: AloneContext, _message: Optional[discord.Message]) -> discord.Message | None:
+    async def quote(self, ctx: AloneContext, _message: Optional[discord.Message]) -> discord.Message | None:
         message: discord.Message | None = _message or ctx.message.reference.resolved  # type: ignore
         if not message:
             return await ctx.reply("You need to give me a message to quote!")
@@ -187,7 +186,7 @@ class Utility(commands.Cog):
 
     @commands.command(aliases=["server_info", "server info", "si", "guildinfo"])
     @commands.guild_only()
-    async def serverinfo(self: Self, ctx: AloneContext, guild: discord.Guild = commands.CurrentGuild) -> None:
+    async def serverinfo(self, ctx: AloneContext, guild: discord.Guild = commands.CurrentGuild) -> None:
         assert guild.icon
         bots: int = sum(member.bot for member in guild.members)
         embed: discord.Embed = discord.Embed(
@@ -199,7 +198,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def source(self: Self, ctx: AloneContext, *, command_name: Optional[str]) -> discord.Message | None:
+    async def source(self, ctx: AloneContext, *, command_name: Optional[str]) -> discord.Message | None:
         if not command_name:
             return await ctx.reply(self.bot.github_link)
 
@@ -215,7 +214,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def spotify(self: Self, ctx: AloneContext, member: discord.Member = commands.Author):
+    async def spotify(self, ctx: AloneContext, member: discord.Member = commands.Author):
         spotify: discord.Spotify | None = discord.utils.find(  # type: ignore
             lambda activity: isinstance(activity, discord.Spotify), member.activities
         )
@@ -244,7 +243,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed, file=file)
 
     @commands.command()
-    async def support(self: Self, ctx: AloneContext) -> None:
+    async def support(self, ctx: AloneContext) -> None:
         embed: discord.Embed = discord.Embed(
             title="Support",
             description="Join my [support server]({self.bot.support_server})!",
@@ -252,7 +251,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed, view=SupportView(ctx))
 
     @commands.group(invoke_without_command=True)
-    async def todo(self: Self, ctx: AloneContext) -> discord.Message | None:
+    async def todo(self, ctx: AloneContext) -> discord.Message | None:
         user_todo: List[Todo_class] | None = self.bot.todos.get(ctx.author.id)
         if not user_todo:
             return await ctx.reply("You don't have a to-do list!")
@@ -265,7 +264,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @todo.command(name="add")
-    async def todo_add(self: Self, ctx: AloneContext, *, text: Optional[str]) -> None:
+    async def todo_add(self, ctx: AloneContext, *, text: Optional[str]) -> None:
         assert text
         task: Todo_class = Todo_class(text, ctx.message.jump_url)
         user_todo: List[Todo_class] = self.bot.todos.setdefault(ctx.author.id, [])
@@ -280,7 +279,7 @@ class Utility(commands.Cog):
         await ctx.message.add_reaction(ctx.Emojis.check)
 
     @todo.command(name="remove")
-    async def todo_remove(self: Self, ctx: AloneContext, todo_number: Optional[int]) -> discord.Message | None:
+    async def todo_remove(self, ctx: AloneContext, todo_number: Optional[int]) -> discord.Message | None:
         user_todo: List[Todo_class] | None = self.bot.todos.get(ctx.author.id)
         if not user_todo:
             return await ctx.reply("You don't have a to-do list!")
@@ -302,7 +301,7 @@ class Utility(commands.Cog):
                     await ctx.reply("That's not a task in your todo list!")
 
     @commands.command()
-    async def uptime(self: Self, ctx: AloneContext) -> None:
+    async def uptime(self, ctx: AloneContext) -> None:
         uptime = datetime.utcnow() - self.bot.launch_time
         hours, remainder = divmod(int(uptime.total_seconds()), 3600)
         minutes, seconds = divmod(remainder, 60)
@@ -316,7 +315,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def userinfo(self: Self, ctx: AloneContext, member: discord.Member = commands.Author) -> None:
+    async def userinfo(self, ctx: AloneContext, member: discord.Member = commands.Author) -> None:
         if member.joined_at:
             joined_at: str = f"Joined At: <t:{int(member.joined_at.timestamp())}:F>\n"
             status: str = f"Status: {member.status}\n"

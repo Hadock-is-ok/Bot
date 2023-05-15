@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Any, Optional
 
 import discord
 from discord.ext import commands
-from typing_extensions import Self
 
 if TYPE_CHECKING:
     from bot import AloneBot
@@ -12,10 +11,10 @@ if TYPE_CHECKING:
 
 
 class Moderation(commands.Cog):
-    def __init__(self: Self, bot: AloneBot) -> None:
+    def __init__(self, bot: AloneBot) -> None:
         self.bot: AloneBot = bot
 
-    def cog_check(self: Self, ctx: AloneContext) -> bool:
+    def cog_check(self, ctx: AloneContext) -> bool:
         if not ctx.guild:
             return False
         return True
@@ -24,7 +23,7 @@ class Moderation(commands.Cog):
     @commands.bot_has_guild_permissions(ban_members=True)
     @commands.has_guild_permissions(ban_members=True)
     async def ban(
-        self: Self,
+        self,
         ctx: AloneContext,
         member: discord.Member,
         *,
@@ -55,7 +54,7 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.bot_has_guild_permissions(ban_members=True)
     @commands.has_guild_permissions(ban_members=True)
-    async def unban(self: Self, ctx: AloneContext, member_id: Optional[int]) -> discord.Message | None:
+    async def unban(self, ctx: AloneContext, member_id: Optional[int]) -> discord.Message | None:
         "This command only works with IDs!"
         if not member_id:
             return await ctx.reply("You need to supply a User ID to unban!")
@@ -69,7 +68,7 @@ class Moderation(commands.Cog):
     @commands.bot_has_guild_permissions(kick_members=True)
     @commands.has_guild_permissions(kick_members=True)
     async def kick(
-        self: Self,
+        self,
         ctx: AloneContext,
         member: discord.Member,
         *,
@@ -100,7 +99,7 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.bot_has_guild_permissions(manage_messages=True)
     @commands.has_guild_permissions(manage_messages=True)
-    async def purge(self: Self, ctx: AloneContext, limit: int = 20) -> None:
+    async def purge(self, ctx: AloneContext, limit: int = 20) -> None:
         await ctx.message.delete()
         messages: Any = await ctx.channel.purge(limit=limit)  # type: ignore
         await ctx.send(f"{len(messages)} messages deleted.")

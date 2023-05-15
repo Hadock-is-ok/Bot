@@ -5,18 +5,17 @@ from typing import TYPE_CHECKING, Any
 
 import discord
 from discord.ext import commands
-from typing_extensions import Self
 
 if TYPE_CHECKING:
     from bot import AloneBot
 
 
 class Voice(commands.Cog):
-    def __init__(self: Self, bot: AloneBot) -> None:
+    def __init__(self, bot: AloneBot) -> None:
         self.bot: AloneBot = bot
 
     @commands.Cog.listener()
-    async def on_voice_join(self: Self, member: discord.Member, state: discord.VoiceState) -> discord.Message | None:
+    async def on_voice_join(self, member: discord.Member, state: discord.VoiceState) -> discord.Message | None:
         assert state.channel
         vc: int | Any | None = self.bot.guild_configs.get(state.channel.guild.id, {}).get("voice_channel", None)
         category_channel_id: int | Any | None = self.bot.guild_configs.get(state.channel.guild.id, {}).get(
@@ -53,7 +52,7 @@ class Voice(commands.Cog):
         await member.send("Welcome to your own voice chat! Here, you lay the rules. your house, your magic. Have fun!")
 
     @commands.Cog.listener()
-    async def on_voice_leave(self: Self, member: discord.Member, state: discord.VoiceState) -> None:
+    async def on_voice_leave(self, member: discord.Member, state: discord.VoiceState) -> None:
         assert state.channel
 
         vc: dict[int, int] | Any = self.bot.guild_configs.get(member.guild.id, {}).get("community_voice_channels", {})

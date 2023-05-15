@@ -32,7 +32,7 @@ class AloneContext(commands.Context['AloneBot']):
     Emojis: _Emojis = _Emojis()
 
     async def send(
-        self: Self,
+        self,
         content: str | None = None,
         add_button_view: bool = True,
         **kwargs: Any,
@@ -82,6 +82,6 @@ class AloneContext(commands.Context['AloneBot']):
                 self.bot.bot_messages_cache[self.message] = message = await super().send(content, **kwargs)
                 return message
 
-    async def create_codeblock(self: Self, content: str) -> str:
+    async def create_codeblock(self, content: str) -> str:
         fmt: LiteralString = "`" * 3
         return f"{fmt}py\n{content}{fmt}"

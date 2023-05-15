@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Dict, Optional
 
 import discord
 from discord.ext import commands
-from typing_extensions import LiteralString, Self
+from typing_extensions import LiteralString
 
 from utils import NoSubredditFound
 

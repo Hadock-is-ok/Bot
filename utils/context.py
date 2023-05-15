@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 import discord
 from discord import PartialEmoji
 from discord.ext import commands
-from typing_extensions import LiteralString, Self
+from typing_extensions import LiteralString
 
 from .views import DeleteView
 

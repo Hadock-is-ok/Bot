@@ -26,7 +26,6 @@ class Fun(commands.Cog):
             data: Any = await response.json()
             try:
                 data["data"]
-                print(data["data"])
             except KeyError:
                 raise NoSubredditFound("No subreddit by that name.")
 

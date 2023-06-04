@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import inspect
 from datetime import datetime
-from inspect import getsource
 from io import BytesIO
 from random import choice
 from time import perf_counter
@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING, Any, List, Optional, Union
 import discord
 from discord.ext import commands
 
-from bot import Todo as Todo_class
-from utils import InviteView, SupportView
+from bot import Todo as Todo_class, BOILERPLATE_GUILD_CONFIG
+from utils import GithubButton, InviteView, SourceButton, SupportView
 
 if TYPE_CHECKING:
     from bot import AloneBot
@@ -30,7 +30,7 @@ class Utility(commands.Cog):
         if reason != "no reason":
             fmt: str = f" for {reason}."
         else:
-            fmt = "!"
+            fmt = "."
 
         await ctx.message.add_reaction(ctx.Emojis.check)
         await ctx.reply(f"**AFK**\nYou are now afk{fmt}")
@@ -48,7 +48,7 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def cleanup(self, ctx: AloneContext, limit: Optional[int] = 50) -> None:
-        bulk: bool = ctx.channel.permissions_for(ctx.me).manage_messages or ctx.author.id in self.bot.owner_ids  # type: ignore
+        bulk: bool = ctx.channel.permissions_for(ctx.me).manage_messages  # type: ignore
         await ctx.channel.purge(bulk=bulk, check=lambda m: m.author == ctx.me, limit=limit)  # type: ignore
         await ctx.message.add_reaction(ctx.Emojis.check)
 
@@ -63,11 +63,11 @@ class Utility(commands.Cog):
 
             link: str = discord.utils.oauth_url(user.id)
             embed: discord.Embed = discord.Embed(title=f"Invite {user.name}", description=f"[Invite]({link})")
-            return await ctx.reply(embed=embed)
+            return await ctx.reply(embed=embed, view=InviteView(user.id))
 
         link = discord.utils.oauth_url(self.bot.user.id)
         embed = discord.Embed(title="Thank you for supporting me!", description=f"[Invite Me!]({link})")
-        await ctx.reply(embed=embed, view=InviteView(ctx))
+        await ctx.reply(embed=embed, view=InviteView(self.bot.user.id))
 
     @commands.command()
     async def ping(self, ctx: AloneContext) -> None:
@@ -133,7 +133,7 @@ class Utility(commands.Cog):
         if len(prefix) > 5:
             return await ctx.reply("You can't have a prefix that's longer than 5 characters, sorry!")
 
-        self.bot.guild_configs[ctx.guild.id]["prefix"] = prefix
+        self.bot.guild_configs.setdefault(ctx.guild.id, BOILERPLATE_GUILD_CONFIG)["prefix"] = prefix
         await self.bot.db.execute(
             "INSERT INTO guilds VALUES ($1, $2) ON CONFLICT DO UPDATE guilds SET prefix = $2 WHERE guild_id = $1",
             ctx.guild.id,
@@ -165,25 +165,6 @@ class Utility(commands.Cog):
             await ctx.message.add_reaction(ctx.Emojis.x)
             await ctx.reply("That's not one of your prefixes!")
 
-    @commands.command()
-    async def quote(self, ctx: AloneContext, _message: Optional[discord.Message]) -> discord.Message | None:
-        message: discord.Message | None = _message or ctx.message.reference.resolved  # type: ignore
-        if not message:
-            return await ctx.reply("You need to give me a message to quote!")
-
-        if isinstance(message, str):
-            embed: discord.Embed = discord.Embed(
-                title=f"{ctx.author} said:",
-                description=f"> {message}",
-            )
-            return await ctx.reply(embed=embed)
-
-        embed: discord.Embed = discord.Embed(
-            title=f"{message.author} sent:",
-            description=f"> {message.content}\n - {message.author.mention}",
-        )
-        await ctx.reply(embed=embed)
-
     @commands.command(aliases=["server_info", "server info", "si", "guildinfo"])
     @commands.guild_only()
     async def serverinfo(self, ctx: AloneContext, guild: discord.Guild = commands.CurrentGuild) -> None:
@@ -200,21 +181,23 @@ class Utility(commands.Cog):
     @commands.command()
     async def source(self, ctx: AloneContext, *, command_name: Optional[str]) -> discord.Message | None:
         if not command_name:
-            return await ctx.reply(self.bot.github_link)
+            return await ctx.reply(self.bot.github_link, view=GithubButton(ctx))
 
         command = self.bot.get_command(command_name)
         if not command:
             return await ctx.reply("That command doesn't exist!")
 
-        source: str = getsource(command.callback)
+        source: str = inspect.getsource(command.callback)
+        source_lines: tuple[list[str], int] = inspect.getsourcelines(command.callback)
+        file_name: str | None = inspect.getsourcefile(command.callback).split("/")[5]  # type: ignore
         embed: discord.Embed = discord.Embed(
             title=f"Source for {command.name}",
             description=await ctx.create_codeblock(source),
         )
-        await ctx.reply(embed=embed)
+        await ctx.reply(embed=embed, view=SourceButton(ctx, source_lines, file_name))
 
     @commands.command()
-    async def spotify(self, ctx: AloneContext, member: discord.Member = commands.Author):
+    async def spotify(self, ctx: AloneContext, *, member: discord.Member = commands.Author):
         spotify: discord.Spotify | None = discord.utils.find(  # type: ignore
             lambda activity: isinstance(activity, discord.Spotify), member.activities
         )
@@ -248,7 +231,7 @@ class Utility(commands.Cog):
             title="Support",
             description="Join my [support server]({self.bot.support_server})!",
         )
-        await ctx.reply(embed=embed, view=SupportView(ctx))
+        await ctx.reply(embed=embed, view=SupportView(self.bot.support_server))
 
     @commands.group(invoke_without_command=True)
     async def todo(self, ctx: AloneContext) -> discord.Message | None:

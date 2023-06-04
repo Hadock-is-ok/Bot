@@ -36,10 +36,29 @@ class DeleteView(discord.ui.View):
 
 
 class SupportView(discord.ui.View):
+    def __init__(self, support_url: str) -> None:
+        super().__init__(timeout=None)
+        self.add_item(discord.ui.Button(label="Support", url=support_url))
+
+
+class GithubButton(discord.ui.View):
     def __init__(self, ctx: AloneContext) -> None:
         super().__init__(timeout=None)
         self.ctx: AloneContext = ctx
-        self.add_item(discord.ui.Button(label="Support", url=self.ctx.bot.support_server))
+        self.add_item(discord.ui.Button(emoji="<:GitHub:1019435755979935794>", label="Github", url=self.ctx.bot.github_link))
+
+
+class SourceButton(discord.ui.View):
+    def __init__(self, ctx: AloneContext, source_lines: tuple[list[str], int], file_name: str | None) -> None:
+        super().__init__(timeout=None)
+        self.ctx: AloneContext = ctx
+        self.add_item(
+            discord.ui.Button(
+                emoji="<:GitHub:1019435755979935794>",
+                label="Source",
+                url=f"{self.ctx.bot.github_link}/tree/master/ext/{file_name}#L{source_lines[1]}-L{len(source_lines[0])+source_lines[1]}",
+            )
+        )
 
 
 class CogSelect(discord.ui.View):
@@ -83,11 +102,7 @@ class CogSelect(discord.ui.View):
 
 
 class InviteView(discord.ui.View):
-    def __init__(self, ctx: AloneContext) -> None:
+    def __init__(self, bot_id: int) -> None:
         super().__init__(timeout=None)
 
-        user = ctx.bot.user
-        if not user:
-            raise RuntimeError("Cannot create instance of invite view without a bot user.")
-
-        self.add_item(discord.ui.Button(label="Invite", url=discord.utils.oauth_url(user.id)))
+        self.add_item(discord.ui.Button(label="Invite", url=discord.utils.oauth_url(bot_id)))

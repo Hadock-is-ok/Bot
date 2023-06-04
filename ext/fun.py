@@ -26,18 +26,24 @@ class Fun(commands.Cog):
             data: Any = await response.json()
             try:
                 data["data"]
-                print(data["data"])
             except KeyError:
                 raise NoSubredditFound("No subreddit by that name.")
 
         return random.choice(data["data"]["children"])["data"]
 
     @commands.command(aliases=["define"])
-    async def urban(self, ctx: AloneContext, *, word: str) -> None:
+    async def urban(self, ctx: AloneContext, *, word: Optional[str]) -> discord.Message | None:
+        if not word:
+            return await ctx.reply("You need to give me a word to look up!")
+
         async with self.bot.session.get("https://api.urbandictionary.com/v0/define", params={"term": word}) as response:
             data: Any = await response.json()
-            word_info: Any = data["list"][0]
-        definition, name = word_info["definition"], word_info["word"]
+            try:
+               word_info: Any = data["list"][0]
+            except IndexError:
+                return await ctx.reply("I couldn't find a definition for that word.")
+            else:
+                definition, name = word_info["definition"], word_info["word"]
 
         await ctx.reply(embed=discord.Embed(title=name, description=definition))
 
@@ -75,7 +81,9 @@ class Fun(commands.Cog):
             return await ctx.reply("You should give me a subreddit to search!")
 
         data: Dict[str, Any] = await self.fetch_subreddit(subreddit)
-        if data["over_18"] and not ctx.channel.is_nsfw():  # type: ignore
+        if not ctx.channel:
+            pass
+        elif data["over_18"] and not ctx.channel.is_nsfw():  # type: ignore
             return await ctx.reply("This post is nsfw! I cannot send this in a normal channel!")
 
         embed: discord.Embed = discord.Embed(title=data["title"], url=data["url"]).set_image(url=data["url"])

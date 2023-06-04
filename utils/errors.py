@@ -11,3 +11,7 @@ class MaintenanceError(commands.CheckFailure):
 
 class NoSubredditFound(commands.CheckFailure):
     pass
+
+
+class NoValidDefinition(commands.CheckFailure):
+    pass

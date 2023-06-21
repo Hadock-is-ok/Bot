@@ -217,7 +217,7 @@ class Utility(commands.Cog):
         file: discord.File = discord.File(bytes, "spotify.png")
         artists: str = ", ".join(spotify.artists)
 
-        embed: discord.Embed = discord.Embed(description=f"**{spotify.title}** by **{artists}**")
+        embed: discord.Embed = discord.Embed(description=f"**{discord.utils.escape_markdown(spotify.title)}** by **{discord.utils.escape_markdown(artists)}**")
         embed.set_author(
             name=f"{discord.utils.escape_markdown(member.display_name)}'s Spotify", icon_url=member.display_avatar.url
         )
@@ -229,7 +229,7 @@ class Utility(commands.Cog):
     async def support(self, ctx: AloneContext) -> None:
         embed: discord.Embed = discord.Embed(
             title="Support",
-            description="Join my [support server]({self.bot.support_server})!",
+            description=f"Join my [support server]({self.bot.support_server})!",
         )
         await ctx.reply(embed=embed, view=SupportView(self.bot.support_server))
 

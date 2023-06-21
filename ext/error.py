@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from bot import AloneBot
     from utils import AloneContext
 
+
 # curious how this file defines what i am, an error :)
 class Error(commands.Cog):
     def __init__(self, bot: AloneBot) -> None:

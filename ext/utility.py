@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, List, Optional, Union
 import discord
 from discord.ext import commands
 
-from bot import Todo as Todo_class, BOILERPLATE_GUILD_CONFIG
+from bot import BOILERPLATE_GUILD_CONFIG, TODO_DATA
 from utils import GithubButton, InviteView, SourceButton, SupportView
 
 if TYPE_CHECKING:
@@ -36,7 +36,7 @@ class Utility(commands.Cog):
         await ctx.reply(f"**AFK**\nYou are now afk{fmt}")
 
     @commands.command(aliases=["av", "pfp"])
-    async def avatar(self, ctx: AloneContext, member: Union[discord.Member, discord.User] = commands.Author) -> None:
+    async def avatar(self, ctx: AloneContext, *, member: Union[discord.Member, discord.User] = commands.Author) -> None:
         embed: discord.Embed = discord.Embed(title=f"{member.display_name}'s avatar")
         embed.set_image(url=member.avatar.url)  # type: ignore
 
@@ -189,7 +189,7 @@ class Utility(commands.Cog):
 
         source: str = inspect.getsource(command.callback)
         source_lines: tuple[list[str], int] = inspect.getsourcelines(command.callback)
-        file_name: str | None = inspect.getsourcefile(command.callback).split("/")[5]  # type: ignore
+        file_name: str | None = command.callback.__module__.replace(".", "/") + ".py"
         embed: discord.Embed = discord.Embed(
             title=f"Source for {command.name}",
             description=await ctx.create_codeblock(source),
@@ -235,7 +235,7 @@ class Utility(commands.Cog):
 
     @commands.group(invoke_without_command=True)
     async def todo(self, ctx: AloneContext) -> discord.Message | None:
-        user_todo: List[Todo_class] | None = self.bot.todos.get(ctx.author.id)
+        user_todo: List[TODO_DATA] | None = self.bot.todos.get(ctx.author.id)
         if not user_todo:
             return await ctx.reply("You don't have a to-do list!")
 
@@ -249,8 +249,8 @@ class Utility(commands.Cog):
     @todo.command(name="add")
     async def todo_add(self, ctx: AloneContext, *, text: Optional[str]) -> None:
         assert text
-        task: Todo_class = Todo_class(text, ctx.message.jump_url)
-        user_todo: List[Todo_class] = self.bot.todos.setdefault(ctx.author.id, [])
+        task: TODO_DATA = TODO_DATA(text, ctx.message.jump_url)
+        user_todo: List[TODO_DATA] = self.bot.todos.setdefault(ctx.author.id, [])
         user_todo.append(task)
 
         await self.bot.db.execute(
@@ -263,7 +263,7 @@ class Utility(commands.Cog):
 
     @todo.command(name="remove")
     async def todo_remove(self, ctx: AloneContext, todo_number: Optional[int]) -> discord.Message | None:
-        user_todo: List[Todo_class] | None = self.bot.todos.get(ctx.author.id)
+        user_todo: List[TODO_DATA] | None = self.bot.todos.get(ctx.author.id)
         if not user_todo:
             return await ctx.reply("You don't have a to-do list!")
 

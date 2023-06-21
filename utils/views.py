@@ -56,7 +56,7 @@ class SourceButton(discord.ui.View):
             discord.ui.Button(
                 emoji="<:GitHub:1019435755979935794>",
                 label="Source",
-                url=f"{self.ctx.bot.github_link}/tree/master/ext/{file_name}#L{source_lines[1]}-L{len(source_lines[0])+source_lines[1]}",
+                url=f"{self.ctx.bot.github_link}/tree/master/{file_name}#L{source_lines[1]}-L{len(source_lines[0])+source_lines[1]}",
             )
         )
 
@@ -106,3 +106,6 @@ class InviteView(discord.ui.View):
         super().__init__(timeout=None)
 
         self.add_item(discord.ui.Button(label="Invite", url=discord.utils.oauth_url(bot_id)))
+
+
+# TODO: EDIT THIS SHIT YOU FUCKING LAZY BITCH

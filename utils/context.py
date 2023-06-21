@@ -36,7 +36,7 @@ class AloneContext(commands.Context['AloneBot']):
         content: str | None = None,
         add_button_view: bool = True,
         **kwargs: Any,
-    ) -> discord.Message | Any:
+    ) -> discord.Message:
         embed: Optional[discord.Embed] = kwargs.get("embed")
         if embed:
             if not embed.color:
@@ -60,28 +60,11 @@ class AloneContext(commands.Context['AloneBot']):
                 view = kwargs["view"] = DeleteView(self)
                 view.add_item(_view.children[0])
 
-        if not self.bot.bot_messages_cache.get(self.message):
-            self.bot.bot_messages_cache[self.message] = message = await super().send(content, **kwargs)
-            return message
-
-        else:
-            message: Any = self.bot.bot_messages_cache.get(self.message)
-            edit_kwargs: dict[str, Any] = {key: value for key, value in kwargs.items() if key in BASE_KWARGS}
-            edit_kwargs["content"] = content
-            edit_kwargs["embeds"] = (kwargs.pop("embeds", [])) or (
-                [kwargs.pop("embed")] if kwargs.get("embed", None) else []
-            )
-
-            try:
-                self.bot.bot_messages_cache[self.message] = message = await self.bot.bot_messages_cache[self.message].edit(
-                    **edit_kwargs
-                )
-                return message
-
-            except discord.HTTPException:
-                self.bot.bot_messages_cache[self.message] = message = await super().send(content, **kwargs)
-                return message
+        return await super().send(content, **kwargs)
 
     async def create_codeblock(self, content: str) -> str:
         fmt: LiteralString = "`" * 3
         return f"{fmt}py\n{content}{fmt}"
+
+
+# TODO: THIS TOO MF

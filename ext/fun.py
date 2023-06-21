@@ -39,7 +39,7 @@ class Fun(commands.Cog):
         async with self.bot.session.get("https://api.urbandictionary.com/v0/define", params={"term": word}) as response:
             data: Any = await response.json()
             try:
-               word_info: Any = data["list"][0]
+                word_info: Any = data["list"][0]
             except IndexError:
                 return await ctx.reply("I couldn't find a definition for that word.")
             else:

@@ -15,7 +15,7 @@ from discord.ext import commands
 from utils.context import AloneContext
 
 
-class Todo(NamedTuple):
+class TODO_DATA(NamedTuple):
     content: str
     jump_url: str
 
@@ -56,7 +56,7 @@ class AloneBot(commands.AutoShardedBot):
         self.blacklisted_users: Dict[int, str] = {}
         self.bypass_cooldown_users: List[int] = []
         self.afk_users: Dict[int, str] = {}
-        self.todos: Dict[int, List[Todo]] = {}
+        self.todos: Dict[int, List[TODO_DATA]] = {}
         self.user_prefixes: Dict[int, List[str]] = {}
         self.guild_configs: Dict[int, DEFAULT_GUILD_CONFIG] = {}
         self.bot_messages_cache: TTLCache[discord.Message, discord.Message] = TTLCache(maxsize=2000, ttl=300.0)
@@ -136,7 +136,7 @@ class AloneBot(commands.AutoShardedBot):
 
         records = await self.db.fetch("SELECT * FROM todo")
         for user_id, content, jump_url in records:
-            self.todos.setdefault(user_id, []).append(Todo(content, jump_url))
+            self.todos.setdefault(user_id, []).append(TODO_DATA(content, jump_url))
 
         records = await self.db.fetch("SELECT * FROM afk")
         self.afk_users = {user_id: reason for user_id, reason in records}

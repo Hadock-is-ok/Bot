@@ -65,6 +65,3 @@ class AloneContext(commands.Context['AloneBot']):
     async def create_codeblock(self, content: str) -> str:
         fmt: LiteralString = "`" * 3
         return f"{fmt}py\n{content}{fmt}"
-
-
-# TODO: THIS TOO MF

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from discord import Embed
+import discord
 from discord.ext import commands
 
 from utils import BlacklistedError, MaintenanceError, NoSubredditFound
@@ -40,7 +40,7 @@ class Error(commands.Cog):
 
         elif isinstance(error, commands.CheckFailure):
             await ctx.reply(
-                embed=Embed(
+                embed=discord.Embed(
                     title="Error",
                     description="You do not have permission to run this command!",
                     color=0xF02E2E,
@@ -57,7 +57,7 @@ class Error(commands.Cog):
             else:
                 guild: str = ""
             self.bot.logger.error("An error occurred", exc_info=error)
-            embed: Embed = Embed(
+            embed: discord.Embed = discord.Embed(
                 title=f"Ignoring exception in {ctx.command}:",
                 description=f"```py\n{error}```\nThe developers have receieved this error and will fix it.",
                 color=0xF02E2E,

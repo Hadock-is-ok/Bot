@@ -106,6 +106,3 @@ class InviteView(discord.ui.View):
         super().__init__(timeout=None)
 
         self.add_item(discord.ui.Button(label="Invite", url=discord.utils.oauth_url(bot_id)))
-
-
-# TODO: EDIT THIS SHIT YOU FUCKING LAZY BITCH

@@ -38,7 +38,7 @@ class Utility(commands.Cog):
     @commands.command(aliases=["av", "pfp"])
     async def avatar(self, ctx: AloneContext, *, member: Union[discord.Member, discord.User] = commands.Author) -> None:
         embed: discord.Embed = discord.Embed(title=f"{member.display_name}'s avatar")
-        embed.set_image(url=member.avatar.url)  # type: ignore
+        embed.set_image(url=member.display_avatar.url)  # type: ignore
 
         await ctx.reply(embed=embed)
 

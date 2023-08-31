@@ -98,6 +98,10 @@ class AloneBot(commands.AutoShardedBot):
         )
         if not self.db:
             raise RuntimeError("Couldn't connect to database!")
+        
+        # Loading schemal.sql
+        with open("schema.sql") as file:
+            await self.pool.execute(file.read())
 
         await self.load_extension("jishaku")
         for file in pathlib.Path('ext').glob('**/*.py'):

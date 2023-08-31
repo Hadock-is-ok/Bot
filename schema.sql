@@ -35,4 +35,4 @@ CREATE TABLE IF NOT EXISTS voice (
     user_id BIGINT,
     channel_id BIGINT,
     enabled BOOLEAN
-)
+);

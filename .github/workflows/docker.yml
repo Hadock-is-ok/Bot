@@ -1,0 +1,25 @@
+name: Docker CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into server and update the bot
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_IP }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: 22
+          script: |
+            cd Alone-Bot
+            git pull
+            docker build -t alone-bot .
+            docker stop alone-bot
+            docker rm alone-bot
+            docker run --name alone-bot -d alone-bot

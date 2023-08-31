@@ -101,7 +101,7 @@ class AloneBot(commands.AutoShardedBot):
         
         # Loading schemal.sql
         with open("schema.sql") as file:
-            await self.pool.execute(file.read())
+            await self.db.execute(file.read())
 
         await self.load_extension("jishaku")
         for file in pathlib.Path('ext').glob('**/*.py'):

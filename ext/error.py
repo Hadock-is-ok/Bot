@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import discord
 from discord.ext import commands
@@ -12,7 +12,6 @@ if TYPE_CHECKING:
     from utils import AloneContext
 
 
-# curious how this file defines what i am, an error :)
 class Error(commands.Cog):
     def __init__(self, bot: AloneBot) -> None:
         self.bot: AloneBot = bot
@@ -51,7 +50,7 @@ class Error(commands.Cog):
             await ctx.reply(f"You are on cooldown. Try again in {error.retry_after:.2f}s")
 
         else:
-            channel: Any = self.bot.get_log_webhook()
+            channel: discord.Webhook = self.bot.get_log_webhook()
             if ctx.guild:
                 guild: str = f"Guild ID: {ctx.guild.id}\n"
             else:

@@ -14,23 +14,6 @@ class Events(commands.Cog):
         self.bot: AloneBot = bot
 
     @commands.Cog.listener()
-    async def on_ready(self) -> None:
-        fmt: str = self.bot.format_print("Alone Bot")
-        assert self.bot.user
-
-        print(
-            f"{fmt} | Ready",
-            "|--------------------------------------------------|",
-            "Name: Alone Bot",
-            f"ID: {self.bot.user.id}",
-            f"Users: {len(self.bot.users)}",
-            f"Guilds: {len(self.bot.guilds)}",
-            f"Support Server: {self.bot.support_server}",
-            "|--------------------------------------------------|",
-            sep="\n",
-        )
-
-    @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild) -> None:
         channel: Any = self.bot.get_log_webhook()
         bots: int = sum(member.bot for member in guild.members)

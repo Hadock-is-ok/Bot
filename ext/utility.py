@@ -38,7 +38,7 @@ class Utility(commands.Cog):
     @commands.command(aliases=["av", "pfp"])
     async def avatar(self, ctx: AloneContext, *, member: Union[discord.Member, discord.User] = commands.Author) -> None:
         embed: discord.Embed = discord.Embed(title=f"{member.display_name}'s avatar")
-        embed.set_image(url=member.display_avatar.url)  # type: ignore
+        embed.set_image(url=member.display_avatar.url)
 
         await ctx.reply(embed=embed)
 
@@ -217,7 +217,9 @@ class Utility(commands.Cog):
         file: discord.File = discord.File(bytes, "spotify.png")
         artists: str = ", ".join(spotify.artists)
 
-        embed: discord.Embed = discord.Embed(description=f"**{discord.utils.escape_markdown(spotify.title)}** by **{discord.utils.escape_markdown(artists)}**")
+        embed: discord.Embed = discord.Embed(
+            description=f"**{discord.utils.escape_markdown(spotify.title)}** by **{discord.utils.escape_markdown(artists)}**"
+        )
         embed.set_author(
             name=f"{discord.utils.escape_markdown(member.display_name)}'s Spotify", icon_url=member.display_avatar.url
         )

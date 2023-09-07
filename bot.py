@@ -77,8 +77,8 @@ class AloneBot(commands.AutoShardedBot):
         if user_prefixes:
             prefixes.extend(user_prefixes)
 
-        if message.guild and not (guild_prefix := self.guild_configs.get(message.guild.id, {}).get("prefix")) is None:
-            prefixes.append(guild_prefix)
+        if message.guild and (guild_prefix := self.guild_configs.get(message.guild.id)) is not None:
+            prefixes.append(guild_prefix.get("prefix"))
 
         if not message.guild or message.author.id in self.owner_ids:
             prefixes.append("")
@@ -98,7 +98,7 @@ class AloneBot(commands.AutoShardedBot):
         )
         if not self.db:
             raise RuntimeError("Couldn't connect to database!")
-        
+
         # Loading schemal.sql
         with open("schema.sql") as file:
             await self.db.execute(file.read())

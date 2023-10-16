@@ -210,6 +210,7 @@ class Utility(commands.Cog):
             "duration_seconds": spotify.duration.seconds,
             "start_timestamp": spotify.start.timestamp(),
             "artists": spotify.artists,
+            "authorization": self.bot.jeyy_key,
         }
         async with self.bot.session.get("https://api.jeyy.xyz/discord/spotify", params=params) as response:
             bytes = BytesIO(await response.read())

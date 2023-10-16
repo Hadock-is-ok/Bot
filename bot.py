@@ -40,7 +40,7 @@ BOILERPLATE_GUILD_CONFIG: DEFAULT_GUILD_CONFIG = {
 class AloneBot(commands.AutoShardedBot):
     INITAL_EXTENSIONS: List[str] = []
     DEFAULT_PREFIXES: ClassVar[List[str]] = ["Alone", "alone"]
-    owner_ids: List[int]
+    owner_ids: List[int] # type: ignore
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(
@@ -99,7 +99,7 @@ class AloneBot(commands.AutoShardedBot):
         if not self.db:
             raise RuntimeError("Couldn't connect to database!")
 
-        # Loading schemal.sql
+        # Loading schema.sql
         with open("schema.sql") as file:
             await self.db.execute(file.read())
 
@@ -148,6 +148,8 @@ class AloneBot(commands.AutoShardedBot):
         records = await self.db.fetch("SELECT * FROM mentions")
         for user_id in records:
             self.bypass_cooldown_users.append(user_id)
+        
+        self.jeyy_key = os.environ["jeyy_key"]
 
     async def close(self) -> None:
         await self.session.close()

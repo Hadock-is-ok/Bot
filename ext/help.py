@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 class _Help(commands.HelpCommand):
     if TYPE_CHECKING:
-        context: AloneContext
+        context: AloneContext # type: ignore
 
     def get_command_signature(self, command: commands.Command[Any, ..., Any], /) -> str:
         return f"{command.qualified_name}"

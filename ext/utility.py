@@ -212,7 +212,7 @@ class Utility(commands.Cog):
             "start_timestamp": spotify.start.timestamp(),
             "artists": spotify.artists,
         }
-        async with self.bot.session.get("https://api.jeyy.xyz/discord/spotify", params=params, headers=headers) as response:
+        async with self.bot.session.get("https://api.jeyy.xyz/v2/discord/spotify", params=params, headers=headers) as response:
             bytes = BytesIO(await response.read())
 
         file: discord.File = discord.File(bytes, "spotify.png")

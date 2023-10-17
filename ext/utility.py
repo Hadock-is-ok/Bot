@@ -204,15 +204,15 @@ class Utility(commands.Cog):
         if not spotify:
             return await ctx.reply(f"{member.display_name} isn't listening to Spotify!")
 
+        headers: dict[str, str] = {"Authorization": f"Bearer {self.bot.jeyy_key}"}
         params: dict[str, Any] = {
             "title": spotify.title,
             "cover_url": spotify.album_cover_url,
             "duration_seconds": spotify.duration.seconds,
             "start_timestamp": spotify.start.timestamp(),
             "artists": spotify.artists,
-            "authorization": self.bot.jeyy_key,
         }
-        async with self.bot.session.get("https://api.jeyy.xyz/discord/spotify", params=params) as response:
+        async with self.bot.session.get("https://api.jeyy.xyz/discord/spotify", params=params, headers=headers) as response:
             bytes = BytesIO(await response.read())
 
         file: discord.File = discord.File(bytes, "spotify.png")

@@ -17,9 +17,8 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: 22
           script: |
-            cd Alone-Bot
+            cd personal
+            cd Bot
+            sudo docker compose down
             git pull
-            docker build -t alone-bot .
-            docker stop alone-bot
-            docker rm alone-bot
-            docker run --name alone-bot -d alone-bot
+            sudo docker compose up

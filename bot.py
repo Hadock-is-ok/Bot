@@ -48,7 +48,7 @@ class AloneBot(commands.AutoShardedBot):
             strip_after_prefix=True,
             allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, users=False, replied_user=False),
             case_insensitive=True,
-            owner_ids=[412734157819609090],
+            owner_ids=[412734157819609090, 1022842005920940063],
             *args,
             **kwargs,
         )

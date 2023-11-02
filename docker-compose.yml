@@ -23,6 +23,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - .:/main:ro
     depends_on:
       - postgres
     env_file:
@@ -33,6 +35,3 @@ services:
       JISHAKU_NO_UNDERSCORE: "True"
       JISHAKU_FORCE_PAGINATOR: "True"
       JISHAKU_NO_DM_TRACEBACK: "True"
-
-volumes:
-  pg_data:

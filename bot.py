@@ -80,7 +80,7 @@ class AloneBot(commands.AutoShardedBot):
         if message.guild and (guild_prefix := self.guild_configs.get(message.guild.id)) is not None:
             prefixes.append(guild_prefix.get("prefix"))
 
-        if not message.guild or message.author.id in self.owner_ids:
+        if not message.guild:
             prefixes.append("")
 
         return commands.when_mentioned_or(*prefixes)(self, message)

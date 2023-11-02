@@ -52,7 +52,7 @@ class AloneBot(commands.AutoShardedBot):
             **kwargs,
         )
 
-        self.owner_ids=[412734157819609090, 1022842005920940063],
+        self.owner_ids=[412734157819609090, 1022842005920940063]
         self.blacklisted_users: Dict[int, str] = {}
         self.bypass_cooldown_users: List[int] = []
         self.afk_users: Dict[int, str] = {}

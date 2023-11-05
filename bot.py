@@ -40,7 +40,7 @@ BOILERPLATE_GUILD_CONFIG: DEFAULT_GUILD_CONFIG = {
 class AloneBot(commands.AutoShardedBot):
     INITAL_EXTENSIONS: List[str] = []
     DEFAULT_PREFIXES: ClassVar[List[str]] = ["Alone", "alone"]
-    owner_ids: List[int] # type: ignore
+    owner_ids: List[int]
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(
@@ -52,7 +52,7 @@ class AloneBot(commands.AutoShardedBot):
             **kwargs,
         )
 
-        self.owner_ids=[412734157819609090, 1022842005920940063]
+        self.owner_ids=[412734157819609090, 1022842005920940063] # type: ignore
         self.blacklisted_users: Dict[int, str] = {}
         self.bypass_cooldown_users: List[int] = []
         self.afk_users: Dict[int, str] = {}

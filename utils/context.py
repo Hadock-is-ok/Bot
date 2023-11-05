@@ -40,7 +40,7 @@ class AloneContext(commands.Context['AloneBot']):
         embed: Optional[discord.Embed] = kwargs.get("embed")
         if embed:
             if not embed.color:
-                embed.color = discord.Color.random()
+                embed.color = self.author.color
 
             if not embed.footer:
                 embed.set_footer(

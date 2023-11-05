@@ -97,7 +97,7 @@ class CogSelect(discord.ui.View):
         for command in cog.get_commands():
             command_list += f"{command.name}\n"
 
-        embed: discord.Embed = discord.Embed(title=cog.qualified_name, description=command_list)
+        embed: discord.Embed = discord.Embed(title=cog.qualified_name, description=command_list, color=interaction.user.color)
         await interaction.response.edit_message(embed=embed)
 
 

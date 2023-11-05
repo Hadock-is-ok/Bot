@@ -83,7 +83,7 @@ class Utility(commands.Cog):
         end = perf_counter()
         database_ping: float = end - start
 
-        embed: discord.Embed = discord.Embed(title="Ping", color=discord.Color.random())
+        embed: discord.Embed = discord.Embed(title="Ping")
         embed.add_field(
             name="<a:typing:1041021440352337991> | Typing",
             value=await ctx.create_codeblock(f"{typing_ping:.2f}ms"),
@@ -296,7 +296,6 @@ class Utility(commands.Cog):
         embed: discord.Embed = discord.Embed(
             title="Current Uptime",
             description=f"Uptime: {days}d, {hours}h, {minutes}m, {seconds}s\n\nStartup Time: <t:{timestamp}:F>",
-            color=0x88FF44,
         )
         await ctx.reply(embed=embed)
 

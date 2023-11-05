@@ -48,7 +48,7 @@ class _Help(commands.HelpCommand):
 
     async def send_command_help(self, command: commands.Command[Any, ..., Any], /) -> None:
         command_name: str = self.get_command_signature(command)
-        embed: discord.Embed = discord.Embed(title=command_name, color=discord.Color.blurple())
+        embed: discord.Embed = discord.Embed(title=command_name)
         embed.add_field(name="Description of the command", value=command.help)
         alias: List[str] | Tuple[str] = command.aliases
         if alias:
@@ -63,7 +63,7 @@ class _Help(commands.HelpCommand):
         await self.context.reply(embed=embed)
 
     async def send_group_help(self, group: commands.Group[Any, ..., Any], /) -> None:
-        embed: discord.Embed = discord.Embed(title=group, color=discord.Color.blurple())
+        embed: discord.Embed = discord.Embed(title=group)
         embed.add_field(
             name="Subcommands",
             value=", ".join([command.name for command in group.walk_commands()]),

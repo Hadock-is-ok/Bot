@@ -52,7 +52,7 @@ class AloneBot(commands.AutoShardedBot):
             **kwargs,
         )
 
-        self.owner_ids=[412734157819609090, 1022842005920940063] # type: ignore
+        self.owner_ids = [412734157819609090, 1022842005920940063]  # type: ignore
         self.blacklisted_users: Dict[int, str] = {}
         self.bypass_cooldown_users: List[int] = []
         self.afk_users: Dict[int, str] = {}
@@ -148,7 +148,7 @@ class AloneBot(commands.AutoShardedBot):
         records = await self.db.fetch("SELECT * FROM mentions")
         for user_id in records:
             self.bypass_cooldown_users.append(user_id)
-        
+
         self.jeyy_key = os.environ["jeyy_key"]
 
     async def close(self) -> None:

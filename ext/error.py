@@ -52,7 +52,7 @@ class Error(commands.Cog):
         else:
             channel: discord.Webhook = self.bot.get_log_webhook()
             if ctx.guild:
-                guild: str = f"Guild ID: {ctx.guild.id}\n"
+                guild: str = f"Guild ID: {ctx.guild.id}"
             else:
                 guild: str = ""
             self.bot.logger.error("An error occurred", exc_info=error)

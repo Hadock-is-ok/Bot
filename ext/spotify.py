@@ -29,7 +29,7 @@ class SpotifyCog(commands.Cog):
             return
 
         embed: discord.Embed = discord.Embed(
-            title="Hadock's Spotify status", description=f"[{spotify.track_url}]({spotify.title})", color=spotify.color
+            title="Hadock's Spotify status", description=f"[{spotify.title}]({spotify.track_url})", color=spotify.color
         )
         embed.set_thumbnail(url=spotify.album_cover_url)
         await music_channel.send(embed=embed)

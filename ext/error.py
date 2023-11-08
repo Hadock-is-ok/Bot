@@ -64,7 +64,7 @@ class Error(commands.Cog):
             embed.set_author(name=f"{ctx.author.name}", icon_url=ctx.author.display_avatar)
             embed.add_field(
                 name="Information",
-                value=f"Error Name: {type(error).__name__}\nError Type: {type(error)}\nMessage: {ctx.message.content}\n{guild}Channel ID: {ctx.channel.id}",
+                value=f"Error Name: {type(error).__name__}\nMessage: {ctx.message.content}\n{guild}\nChannel ID: {ctx.channel.id}",
             )
 
             await channel.send(

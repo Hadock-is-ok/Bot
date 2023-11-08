@@ -25,7 +25,7 @@ class SpotifyCog(commands.Cog):
         if not spotify:
             return
 
-        if not random.randint(1, 10) == random.randint(1, 10):
+        if not random.randint(1, 30) == random.randint(1, 30):
             return
 
         embed: discord.Embed = discord.Embed(

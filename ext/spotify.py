@@ -1,11 +1,9 @@
 import random
-import typing
 
 import discord
 from discord.ext import commands
 
-if typing.TYPE_CHECKING:
-    from bot import AloneBot
+from bot import AloneBot
 
 
 class SpotifyCog(commands.Cog):

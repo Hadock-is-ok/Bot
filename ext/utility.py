@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import inspect
-from datetime import datetime
 from io import BytesIO
 from random import choice
 from time import perf_counter
@@ -290,7 +289,7 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def uptime(self, ctx: AloneContext) -> None:
-        uptime = datetime.utcnow() - self.bot.launch_time
+        uptime = discord.utils.utcnow() - self.bot.launch_time
         hours, remainder = divmod(int(uptime.total_seconds()), 3600)
         minutes, seconds = divmod(remainder, 60)
         days, hours = divmod(hours, 24)

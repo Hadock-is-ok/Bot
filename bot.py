@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import datetime
 import logging
 import os
 import pathlib
@@ -69,7 +68,7 @@ class AloneBot(commands.AutoShardedBot):
         self.maintenance: Optional[str] = None
 
         self.command_counter: int = 0
-        self.launch_time: datetime.datetime = datetime.datetime.utcnow()
+        self.launch_time = discord.utils.utcnow()
 
     async def get_prefix(self, message: discord.Message, /) -> List[str] | str:
         prefixes: List[str] = self.DEFAULT_PREFIXES.copy()
@@ -181,5 +180,5 @@ class AloneBot(commands.AutoShardedBot):
             return "There's no owner with that ID!"
 
     def format_print(self, text: str) -> str:
-        fmt: str = datetime.datetime.utcnow().strftime("%x | %X") + f" | {text}"
+        fmt: str = discord.utils.utcnow().strftime("%x | %X") + f" | {text}"
         return fmt

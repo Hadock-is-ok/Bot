@@ -48,6 +48,10 @@ class Utility(commands.Cog):
     @commands.command()
     async def cleanup(self, ctx: AloneContext, limit: Optional[int] = 50) -> None:
         bulk: bool = ctx.channel.permissions_for(ctx.me).manage_messages  # type: ignore
+        if type(ctx.channel) == discord.DMChannel:
+            async for message in ctx.channel.history(limit=limit):
+                if message.author == ctx.me:
+                    await message.delete()
         await ctx.channel.purge(bulk=bulk, check=lambda m: m.author == ctx.me, limit=limit)  # type: ignore
         await ctx.message.add_reaction(ctx.Emojis.check)
 

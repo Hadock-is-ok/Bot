@@ -47,14 +47,14 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def cleanup(self, ctx: AloneContext, limit: int = 50) -> None:
-        if not ctx.guild:
+        if not ctx.guild or isinstance(ctx.author, discord.User):
             async for message in ctx.channel.history(limit=limit):
                 if message.author == ctx.me:
                     await message.delete()
             return await ctx.message.add_reaction(ctx.Emojis.check)
 
         bulk: bool = ctx.channel.permissions_for(ctx.guild.me).manage_messages
-        if bulk:
+        if ctx.channel.permissions_for(ctx.author).manage_messages:
             limit = 100
 
         await ctx.channel.purge(bulk=bulk, check=lambda m: m.author == ctx.me, limit=limit)  # type: ignore

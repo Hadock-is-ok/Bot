@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import inspect
 from io import BytesIO
 from random import choice

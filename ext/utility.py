@@ -1,20 +1,22 @@
-from __future__ import annotations
-
 import inspect
 from io import BytesIO
 from random import choice
 from time import perf_counter
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Any, List, Optional, Union, LiteralString
 
 import discord
 from discord.ext import commands
 
-from bot import BOILERPLATE_GUILD_CONFIG, TODO_DATA
+from bot import TodoData
 from utils import GithubButton, InviteView, SourceButton, SupportView
 
 if TYPE_CHECKING:
     from bot import AloneBot
     from utils import AloneContext
+
+async def create_codeblock(content: str) -> str:
+    fmt: LiteralString = "`" * 3
+    return f"{fmt}py\n{content}{fmt}"
 
 
 class Utility(commands.Cog):
@@ -31,7 +33,7 @@ class Utility(commands.Cog):
         else:
             fmt = "."
 
-        await ctx.message.add_reaction(ctx.Emojis.check)
+        await ctx.message.add_reaction(ctx.emojis["check"])
         await ctx.reply(f"**AFK**\nYou are now afk{fmt}")
 
     @commands.command(aliases=["av", "pfp"])
@@ -51,14 +53,14 @@ class Utility(commands.Cog):
             async for message in ctx.channel.history(limit=limit):
                 if message.author == ctx.me:
                     await message.delete()
-            return await ctx.message.add_reaction(ctx.Emojis.check)
+            return await ctx.message.add_reaction(ctx.emojis["check"])
 
         bulk: bool = ctx.channel.permissions_for(ctx.guild.me).manage_messages
         if ctx.channel.permissions_for(ctx.author).manage_messages:
             limit = 100
 
         await ctx.channel.purge(bulk=bulk, check=lambda m: m.author == ctx.me, limit=limit)  # type: ignore
-        await ctx.message.add_reaction(ctx.Emojis.check)
+        await ctx.message.add_reaction(ctx.emojis["check"])
 
     @commands.command()
     async def invite(self, ctx: AloneContext, bot_id: Optional[int]) -> discord.Message | None:
@@ -94,15 +96,15 @@ class Utility(commands.Cog):
         embed: discord.Embed = discord.Embed(title="Ping")
         embed.add_field(
             name="<a:typing:1041021440352337991> | Typing",
-            value=await ctx.create_codeblock(f"{typing_ping:.2f}ms"),
+            value=await create_codeblock(f"{typing_ping:.2f}ms"),
         )
         embed.add_field(
             name="<a:loading:1041021510590152834> | Websocket",
-            value=await ctx.create_codeblock(f"{websocket_ping:.2f}ms"),
+            value=await create_codeblock(f"{websocket_ping:.2f}ms"),
         )
         embed.add_field(
             name="<:PostgreSQL:1019435339124850708> | Database",
-            value=await ctx.create_codeblock(f"{database_ping:.2f}ms"),
+            value=await create_codeblock(f"{database_ping:.2f}ms"),
         )
 
         await message.edit(content=None, embed=embed)
@@ -122,7 +124,7 @@ class Utility(commands.Cog):
         prefix_list.append(prefix)
 
         await self.bot.db.execute("INSERT INTO prefix VALUES ($1, $2)", ctx.author.id, prefix)
-        await ctx.message.add_reaction(ctx.Emojis.check)
+        await ctx.message.add_reaction(ctx.emojis["check"])
 
     @prefix.command(name="guild")
     async def prefix_guild(self, ctx: AloneContext, *, prefix: Optional[str]) -> discord.Message | None:
@@ -130,24 +132,24 @@ class Utility(commands.Cog):
             raise commands.NoPrivateMessage("This is a guild only command!")
 
         if not prefix or "remove" in prefix.lower():
-            guild_config: Any = self.bot.guild_configs.get(ctx.guild.id, None)
-            if not guild_config or not guild_config.get("prefix", None):
+            guild_config: Any = self.bot.guild_prefixes.get(ctx.guild.id, None)
+            if not guild_config:
                 return await ctx.reply("There is no guild prefix to remove!")
 
             await self.bot.db.execute("UPDATE guilds SET prefix = NULL WHERE guild_id = $1", ctx.guild.id)
-            await ctx.message.add_reaction(ctx.Emojis.check)
+            await ctx.message.add_reaction(ctx.emojis["check"])
             return await ctx.reply("The prefix for this guild has been removed.")
 
         if len(prefix) > 5:
             return await ctx.reply("You can't have a prefix that's longer than 5 characters, sorry!")
 
-        self.bot.guild_configs.setdefault(ctx.guild.id, BOILERPLATE_GUILD_CONFIG)["prefix"] = prefix
+        self.bot.guild_prefixes[ctx.guild.id] = prefix
         await self.bot.db.execute(
             "INSERT INTO guilds VALUES ($1, $2) ON CONFLICT DO UPDATE guilds SET prefix = $2 WHERE guild_id = $1",
             ctx.guild.id,
             prefix,
         )
-        await ctx.message.add_reaction(ctx.Emojis.check)
+        await ctx.message.add_reaction(ctx.emojis["check"])
         await ctx.reply(f"The prefix for this guild is now `{prefix}`")
 
     @prefix.command(name="remove")
@@ -159,7 +161,7 @@ class Utility(commands.Cog):
         if not prefix:
             self.bot.user_prefixes.pop(ctx.author.id)
             await self.bot.db.execute("DELETE FROM prefix WHERE user_id = $1", ctx.author.id)
-            return await ctx.message.add_reaction(ctx.Emojis.check)
+            return await ctx.message.add_reaction(ctx.emojis["check"])
 
         try:
             user_prefixes.remove(prefix)
@@ -168,9 +170,9 @@ class Utility(commands.Cog):
                 ctx.author.id,
                 prefix,
             )
-            await ctx.message.add_reaction(ctx.Emojis.check)
+            await ctx.message.add_reaction(ctx.emojis["check"])
         except ValueError:
-            await ctx.message.add_reaction(ctx.Emojis.x)
+            await ctx.message.add_reaction(ctx.emojis["x"])
             await ctx.reply("That's not one of your prefixes!")
 
     @commands.command(aliases=["server_info", "server info", "si", "guildinfo"])
@@ -200,7 +202,7 @@ class Utility(commands.Cog):
         file_name: str | None = command.callback.__module__.replace(".", "/") + ".py"
         embed: discord.Embed = discord.Embed(
             title=f"Source for {command.name}",
-            description=await ctx.create_codeblock(source),
+            description=await create_codeblock(source),
         )
         await ctx.reply(embed=embed, view=SourceButton(ctx, source_lines, file_name))
 
@@ -248,7 +250,7 @@ class Utility(commands.Cog):
 
     @commands.group(invoke_without_command=True)
     async def todo(self, ctx: AloneContext) -> discord.Message | None:
-        user_todo: List[TODO_DATA] | None = self.bot.todos.get(ctx.author.id)
+        user_todo: List[TodoData] | None = self.bot.todos.get(ctx.author.id)
         if not user_todo:
             return await ctx.reply("You don't have a to-do list!")
 
@@ -262,8 +264,8 @@ class Utility(commands.Cog):
     @todo.command(name="add")
     async def todo_add(self, ctx: AloneContext, *, text: Optional[str]) -> None:
         assert text
-        task: TODO_DATA = TODO_DATA(text, ctx.message.jump_url)
-        user_todo: List[TODO_DATA] = self.bot.todos.setdefault(ctx.author.id, [])
+        task: TodoData = TodoData(text, ctx.message.jump_url)
+        user_todo: List[TodoData] = self.bot.todos.setdefault(ctx.author.id, [])
         user_todo.append(task)
 
         await self.bot.db.execute(
@@ -272,18 +274,18 @@ class Utility(commands.Cog):
             text,
             ctx.message.jump_url,
         )
-        await ctx.message.add_reaction(ctx.Emojis.check)
+        await ctx.message.add_reaction(ctx.emojis["check"])
 
     @todo.command(name="remove")
     async def todo_remove(self, ctx: AloneContext, todo_number: Optional[int]) -> discord.Message | None:
-        user_todo: List[TODO_DATA] | None = self.bot.todos.get(ctx.author.id)
+        user_todo: List[TodoData] | None = self.bot.todos.get(ctx.author.id)
         if not user_todo:
             return await ctx.reply("You don't have a to-do list!")
 
         if not todo_number:
             self.bot.todos.pop(ctx.author.id)
             await self.bot.db.execute("DELETE FROM todo WHERE user_id = $1", ctx.author.id)
-            return await ctx.message.add_reaction(ctx.Emojis.check)
+            return await ctx.message.add_reaction(ctx.emojis["check"])
 
         for number, todo in enumerate(user_todo, start=1):
             if todo_number == number:
@@ -292,7 +294,7 @@ class Utility(commands.Cog):
                     await self.bot.db.execute(
                         "DELETE FROM todo WHERE user_id = $1 AND task = $2", ctx.author.id, todo.content
                     )
-                    await ctx.message.add_reaction(ctx.Emojis.check)
+                    await ctx.message.add_reaction(ctx.emojis["check"])
                 except KeyError:
                     await ctx.reply("That's not a task in your todo list!")
 

@@ -41,7 +41,6 @@ async def cooldown(ctx: AloneContext) -> Literal[True]:
     "A check that gets applied before commands to make sure a user hasn't ran too many commands in X amount of time."
     if (
         ctx.author.id in bot.owner_ids
-        or ctx.author.id in bot.bypass_cooldown_users
         or isinstance(ctx.author, discord.User)
         or ctx.channel.permissions_for(ctx.author).manage_messages
     ):

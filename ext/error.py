@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import TYPE_CHECKING
 
 import discord
@@ -22,7 +20,7 @@ class Error(commands.Cog):
         if isinstance(error, commands.CommandNotFound):
             return
 
-        await ctx.message.add_reaction(ctx.Emojis.x)
+        await ctx.message.add_reaction(self.bot._emojis["x"])
         if isinstance(error, BlacklistedError):
             reason: str | None = self.bot.blacklisted_users.get(ctx.author.id)
             await ctx.reply(

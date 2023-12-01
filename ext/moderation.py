@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any, Optional
 
 import discord
@@ -62,7 +60,7 @@ class Moderation(commands.Cog):
         assert ctx.guild
         user: discord.User = await self.bot.fetch_user(member_id)
         await ctx.guild.unban(user)
-        await ctx.message.add_reaction(ctx.Emojis.check)
+        await ctx.message.add_reaction(ctx.emojis["check"])
 
     @commands.command()
     @commands.bot_has_guild_permissions(kick_members=True)

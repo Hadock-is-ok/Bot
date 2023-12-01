@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import logging
 import os
 import pathlib
@@ -44,6 +42,8 @@ class AloneBot(commands.Bot):
             1, 1.5, commands.BucketType.member
         )
         self.support_server: str = os.environ["bot_guild"]
+        self.emoji_guild: int = int(os.environ["emoji_guild"])
+        self._emojis: dict[str, discord.Emoji] = {}
         self.log_webhook: str = os.environ["webhook_url"]
         self.github_link: str = os.environ["github"]
         self.maintenance: Optional[str] = None
@@ -78,6 +78,9 @@ class AloneBot(commands.Bot):
 
         with open("schema.sql") as file:
             await self.db.execute(file.read())
+        
+        for emoji in (await self.fetch_guild(self.emoji_guild)).emojis:
+            self._emojis[emoji.name] = emoji
 
         await self.load_extension("jishaku")
         for file in pathlib.Path('ext').glob('**/*.py'):
@@ -91,7 +94,6 @@ class AloneBot(commands.Bot):
                 self.logger.error(error, exc_info=error)
             else:
                 self.INITAL_EXTENSIONS.append(f"{'.'.join(tree)}.{file.stem}")
-
 
         records: list[Any]
         records = await self.db.fetch("SELECT user_id, array_agg(prefix) AS prefixes FROM prefix GROUP BY user_id")

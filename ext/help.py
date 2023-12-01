@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any, List, Mapping, Optional, Tuple
 
 import discord
@@ -59,7 +57,7 @@ class _Help(commands.HelpCommand):
     async def send_error_message(self, error: str, /) -> None:
         embed: discord.Embed = discord.Embed(title="Error", description=error, color=0xF02E2E)
         assert isinstance(self.context, AloneContext)
-        await self.context.message.add_reaction(self.context.Emojis.x)
+        await self.context.message.add_reaction(self.context.emojis["x"])
         await self.context.reply(embed=embed)
 
     async def send_group_help(self, group: commands.Group[Any, ..., Any], /) -> None:

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
 
 import discord
@@ -8,7 +6,7 @@ from discord.ext import commands
 if TYPE_CHECKING:
     from bot import AloneBot
 
-    from . import AloneContext
+    from utils import AloneContext
 
 
 class DeleteView(discord.ui.View):
@@ -45,7 +43,7 @@ class GithubButton(discord.ui.View):
     def __init__(self, ctx: AloneContext) -> None:
         super().__init__(timeout=None)
         self.ctx: AloneContext = ctx
-        self.add_item(discord.ui.Button(emoji="<:GitHub:1019435755979935794>", label="Github", url=self.ctx.bot.github_link))
+        self.add_item(discord.ui.Button(emoji="<:github:1019435755979935794>", label="GitHub", url=self.ctx.bot.github_link))
 
 
 class SourceButton(discord.ui.View):
@@ -54,7 +52,7 @@ class SourceButton(discord.ui.View):
         self.ctx: AloneContext = ctx
         self.add_item(
             discord.ui.Button(
-                emoji="<:GitHub:1019435755979935794>",
+                emoji="<:github:1019435755979935794>",
                 label="Source",
                 url=f"{self.ctx.bot.github_link}/tree/master/{file_name}#L{source_lines[1]}-L{len(source_lines[0])+source_lines[1]}",
             )

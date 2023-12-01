@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any, List, Optional
 
 import discord
@@ -20,7 +18,7 @@ class Owner(commands.Cog):
     @commands.command()
     async def maintenance(self, ctx: AloneContext, *, reason: Optional[str]) -> None:
         if not self.bot.maintenance:
-            await ctx.message.add_reaction(ctx.Emojis.check)
+            await ctx.message.add_reaction(ctx.emojis["check"])
             self.bot.maintenance = reason or "no reason provided"
 
             channel: Any = self.bot.get_log_webhook()
@@ -54,7 +52,7 @@ class Owner(commands.Cog):
         self.bot.blacklisted_users[member.id] = reason
         await self.bot.db.execute("INSERT INTO blacklist (user_id, reason) VALUES ($1, $2)", member.id, reason)
 
-        await ctx.message.add_reaction(ctx.Emojis.check)
+        await ctx.message.add_reaction(ctx.emojis["check"])
 
     @blacklist.command()
     async def remove(self, ctx: AloneContext, *, member: discord.Member) -> discord.Message | None:
@@ -62,20 +60,20 @@ class Owner(commands.Cog):
             self.bot.blacklisted_users.pop(member.id)
             await self.bot.db.execute("DELETE FROM blacklist WHERE user_id = $1", member.id)
         except KeyError:
-            await ctx.message.add_reaction(ctx.Emojis.x)
+            await ctx.message.add_reaction(ctx.emojis["x"])
             return await ctx.reply("That user isn't blacklisted!")
 
-        await ctx.message.add_reaction(ctx.Emojis.check)
+        await ctx.message.add_reaction(ctx.emojis["check"])
 
     @commands.command()
     async def disable(self, ctx: AloneContext, name: str) -> discord.Message | None:
         command = self.bot.get_command(name)
         if not command:
-            await ctx.message.add_reaction(ctx.Emojis.x)
+            await ctx.message.add_reaction(ctx.emojis["x"])
             return await ctx.reply("That command doesn't exist!")
 
         if not command.enabled:
-            await ctx.message.add_reaction(ctx.Emojis.x)
+            await ctx.message.add_reaction(ctx.emojis["x"])
             return await ctx.reply("This command is already disabled!")
 
         command.enabled = False
@@ -85,11 +83,11 @@ class Owner(commands.Cog):
     async def enable(self, ctx: AloneContext, name: str) -> discord.Message | None:
         command = self.bot.get_command(name)
         if not command:
-            await ctx.message.add_reaction(ctx.Emojis.x)
+            await ctx.message.add_reaction(ctx.emojis["x"])
             return await ctx.reply("That command doesn't exist!")
 
         if command.enabled:
-            await ctx.message.add_reaction(ctx.Emojis.x)
+            await ctx.message.add_reaction(ctx.emojis["x"])
             return await ctx.reply("This command is already enabled!")
 
         command.enabled = True
@@ -98,7 +96,7 @@ class Owner(commands.Cog):
     @commands.command()
     async def say(self, ctx: AloneContext, *, text: Optional[str]) -> None:
         if not text:
-            return await ctx.message.add_reaction(ctx.Emojis.slash)
+            return await ctx.message.add_reaction(ctx.emojis["slash"])
 
         await ctx.reply(text)
 
@@ -106,7 +104,7 @@ class Owner(commands.Cog):
     async def delmsg(self, ctx: AloneContext, _message: Optional[discord.Message]) -> None:
         message: discord.Message | None = _message or ctx.message.reference.resolved  # type: ignore
         if not message:
-            return await ctx.message.add_reaction(ctx.Emojis.slash)
+            return await ctx.message.add_reaction(ctx.emojis["slash"])
 
         await message.delete()
 
@@ -116,11 +114,11 @@ class Owner(commands.Cog):
             return
 
         await ctx.guild.me.edit(nick=name)
-        await ctx.message.add_reaction(ctx.Emojis.check)
+        await ctx.message.add_reaction(ctx.emojis["check"])
 
     @commands.command(aliases=["shutdown", "fuckoff", "quit"])
     async def logout(self, ctx: AloneContext) -> None:
-        await ctx.message.add_reaction(ctx.Emojis.check)
+        await ctx.message.add_reaction(ctx.emojis["check"])
         await self.bot.close()
 
     @commands.command()
@@ -148,12 +146,12 @@ class Owner(commands.Cog):
             try:
                 await self.bot.reload_extension(extension)
             except commands.ExtensionNotLoaded:
-                cog_status += f"{ctx.Emojis.x} {extension} not loaded!\n\n"
+                cog_status += f"{ctx.emojis['x']} {extension} not loaded!\n\n"
                 continue
             cog_status += f"\U0001f504 {extension} Reloaded!\n\n"
 
         await ctx.reply(embed=discord.Embed(title="Reload", description=cog_status))
-        await ctx.message.add_reaction(ctx.Emojis.check)
+        await ctx.message.add_reaction(ctx.emojis["check"])
 
 
 async def setup(bot: AloneBot) -> None:

@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Any
 
 import discord
 from discord.ext import commands
-from utils import AloneContext
+from utils.context import AloneContext
 
 if TYPE_CHECKING:
     from bot import AloneBot

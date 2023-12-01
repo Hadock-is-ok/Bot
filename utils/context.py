@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
 
 import discord
@@ -8,7 +10,7 @@ from .views import DeleteView
 if TYPE_CHECKING:
     from bot import AloneBot
 
-class AloneContext(commands.Context[AloneBot]):
+class AloneContext(commands.Context['AloneBot']):
     async def send(
         self,
         content: str | None = None,

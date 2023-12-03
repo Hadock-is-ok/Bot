@@ -1,0 +1,8 @@
+example.env
+LICENSE
+requirements.dev.txt
+README.md
+pyproject.toml
+.vscode
+.github
+.gitignore

@@ -2,8 +2,10 @@ FROM python:bullseye
 
 WORKDIR /main
 
-COPY . .
+COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -Ur requirements.txt
+
+COPY . .
 
 CMD ["python", "main.py"]

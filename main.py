@@ -60,7 +60,7 @@ async def cooldown(ctx: AloneContext) -> Literal[True]:
 
 async def main() -> None:
     async with bot:
-        await bot.start(os.environ["token"]) #useless commit, testing docker
+        await bot.start(os.environ["token"])
 
 
 if __name__ == "__main__":

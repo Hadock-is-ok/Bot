@@ -20,7 +20,7 @@ class Owner(commands.Cog):
     @commands.command()
     async def maintenance(self, ctx: AloneContext, *, reason: Optional[str]) -> None:
         if not self.bot.maintenance:
-            await ctx.message.add_reaction(ctx.emojis["check"])
+            await ctx.message.add_reaction(ctx.emojis["tick"])
             self.bot.maintenance = reason or "no reason provided"
 
             channel: Any = self.bot.get_log_webhook()
@@ -54,7 +54,7 @@ class Owner(commands.Cog):
         self.bot.blacklisted_users[member.id] = reason
         await self.bot.db.execute("INSERT INTO blacklist (user_id, reason) VALUES ($1, $2)", member.id, reason)
 
-        await ctx.message.add_reaction(ctx.emojis["check"])
+        await ctx.message.add_reaction(ctx.emojis["tick"])
 
     @blacklist.command()
     async def remove(self, ctx: AloneContext, *, member: discord.Member) -> discord.Message | None:
@@ -65,7 +65,7 @@ class Owner(commands.Cog):
             await ctx.message.add_reaction(ctx.emojis["cross"])
             return await ctx.reply("That user isn't blacklisted!")
 
-        await ctx.message.add_reaction(ctx.emojis["check"])
+        await ctx.message.add_reaction(ctx.emojis["tick"])
 
     @commands.command()
     async def disable(self, ctx: AloneContext, name: str) -> discord.Message | None:
@@ -116,11 +116,11 @@ class Owner(commands.Cog):
             return
 
         await ctx.guild.me.edit(nick=name)
-        await ctx.message.add_reaction(ctx.emojis["check"])
+        await ctx.message.add_reaction(ctx.emojis["tick"])
 
     @commands.command(aliases=["shutdown", "fuckoff", "quit"])
     async def logout(self, ctx: AloneContext) -> None:
-        await ctx.message.add_reaction(ctx.emojis["check"])
+        await ctx.message.add_reaction(ctx.emojis["tick"])
         await self.bot.close()
 
     @commands.command()
@@ -153,7 +153,7 @@ class Owner(commands.Cog):
             cog_status += f"\U0001f504 {extension} Reloaded!\n\n"
 
         await ctx.reply(embed=discord.Embed(title="Reload", description=cog_status))
-        await ctx.message.add_reaction(ctx.emojis["check"])
+        await ctx.message.add_reaction(ctx.emojis["tick"])
 
 
 async def setup(bot: AloneBot) -> None:

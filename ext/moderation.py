@@ -62,7 +62,7 @@ class Moderation(commands.Cog):
         assert ctx.guild
         user: discord.User = await self.bot.fetch_user(member_id)
         await ctx.guild.unban(user)
-        await ctx.message.add_reaction(ctx.emojis["check"])
+        await ctx.message.add_reaction(ctx.emojis["tick"])
 
     @commands.command()
     @commands.bot_has_guild_permissions(kick_members=True)

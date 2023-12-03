@@ -174,7 +174,7 @@ class Utility(commands.Cog):
             )
             await ctx.message.add_reaction(ctx.emojis["check"])
         except ValueError:
-            await ctx.message.add_reaction(ctx.emojis["x"])
+            await ctx.message.add_reaction(ctx.emojis["cross"])
             await ctx.reply("That's not one of your prefixes!")
 
     @commands.command(aliases=["server_info", "server info", "si", "guildinfo"])

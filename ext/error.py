@@ -22,7 +22,7 @@ class Error(commands.Cog):
         if isinstance(error, commands.CommandNotFound):
             return
 
-        await ctx.message.add_reaction(self.bot._emojis["x"])
+        await ctx.message.add_reaction(self.bot._emojis["cross"])
         if isinstance(error, BlacklistedError):
             reason: str | None = self.bot.blacklisted_users.get(ctx.author.id)
             await ctx.reply(

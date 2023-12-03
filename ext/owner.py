@@ -62,7 +62,7 @@ class Owner(commands.Cog):
             self.bot.blacklisted_users.pop(member.id)
             await self.bot.db.execute("DELETE FROM blacklist WHERE user_id = $1", member.id)
         except KeyError:
-            await ctx.message.add_reaction(ctx.emojis["x"])
+            await ctx.message.add_reaction(ctx.emojis["cross"])
             return await ctx.reply("That user isn't blacklisted!")
 
         await ctx.message.add_reaction(ctx.emojis["check"])
@@ -71,11 +71,11 @@ class Owner(commands.Cog):
     async def disable(self, ctx: AloneContext, name: str) -> discord.Message | None:
         command = self.bot.get_command(name)
         if not command:
-            await ctx.message.add_reaction(ctx.emojis["x"])
+            await ctx.message.add_reaction(ctx.emojis["cross"])
             return await ctx.reply("That command doesn't exist!")
 
         if not command.enabled:
-            await ctx.message.add_reaction(ctx.emojis["x"])
+            await ctx.message.add_reaction(ctx.emojis["cross"])
             return await ctx.reply("This command is already disabled!")
 
         command.enabled = False
@@ -85,11 +85,11 @@ class Owner(commands.Cog):
     async def enable(self, ctx: AloneContext, name: str) -> discord.Message | None:
         command = self.bot.get_command(name)
         if not command:
-            await ctx.message.add_reaction(ctx.emojis["x"])
+            await ctx.message.add_reaction(ctx.emojis["cross"])
             return await ctx.reply("That command doesn't exist!")
 
         if command.enabled:
-            await ctx.message.add_reaction(ctx.emojis["x"])
+            await ctx.message.add_reaction(ctx.emojis["cross"])
             return await ctx.reply("This command is already enabled!")
 
         command.enabled = True

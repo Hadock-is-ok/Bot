@@ -6,3 +6,4 @@ pyproject.toml
 .vscode
 .github
 .gitignore
+__pycache__

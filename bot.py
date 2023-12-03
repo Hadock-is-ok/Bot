@@ -70,7 +70,7 @@ class AloneBot(commands.Bot):
             host=os.environ["database_ip"],
             port=int(os.environ["database_port"]),
             user=os.environ["database_user"],
-            password=os.environ["database_key"],
+            password=os.environ["database_password"],
             database=os.environ["database_name"],
         )
         if not self.db:

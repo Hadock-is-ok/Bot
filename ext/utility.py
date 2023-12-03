@@ -105,7 +105,7 @@ class Utility(commands.Cog):
             value=await create_codeblock(f"{websocket_ping:.2f}ms"),
         )
         embed.add_field(
-            name="<:PostgreSQL:1019435339124850708> | Database",
+            name="<:postgresql:1019435339124850708> | Database",
             value=await create_codeblock(f"{database_ping:.2f}ms"),
         )
 

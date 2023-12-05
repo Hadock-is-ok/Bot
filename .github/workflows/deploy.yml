@@ -19,6 +19,6 @@ jobs:
           script: |
             cd personal
             cd Bot
-            sudo docker compose restart alonebot
+            sudo docker compose restart bot
             sudo git pull
             sudo docker compose up -d

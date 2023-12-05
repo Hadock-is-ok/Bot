@@ -18,18 +18,13 @@ class Owner(commands.Cog):
         return ctx.author.id in self.bot.owner_ids
 
     @commands.command()
-    async def maintenance(self, ctx: AloneContext, *, reason: Optional[str]) -> None:
+    async def maintenance(self, ctx: AloneContext, *, reason: Optional[str] = "no reason provided") -> None:
         if not self.bot.maintenance:
-            await ctx.message.add_reaction(ctx.emojis["tick"])
-            self.bot.maintenance = reason or "no reason provided"
+            self.bot.maintenance = reason
+        else:
+            del self.bot.maintenance
 
-            channel: Any = self.bot.get_log_webhook()
-            return await channel.send("I am going on maintenance break, all commands will not work during the downtime.")
-        await ctx.reply("Maintenance mode is now off.")
-        self.bot.maintenance = None
-
-        channel = self.bot.get_log_webhook()
-        await channel.send("The maintenance break is over. All commands should be up now.")
+        await ctx.message.add_reaction(ctx.emojis["tick"])
 
     @commands.group(invoke_without_command=True)
     async def blacklist(self, ctx: AloneContext) -> None:
@@ -53,7 +48,6 @@ class Owner(commands.Cog):
     ) -> None:
         self.bot.blacklisted_users[member.id] = reason
         await self.bot.db.execute("INSERT INTO blacklist (user_id, reason) VALUES ($1, $2)", member.id, reason)
-
         await ctx.message.add_reaction(ctx.emojis["tick"])
 
     @blacklist.command()
@@ -96,10 +90,7 @@ class Owner(commands.Cog):
         await ctx.reply(f"Enabled {name}.")
 
     @commands.command()
-    async def say(self, ctx: AloneContext, *, text: Optional[str]) -> None:
-        if not text:
-            return await ctx.message.add_reaction(ctx.emojis["slash"])
-
+    async def say(self, ctx: AloneContext, *, text: Optional[str] = "hi im stupid and i put nothing here") -> None:
         await ctx.reply(text)
 
     @commands.command(aliases=["d", "delete"])
@@ -112,7 +103,7 @@ class Owner(commands.Cog):
 
     @commands.command()
     async def nick(self, ctx: AloneContext, *, name: Optional[str]) -> None:
-        if not ctx.guild:  # I have it like this for typehinting purposes
+        if not ctx.guild:
             return
 
         await ctx.guild.me.edit(nick=name)

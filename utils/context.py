@@ -10,6 +10,7 @@ from .views import DeleteView
 if TYPE_CHECKING:
     from bot import AloneBot
 
+
 class AloneContext(commands.Context['AloneBot']):
     async def send(
         self,
@@ -34,14 +35,14 @@ class AloneContext(commands.Context['AloneBot']):
             original_view = kwargs.get("view") or discord.ui.View()
             if original_view:
                 original_view.add_item(delete_button)
-            
+
             kwargs["view"] = original_view
 
         return await super().send(content, **kwargs)
-    
+
     @property
     def emojis(self) -> dict[str, discord.Emoji]:
         return self.bot._emojis
-    
+
     def get_emoji(self, name: str) -> discord.Emoji:
         return self.bot._emojis[name]

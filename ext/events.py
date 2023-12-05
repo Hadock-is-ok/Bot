@@ -88,11 +88,11 @@ class Events(commands.Cog):
         message: discord.Message | None = self.bot.bot_messages_cache.get(before)
 
         if not after.content.startswith(tuple(await self.bot.get_prefix(before))):
+            self.bot.bot_messages_cache.pop(before)
             if not message:
                 return
 
             await message.delete()
-            self.bot.bot_messages_cache.pop(before)
         else:
             await self.bot.process_commands(after)
 

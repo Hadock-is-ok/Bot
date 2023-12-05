@@ -4,7 +4,7 @@ import inspect
 from io import BytesIO
 from random import choice
 from time import perf_counter
-from typing import TYPE_CHECKING, Any, List, Optional, Union, LiteralString
+from typing import TYPE_CHECKING, Any, List, LiteralString, Optional, Union
 
 import discord
 from discord.ext import commands
@@ -15,6 +15,7 @@ from utils import GithubButton, InviteView, SourceButton, SupportView
 if TYPE_CHECKING:
     from bot import AloneBot
     from utils import AloneContext
+
 
 async def create_codeblock(content: str) -> str:
     fmt: LiteralString = "`" * 3

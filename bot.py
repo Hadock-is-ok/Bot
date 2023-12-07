@@ -11,9 +11,11 @@ from discord.ext import commands
 
 from utils.context import AloneContext
 
+
 class TodoData(NamedTuple):
     content: str
     jump_url: str
+
 
 class AloneBot(commands.Bot):
     INITAL_EXTENSIONS: List[str] = []
@@ -78,7 +80,7 @@ class AloneBot(commands.Bot):
 
         with open("schema.sql") as file:
             await self.db.execute(file.read())
-        
+
         for emoji in (await self.fetch_guild(self.emoji_guild)).emojis:
             self._emojis[emoji.name] = emoji
 

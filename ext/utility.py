@@ -4,7 +4,7 @@ import inspect
 from io import BytesIO
 from random import choice
 from time import perf_counter
-from typing import TYPE_CHECKING, Any, List, Optional, Union, LiteralString
+from typing import TYPE_CHECKING, Any, List, LiteralString, Optional, Union
 
 import discord
 from discord.ext import commands
@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from bot import AloneBot
     from utils import AloneContext
 
+
 async def create_codeblock(content: str) -> str:
     fmt: LiteralString = "`" * 3
     return f"{fmt}py\n{content}{fmt}"
@@ -26,17 +27,11 @@ class Utility(commands.Cog):
         self.bot: AloneBot = bot
 
     @commands.command()
-    async def afk(self, ctx: AloneContext, *, reason: str = "no reason") -> None:
+    async def afk(self, ctx: AloneContext, *, reason: str = ".") -> None:
         await self.bot.db.execute("INSERT INTO afk VALUES ($1, $2)", ctx.author.id, reason)
         self.bot.afk_users[ctx.author.id] = reason
-
-        if reason != "no reason":
-            fmt: str = f" for {reason}."
-        else:
-            fmt = "."
-
         await ctx.message.add_reaction(ctx.emojis["check"])
-        await ctx.reply(f"**AFK**\nYou are now afk{fmt}")
+        await ctx.reply(f"**AFK**\nYou are now afk{f'for {reason}' if reason else ''}")
 
     @commands.command(aliases=["av", "pfp"])
     async def avatar(self, ctx: AloneContext, *, member: Union[discord.Member, discord.User] = commands.Author) -> None:

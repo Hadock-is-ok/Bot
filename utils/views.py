@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from bot import AloneBot
     from utils.context import AloneContext
 
+
 class DeleteView(discord.ui.View):
     def __init__(self, ctx: AloneContext) -> None:
         super().__init__(timeout=None)

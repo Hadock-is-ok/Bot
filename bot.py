@@ -56,8 +56,9 @@ class AloneBot(commands.Bot):
 
     async def get_prefix(self, message: discord.Message, /) -> List[str] | str:
         prefixes: List[str] = self.DEFAULT_PREFIXES.copy()
-        user_prefixes: List[str] = self.user_prefixes[message.author.id]
-        prefixes.extend(user_prefixes)
+        user_prefixes: List[str] | None = self.user_prefixes.get(message.author.id)
+        if user_prefixes:
+            prefixes.extend(user_prefixes)
 
         if message.guild and (guild_prefix := self.guild_prefixes.get(message.guild.id, None)):
             prefixes.append(guild_prefix)
@@ -72,7 +73,7 @@ class AloneBot(commands.Bot):
             host=os.environ["database_ip"],
             port=int(os.environ["database_port"]),
             user=os.environ["database_user"],
-            password=os.environ["database_key"],
+            password=os.environ["database_password"],
             database=os.environ["database_name"],
         )
         if not self.db:

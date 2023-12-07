@@ -5,18 +5,12 @@ CREATE TABLE IF NOT EXISTS prefix (
 
 CREATE TABLE IF NOT EXISTS guilds (
     guild_id BIGINT PRIMARY KEY,
-    prefix TEXT,
-    voice_channel BIGINT,
-    voice_category BIGINT
+    prefix TEXT
 );
 
 CREATE TABLE IF NOT EXISTS afk (
     user_id BIGINT PRIMARY KEY,
     reason TEXT
-);
-
-CREATE TABLE IF NOT EXISTS mentions (
-    user_id BIGINT PRIMARY KEY
 );
 
 CREATE TABLE IF NOT EXISTS todo (
@@ -28,11 +22,4 @@ CREATE TABLE IF NOT EXISTS todo (
 CREATE TABLE IF NOT EXISTS blacklist (
     user_id BIGINT PRIMARY KEY,
     reason TEXT
-);
-
-CREATE TABLE IF NOT EXISTS voice (
-    guild_id BIGINT,
-    user_id BIGINT,
-    channel_id BIGINT,
-    enabled BOOLEAN
-);
+)

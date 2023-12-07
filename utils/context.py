@@ -27,12 +27,16 @@ class AloneContext(commands.Context['AloneBot']):
                     icon_url=self.author.display_avatar.url,
                 )
 
-        if add_button_view:
-            delete_view = DeleteView(self)
-            if original_view := kwargs.get("view"):
-                delete_view._children += original_view._children
+        if self.command and (self.command.root_parent or self.command).name == "jishaku":
+            return await super().send(content, **kwargs)
 
-            kwargs["view"] = delete_view
+        if add_button_view:
+            delete_button = DeleteView(self).children[0]
+            original_view = kwargs.get("view") or discord.ui.View()
+            if original_view:
+                original_view.add_item(delete_button)
+
+            kwargs["view"] = original_view
 
         return await super().send(content, **kwargs)
 
@@ -42,3 +46,4 @@ class AloneContext(commands.Context['AloneBot']):
 
     def get_emoji(self, name: str) -> discord.Emoji:
         return self.bot._emojis[name]
+

@@ -11,6 +11,14 @@ if TYPE_CHECKING:
     from bot import AloneBot
     from utils import AloneContext
 
+errors: dict[type[Exception], str] = {
+    BlacklistedError: "You have been blacklisted for {self.bot.blacklisted_users.get(ctx.author.id)}. you may not appeal this blacklist. There still exists a chance I'll unban you, but it's not likely.",
+    MaintenanceError: "The bot is currently in maintenance mode for {self.bot.maintenance}, please wait. If you have any issues, you can join my support server for help.",
+    NoSubredditFound: "I couldn't find a subreddit by that name, maybe you should double check the name?",
+    commands.CheckFailure: "You do not have permission to run this command!",
+    commands.CommandOnCooldown: "You are on cooldown. Try again in {error.retry_after:.2f}s",
+}
+
 
 class Error(commands.Cog):
     def __init__(self, bot: AloneBot) -> None:
@@ -22,40 +30,20 @@ class Error(commands.Cog):
         if isinstance(error, commands.CommandNotFound):
             return
 
-        await ctx.message.add_reaction(self.bot._emojis["x"])
-        if isinstance(error, BlacklistedError):
-            reason: str | None = self.bot.blacklisted_users.get(ctx.author.id)
-            await ctx.reply(
-                f"You have been blacklisted for {reason}. you may not appeal this blacklist. There still exists a chance I'll unban you, but it's not likely."
-            )
+        await ctx.message.add_reaction(self.bot._emojis["cross"])
 
-        elif isinstance(error, MaintenanceError):
-            await ctx.reply(
-                f"The bot is currently in maintenance mode for {self.bot.maintenance}, please wait. If you have any issues, you can join my support server for help."
-            )
-
-        elif isinstance(error, NoSubredditFound):
-            await ctx.reply("I couldn't find a subreddit by that name, maybe you should double check the name?")
-
-        elif isinstance(error, commands.CheckFailure):
+        if reason := errors.get(type(error)):
             await ctx.reply(
                 embed=discord.Embed(
                     title="Error",
-                    description="You do not have permission to run this command!",
+                    description=reason.format(self=self, ctx=ctx, error=error),
                     color=0xF02E2E,
                 )
             )
 
-        elif isinstance(error, commands.CommandOnCooldown):
-            await ctx.reply(f"You are on cooldown. Try again in {error.retry_after:.2f}s")
-
         else:
-            channel: discord.Webhook = self.bot.get_log_webhook()
-            if ctx.guild:
-                guild: str = f"Guild ID: {ctx.guild.id}"
-            else:
-                guild: str = ""
             self.bot.logger.error("An error occurred", exc_info=error)
+            guild: str = f"Guild ID: {ctx.guild.id}\n" if ctx.guild else ""
             embed: discord.Embed = discord.Embed(
                 title=f"Ignoring exception in {ctx.command}:",
                 description=f"```py\n{error}```\nThe developers have receieved this error and will fix it.",
@@ -64,9 +52,10 @@ class Error(commands.Cog):
             embed.set_author(name=f"{ctx.author.name}", icon_url=ctx.author.display_avatar)
             embed.add_field(
                 name="Information",
-                value=f"Error Name: {type(error).__name__}\nMessage: {ctx.message.content}\n{guild}\nChannel ID: {ctx.channel.id}",
+                value=f"Error Name: {error.__name__}\nMessage: {ctx.message.content}\n{guild}Channel ID: {ctx.channel.id}",  # type: ignore fuck you pyright this shit exists
             )
 
+            channel: discord.Webhook = self.bot.get_log_webhook()
             await channel.send(
                 f"This error came from {ctx.author} using {ctx.command} in {ctx.guild}.",
                 embed=embed,

@@ -30,7 +30,7 @@ class Utility(commands.Cog):
     async def afk(self, ctx: AloneContext, *, reason: str = ".") -> None:
         await self.bot.db.execute("INSERT INTO afk VALUES ($1, $2)", ctx.author.id, reason)
         self.bot.afk_users[ctx.author.id] = reason
-        await ctx.message.add_reaction(ctx.emojis["check"])
+        await ctx.message.add_reaction(ctx.emojis["tick"])
         await ctx.reply(f"**AFK**\nYou are now afk{f'for {reason}' if reason else ''}")
 
     @commands.command(aliases=["av", "pfp"])
@@ -50,14 +50,14 @@ class Utility(commands.Cog):
             async for message in ctx.channel.history(limit=limit):
                 if message.author == ctx.me:
                     await message.delete()
-            return await ctx.message.add_reaction(ctx.emojis["check"])
+            return await ctx.message.add_reaction(ctx.emojis["tick"])
 
         bulk: bool = ctx.channel.permissions_for(ctx.guild.me).manage_messages
         if ctx.channel.permissions_for(ctx.author).manage_messages:
             limit = 100
 
         await ctx.channel.purge(bulk=bulk, check=lambda m: m.author == ctx.me, limit=limit)  # type: ignore
-        await ctx.message.add_reaction(ctx.emojis["check"])
+        await ctx.message.add_reaction(ctx.emojis["tick"])
 
     @commands.command()
     async def invite(self, ctx: AloneContext, bot_id: Optional[int]) -> discord.Message | None:
@@ -100,7 +100,7 @@ class Utility(commands.Cog):
             value=await create_codeblock(f"{websocket_ping:.2f}ms"),
         )
         embed.add_field(
-            name="<:PostgreSQL:1019435339124850708> | Database",
+            name="<:postgresql:1180172627663396864> | Database",
             value=await create_codeblock(f"{database_ping:.2f}ms"),
         )
 
@@ -121,7 +121,7 @@ class Utility(commands.Cog):
         prefix_list.append(prefix)
 
         await self.bot.db.execute("INSERT INTO prefix VALUES ($1, $2)", ctx.author.id, prefix)
-        await ctx.message.add_reaction(ctx.emojis["check"])
+        await ctx.message.add_reaction(ctx.emojis["tick"])
 
     @prefix.command(name="guild")
     async def prefix_guild(self, ctx: AloneContext, *, prefix: Optional[str]) -> discord.Message | None:
@@ -134,7 +134,7 @@ class Utility(commands.Cog):
                 return await ctx.reply("There is no guild prefix to remove!")
 
             await self.bot.db.execute("UPDATE guilds SET prefix = NULL WHERE guild_id = $1", ctx.guild.id)
-            await ctx.message.add_reaction(ctx.emojis["check"])
+            await ctx.message.add_reaction(ctx.emojis["tick"])
             return await ctx.reply("The prefix for this guild has been removed.")
 
         if len(prefix) > 5:
@@ -146,7 +146,7 @@ class Utility(commands.Cog):
             ctx.guild.id,
             prefix,
         )
-        await ctx.message.add_reaction(ctx.emojis["check"])
+        await ctx.message.add_reaction(ctx.emojis["tick"])
         await ctx.reply(f"The prefix for this guild is now `{prefix}`")
 
     @prefix.command(name="remove")
@@ -158,7 +158,7 @@ class Utility(commands.Cog):
         if not prefix:
             self.bot.user_prefixes.pop(ctx.author.id)
             await self.bot.db.execute("DELETE FROM prefix WHERE user_id = $1", ctx.author.id)
-            return await ctx.message.add_reaction(ctx.emojis["check"])
+            return await ctx.message.add_reaction(ctx.emojis["tick"])
 
         try:
             user_prefixes.remove(prefix)
@@ -167,9 +167,9 @@ class Utility(commands.Cog):
                 ctx.author.id,
                 prefix,
             )
-            await ctx.message.add_reaction(ctx.emojis["check"])
+            await ctx.message.add_reaction(ctx.emojis["tick"])
         except ValueError:
-            await ctx.message.add_reaction(ctx.emojis["x"])
+            await ctx.message.add_reaction(ctx.emojis["cross"])
             await ctx.reply("That's not one of your prefixes!")
 
     @commands.command(aliases=["server_info", "server info", "si", "guildinfo"])
@@ -271,7 +271,7 @@ class Utility(commands.Cog):
             text,
             ctx.message.jump_url,
         )
-        await ctx.message.add_reaction(ctx.emojis["check"])
+        await ctx.message.add_reaction(ctx.emojis["tick"])
 
     @todo.command(name="remove")
     async def todo_remove(self, ctx: AloneContext, todo_number: Optional[int]) -> discord.Message | None:
@@ -282,7 +282,7 @@ class Utility(commands.Cog):
         if not todo_number:
             self.bot.todos.pop(ctx.author.id)
             await self.bot.db.execute("DELETE FROM todo WHERE user_id = $1", ctx.author.id)
-            return await ctx.message.add_reaction(ctx.emojis["check"])
+            return await ctx.message.add_reaction(ctx.emojis["tick"])
 
         for number, todo in enumerate(user_todo, start=1):
             if todo_number == number:
@@ -291,7 +291,7 @@ class Utility(commands.Cog):
                     await self.bot.db.execute(
                         "DELETE FROM todo WHERE user_id = $1 AND task = $2", ctx.author.id, todo.content
                     )
-                    await ctx.message.add_reaction(ctx.emojis["check"])
+                    await ctx.message.add_reaction(ctx.emojis["tick"])
                 except KeyError:
                     await ctx.reply("That's not a task in your todo list!")
 

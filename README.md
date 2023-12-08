@@ -1,5 +1,5 @@
 # Alone Bot
-A personal bot made for discord.
+A personal client made for discord, ported to revolt.
 
 ## Running your own version
 
@@ -10,7 +10,7 @@ Please take all code from the stable release, also known as the stable branch. I
 
 1. **Install Python 3.9 or higher**
 
-You need this for the bot to actually run.
+You need this for the client to actually run.
 For windows, you can get it from the microsoft store or the official [python website](https://www.python.org/).
 
 On GNU/Linux, you can run apt install python, or whatever your desired package manager is.

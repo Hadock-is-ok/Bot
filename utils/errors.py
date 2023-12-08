@@ -1,17 +1,17 @@
-from discord.ext import commands
+from revolt.ext import commands
 
 
-class BlacklistedError(commands.CheckFailure):
+class BlacklistedError(commands.CheckError):
     pass
 
 
-class MaintenanceError(commands.CheckFailure):
+class MaintenanceError(commands.CheckError):
     pass
 
 
-class NoSubredditFound(commands.CheckFailure):
+class NoSubredditFound(commands.CheckError):
     pass
 
 
-class NoValidDefinition(commands.CheckFailure):
+class NoValidDefinition(commands.CheckError):
     pass

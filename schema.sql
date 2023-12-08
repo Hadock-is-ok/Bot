@@ -3,8 +3,8 @@ CREATE TABLE IF NOT EXISTS prefix (
     prefix TEXT
 );
 
-CREATE TABLE IF NOT EXISTS guilds (
-    guild_id BIGINT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS servers (
+    server_id BIGINT PRIMARY KEY,
     prefix TEXT
 );
 

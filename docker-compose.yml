@@ -17,7 +17,7 @@ services:
       timeout: 1s
       retries: 5
 
-  bot:
+  client:
     container_name: "alonebot"
     restart: unless-stopped
     build:

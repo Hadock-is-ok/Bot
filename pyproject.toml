@@ -1,7 +1,7 @@
 [project]
 name = "AloneBot"
 version = "1.0.0a"
-description = "A personal bot."
+description = "A personal client."
 license = "AGPL 3.0"
 readme = "README.md"
 

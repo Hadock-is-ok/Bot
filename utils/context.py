@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-import discord
-from discord.ext import commands
+import revolt
+from revolt.ext import commands
 
 from .views import DeleteView
 
 if TYPE_CHECKING:
-    from bot import AloneBot
+    from client import AloneBot
+    embed: revolt.SendableEmbed
 
 
 class AloneContext(commands.Context['AloneBot']):
@@ -17,14 +18,14 @@ class AloneContext(commands.Context['AloneBot']):
         content: str | None = None,
         add_button_view: bool = True,
         **kwargs: Any,
-    ) -> discord.Message:
+    ) -> revolt.Message:
         for embed in kwargs.get("embeds", []):
-            embed.colour = embed.colour or self.author.color
-            embed.timestamp = embed.timestamp or discord.utils.utcnow()
+            embed.colour = embed.colour or None
+            embed.timestamp = embed.timestamp or 
             if not embed.footer.text:
                 embed.set_footer(
                     text=f"Command ran by {self.author.display_name}",
-                    icon_url=self.author.display_avatar.url,
+                    icon_url=self.author.avatar.url,
                 )
 
         if self.command and (self.command.root_parent or self.command).name == "jishaku":
@@ -32,7 +33,7 @@ class AloneContext(commands.Context['AloneBot']):
 
         if add_button_view:
             delete_button = DeleteView(self).children[0]
-            original_view = kwargs.get("view") or discord.ui.View()
+            original_view = kwargs.get("view") or revolt.ui.View()
             if original_view:
                 original_view.add_item(delete_button)
 
@@ -41,8 +42,8 @@ class AloneContext(commands.Context['AloneBot']):
         return await super().send(content, **kwargs)
 
     @property
-    def emojis(self) -> dict[str, discord.Emoji]:
-        return self.bot._emojis
+    def emojis(self) -> dict[str, revolt.Emoji]:
+        return self.client._emojis
 
-    def get_emoji(self, name: str) -> discord.Emoji:
-        return self.bot._emojis[name]
+    def get_emoji(self, name: str) -> revolt.Emoji:
+        return self.client._emojis[name]

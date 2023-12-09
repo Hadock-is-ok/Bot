@@ -11,9 +11,9 @@ if TYPE_CHECKING:
 
 
 class DeleteView(discord.ui.View):
-    def __init__(self, ctx: AloneContext) -> None:
+    def __init__(self, author_id: int) -> None:
         super().__init__(timeout=None)
-        self.ctx: AloneContext = ctx
+        self.author_id: int = author_id
 
     @discord.ui.button(
         emoji="\U0001f5d1",
@@ -22,14 +22,14 @@ class DeleteView(discord.ui.View):
         custom_id="delete",
     )
     async def delete(self, interaction: discord.Interaction, _) -> None:
-        if interaction.user.id == self.ctx.author.id:
+        if interaction.user.id == self.author_id:
             if not interaction.message:
                 return
 
             return await interaction.message.delete()
 
         await interaction.response.send_message(
-            f"This command was ran by {self.ctx.author.name}, so you can't delete it!",
+            f"This command was ran by <@{self.author_id}>, so you can't delete it!",
             ephemeral=True,
         )
 

@@ -31,7 +31,7 @@ class AloneContext(commands.Context['AloneBot']):
             return await super().send(content, **kwargs)
 
         if add_button_view:
-            delete_button = DeleteView(self).children[0]
+            delete_button = DeleteView(self.author.id).children[0]
             original_view = kwargs.get("view") or discord.ui.View()
             if original_view:
                 original_view.add_item(delete_button)

@@ -12,7 +12,7 @@ from utils import AloneContext, BlacklistedError, MaintenanceError
 load_dotenv()
 
 
-bot: AloneBot = AloneBot(intents=discord.Intents.all())
+bot = AloneBot(intents=discord.Intents.all())
 
 
 @bot.after_invoke

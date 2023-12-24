@@ -52,7 +52,7 @@ class Error(commands.Cog):
             embed.set_author(name=f"{ctx.author.name}", icon_url=ctx.author.display_avatar)
             embed.add_field(
                 name="Information",
-                value=f"Error Name: {error.__name__}\nMessage: {ctx.message.content}\n{guild}Channel ID: {ctx.channel.id}",  # type: ignore fuck you pyright this shit exists
+                value=f"Error Name: {error.__class__.__name__}\nMessage: {ctx.message.content}\n{guild}Channel ID: {ctx.channel.id}",
             )
 
             channel: discord.Webhook = self.bot.get_log_webhook()

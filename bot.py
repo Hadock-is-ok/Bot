@@ -18,7 +18,7 @@ class TodoData(NamedTuple):
 
 
 class AloneBot(commands.Bot):
-    INITAL_EXTENSIONS: List[str] = []
+    INITIAL_EXTENSIONS: List[str] = []
     DEFAULT_PREFIXES: ClassVar[List[str]] = ["Alone", "alone"]
     owner_ids: List[int]
 
@@ -96,7 +96,7 @@ class AloneBot(commands.Bot):
             except Exception as error:
                 self.logger.error(error, exc_info=error)
             else:
-                self.INITAL_EXTENSIONS.append(f"{'.'.join(tree)}.{file.stem}")
+                self.INITIAL_EXTENSIONS.append(f"{'.'.join(tree)}.{file.stem}")
 
         records: list[Any]
         records = await self.db.fetch("SELECT user_id, array_agg(prefix) AS prefixes FROM prefix GROUP BY user_id")

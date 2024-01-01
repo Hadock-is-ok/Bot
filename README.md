@@ -31,9 +31,9 @@ The easiest way is just to `pip install -Ur requirements.txt`.
 You can also install them manually, or other versions that you specifically want.
 
 
-4. **Create a database in PostgreSQl**
+4. **Create a database in PostgreSQL**
 
-You will need PostgreSQl 14 or higher.
+You will need PostgreSQL 14 or higher.
 
 Make your own database however you like it and then run the following command:
 

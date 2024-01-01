@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from bot import AloneBot
 
 
-class AloneContext(commands.Context['AloneBot']):
+class AloneContext(commands.Context["AloneBot"]):
     async def send(
         self,
         content: str | None = None,
@@ -46,4 +46,3 @@ class AloneContext(commands.Context['AloneBot']):
 
     def get_emoji(self, name: str) -> discord.Emoji:
         return self.bot._emojis[name]
-

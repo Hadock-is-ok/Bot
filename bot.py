@@ -86,7 +86,7 @@ class AloneBot(commands.Bot):
             self._emojis[emoji.name] = emoji
 
         await self.load_extension("jishaku")
-        for file in pathlib.Path('ext').glob('**/*.py'):
+        for file in pathlib.Path("ext").glob("**/*.py"):
             *tree, _ = file.parts
             if file.stem == "__init__":
                 continue

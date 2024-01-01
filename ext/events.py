@@ -19,16 +19,16 @@ class Events(commands.Cog):
         bots: int = sum(member.bot for member in guild.members)
 
         guild_metadata: list[str] = [
-            f'Owner: {guild.owner}',
-            f'Name: {guild.name}',
-            f'Members: {guild.member_count}',
-            f'Bots: {bots}',
-            f'Nitro Tier: {guild.premium_tier}',
+            f"Owner: {guild.owner}",
+            f"Name: {guild.name}",
+            f"Members: {guild.member_count}",
+            f"Bots: {bots}",
+            f"Nitro Tier: {guild.premium_tier}",
         ]
 
         embed: discord.Embed = discord.Embed(
             title="I joined a new guild!",
-            description='\n'.join(guild_metadata),
+            description="\n".join(guild_metadata),
             color=0x5FAD68,
         )
 
@@ -40,16 +40,16 @@ class Events(commands.Cog):
         bots: int = sum(member.bot for member in guild.members)
 
         guild_metadata: List[str] = [
-            f'Owner: {guild.owner}',
-            f'Name: {guild.name}',
-            f'Members: {guild.member_count}',
-            f'Bots: {bots}',
-            f'Nitro Tier: {guild.premium_tier}',
+            f"Owner: {guild.owner}",
+            f"Name: {guild.name}",
+            f"Members: {guild.member_count}",
+            f"Bots: {bots}",
+            f"Nitro Tier: {guild.premium_tier}",
         ]
 
         embed: discord.Embed = discord.Embed(
             title="I have left a guild",
-            description='\n'.join(guild_metadata),
+            description="\n".join(guild_metadata),
             color=0xFF0000,
         )
 
@@ -104,7 +104,10 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_voice_state_update(
-        self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
+        self,
+        member: discord.Member,
+        before: discord.VoiceState,
+        after: discord.VoiceState,
     ) -> None:
         if not before.channel:
             return self.bot.dispatch("voice_join", member, after)

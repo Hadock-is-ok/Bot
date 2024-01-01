@@ -34,7 +34,12 @@ class Utility(commands.Cog):
         await ctx.reply(f"**AFK**\nYou are now afk{f'for {reason}' if reason else ''}")
 
     @commands.command(aliases=["av", "pfp"])
-    async def avatar(self, ctx: AloneContext, *, member: Union[discord.Member, discord.User] = commands.Author) -> None:
+    async def avatar(
+        self,
+        ctx: AloneContext,
+        *,
+        member: Union[discord.Member, discord.User] = commands.Author,
+    ) -> None:
         embed: discord.Embed = discord.Embed(title=f"{member.display_name}'s avatar")
         embed.set_image(url=member.display_avatar.url)
 
@@ -231,7 +236,8 @@ class Utility(commands.Cog):
             description=f"<:spotify:1169623519630471198> **{discord.utils.escape_markdown(spotify.title)}** by **{discord.utils.escape_markdown(artists)}**"
         )
         embed.set_author(
-            name=f"{discord.utils.escape_markdown(member.display_name)}'s Spotify", icon_url=member.display_avatar.url
+            name=f"{discord.utils.escape_markdown(member.display_name)}'s Spotify",
+            icon_url=member.display_avatar.url,
         )
         embed.set_image(url="attachment://spotify.png")
 
@@ -289,7 +295,9 @@ class Utility(commands.Cog):
                 try:
                     user_todo.remove(todo)
                     await self.bot.db.execute(
-                        "DELETE FROM todo WHERE user_id = $1 AND task = $2", ctx.author.id, todo.content
+                        "DELETE FROM todo WHERE user_id = $1 AND task = $2",
+                        ctx.author.id,
+                        todo.content,
                     )
                     await ctx.message.add_reaction(ctx.emojis["tick"])
                 except KeyError:

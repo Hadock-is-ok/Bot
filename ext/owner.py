@@ -90,7 +90,12 @@ class Owner(commands.Cog):
         await ctx.reply(f"Enabled {name}.")
 
     @commands.command()
-    async def say(self, ctx: AloneContext, *, text: Optional[str] = "hi im stupid and i put nothing here") -> None:
+    async def say(
+        self,
+        ctx: AloneContext,
+        *,
+        text: Optional[str] = "hi im stupid and i put nothing here",
+    ) -> None:
         await ctx.reply(text)
 
     @commands.command(aliases=["d", "delete"])

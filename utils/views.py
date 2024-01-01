@@ -44,11 +44,22 @@ class GithubButton(discord.ui.View):
     def __init__(self, ctx: AloneContext) -> None:
         super().__init__(timeout=None)
         self.ctx: AloneContext = ctx
-        self.add_item(discord.ui.Button(emoji="<:github:1019435755979935794>", label="GitHub", url=self.ctx.bot.github_link))
+        self.add_item(
+            discord.ui.Button(
+                emoji="<:github:1019435755979935794>",
+                label="GitHub",
+                url=self.ctx.bot.github_link,
+            )
+        )
 
 
 class SourceButton(discord.ui.View):
-    def __init__(self, ctx: AloneContext, source_lines: tuple[list[str], int], file_name: str | None) -> None:
+    def __init__(
+        self,
+        ctx: AloneContext,
+        source_lines: tuple[list[str], int],
+        file_name: str | None,
+    ) -> None:
         super().__init__(timeout=None)
         self.ctx: AloneContext = ctx
         self.add_item(
@@ -97,7 +108,9 @@ class CogSelect(discord.ui.View):
             command_list += f"{command.name}\n"
 
         embed: discord.Embed = discord.Embed(
-            title=cog.qualified_name, description=command_list, color=interaction.user.color
+            title=cog.qualified_name,
+            description=command_list,
+            color=interaction.user.color,
         )
         await interaction.response.edit_message(embed=embed)
 

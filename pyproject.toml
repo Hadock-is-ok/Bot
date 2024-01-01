@@ -26,4 +26,3 @@ reportUnusedImport = "error"
 reportUnnecessaryTypeIgnoreComment = "error"
 reportIncompatibleMethodOverride = "none"
 reportPrivateUsage = "none"
-exclude = ["**/venv"]

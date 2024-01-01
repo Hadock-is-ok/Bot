@@ -20,7 +20,9 @@ class _Help(commands.HelpCommand):
         return f"{command.qualified_name}"
 
     async def send_bot_help(
-        self, mapping: Mapping[Optional[commands.Cog], List[commands.Command[Any, ..., Any]]], /
+        self,
+        mapping: Mapping[Optional[commands.Cog], List[commands.Command[Any, ..., Any]]],
+        /,
     ) -> None:
         embed: discord.Embed = discord.Embed(
             title="Help",

@@ -22,7 +22,7 @@ class Owner(commands.Cog):
         if not self.bot.maintenance:
             self.bot.maintenance = reason
         else:
-            del self.bot.maintenance
+            self.bot.maintenance = None
 
         await ctx.message.add_reaction(ctx.emojis["tick"])
 

@@ -42,7 +42,7 @@ class AloneContext(commands.Context["AloneBot"]):
 
     @property
     def emojis(self) -> dict[str, discord.Emoji]:
-        return self.bot._emojis
+        return self.bot.EMOJIS
 
     def get_emoji(self, name: str) -> discord.Emoji:
-        return self.bot._emojis[name]
+        return self.bot.EMOJIS[name]

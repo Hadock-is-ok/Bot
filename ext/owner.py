@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, List, Optional
+from typing import TYPE_CHECKING, Optional
 
 import discord
 from discord.ext import commands
@@ -9,16 +9,17 @@ if TYPE_CHECKING:
     from bot import AloneBot
     from utils import AloneContext
 
+message_param: discord.Message = commands.parameter(default=lambda ctx: ctx.message) # type: ignore
 
 class Owner(commands.Cog):
     def __init__(self, bot: AloneBot) -> None:
         self.bot: AloneBot = bot
 
-    def cog_check(self, ctx: commands.Context[Any]) -> bool:
+    def cog_check(self, ctx: AloneContext) -> bool:
         return ctx.author.id in self.bot.owner_ids
 
     @commands.command()
-    async def maintenance(self, ctx: AloneContext, *, reason: Optional[str] = "no reason provided") -> None:
+    async def maintenance(self, ctx: AloneContext, *, reason: str = "no reason provided") -> None:
         if not self.bot.maintenance:
             self.bot.maintenance = reason
         else:
@@ -28,7 +29,7 @@ class Owner(commands.Cog):
 
     @commands.group(invoke_without_command=True)
     async def blacklist(self, ctx: AloneContext) -> None:
-        fmt: List[str] = []
+        fmt: list[str] = []
         for user_id, reason in self.bot.blacklisted_users.items():
             user: discord.User | None = self.bot.get_user(user_id)
             if not user:
@@ -94,12 +95,12 @@ class Owner(commands.Cog):
         self,
         ctx: AloneContext,
         *,
-        text: Optional[str] = "hi im stupid and i put nothing here",
+        text: str = "hi im stupid and i put nothing here",
     ) -> None:
         await ctx.reply(text)
 
     @commands.command(aliases=["d", "delete"])
-    async def delmsg(self, ctx: AloneContext, _message: Optional[discord.Message]) -> None:
+    async def delmsg(self, ctx: AloneContext, _message: Optional[discord.Message] = message_param) -> None:
         message: discord.Message | None = _message or ctx.message.reference.resolved  # type: ignore
         if not message:
             return await ctx.message.add_reaction(ctx.emojis["slash"])
@@ -140,7 +141,7 @@ class Owner(commands.Cog):
     @commands.command()
     async def reload(self, ctx: AloneContext) -> None:
         cog_status: str = ""
-        for extension in self.bot.INITAL_EXTENSIONS:
+        for extension in self.bot.INITIAL_EXTENSIONS:
             try:
                 await self.bot.reload_extension(extension)
             except commands.ExtensionNotLoaded:

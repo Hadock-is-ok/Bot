@@ -30,7 +30,7 @@ class Error(commands.Cog):
         if isinstance(error, commands.CommandNotFound):
             return
 
-        await ctx.message.add_reaction(self.bot._emojis["cross"])
+        await ctx.message.add_reaction(ctx.emojis["cross"])
 
         if reason := errors.get(type(error)):
             await ctx.reply(

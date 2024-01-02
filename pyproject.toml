@@ -25,4 +25,3 @@ reportImportCycles = false
 reportUnusedImport = "error"
 reportUnnecessaryTypeIgnoreComment = "error"
 reportIncompatibleMethodOverride = "none"
-reportPrivateUsage = "none"

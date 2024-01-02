@@ -45,7 +45,7 @@ class AloneBot(commands.Bot):
         )
         self.support_server: str = os.environ["bot_guild"]
         self.emoji_guild: int = int(os.environ["emoji_guild"])
-        self._emojis: dict[str, discord.Emoji] = {}
+        self.EMOJIS: dict[str, discord.Emoji] = {}
         self.log_webhook: str = os.environ["webhook_url"]
         self.github_link: str = os.environ["github"]
         self.maintenance: Optional[str] = None
@@ -83,7 +83,7 @@ class AloneBot(commands.Bot):
             await self.db.execute(file.read())
 
         for emoji in (await self.fetch_guild(self.emoji_guild)).emojis:
-            self._emojis[emoji.name] = emoji
+            self.EMOJIS[emoji.name] = emoji
 
         await self.load_extension("jishaku")
         for file in pathlib.Path("ext").glob("**/*.py"):

@@ -92,11 +92,11 @@ class AloneBot(commands.Bot):
                 continue
 
             try:
-                await self.load_extension(f"{".".join(tree)}.{file.stem}")
+                await self.load_extension(f"{'.'.join(tree)}.{file.stem}")
             except Exception as error:
                 self.logger.error(error, exc_info=error)
             else:
-                self.INITIAL_EXTENSIONS.append(f"{".".join(tree)}.{file.stem}")
+                self.INITIAL_EXTENSIONS.append(f"{'.'.join(tree)}.{file.stem}")
 
         records: list[Any]
         records = await self.db.fetch("SELECT user_id, array_agg(prefix) AS prefixes FROM prefix GROUP BY user_id")

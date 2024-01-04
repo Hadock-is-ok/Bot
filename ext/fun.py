@@ -7,7 +7,7 @@ import discord
 from discord.ext import commands
 from typing_extensions import LiteralString
 
-#from utils import NoSubredditFound
+from utils import NoSubredditFound
 
 if TYPE_CHECKING:
     from bot import AloneBot
@@ -17,19 +17,19 @@ if TYPE_CHECKING:
 class Fun(commands.Cog):
     def __init__(self, bot: AloneBot) -> None:
         self.bot: AloneBot = bot
+        self.headers = self.bot.headers
+        self.headers["Authorization"] = f"bearer {self.bot.access_token}"
+        del self.bot.headers
 
-    async def fetch_subreddit(self, subreddit: str, sort: str = "hot") -> str: # Dict[str, Any]:
-        #async with self.bot.session.get(
-        #    f"https://www.reddit.com/r/{subreddit}/{sort}.json",
-        #    headers={},
-        #) as response:
-        #    data: Any = await response.json()
-        #    try:
-        #        data["data"]
-        #    except KeyError:
-        #        raise NoSubredditFound("No subreddit by that name.")
+    async def fetch_subreddit(self, subreddit: str, sort: str = "hot") -> dict[str, Any]:
+        async with self.bot.session.get('https://oauth.reddit.com/api/v1/me', headers=self.headers) as response:
+            data: Any = await response.json()
+            try:
+                data["data"]
+            except KeyError:
+                raise NoSubredditFound("No subreddit by that name.")
 
-        return "temporarily disabled!" #random.choice(data["data"]["children"])["data"]
+        return random.choice(data["data"]["children"])["data"]
 
     @commands.command(aliases=["define"])
     async def urban(self, ctx: AloneContext, *, word: Optional[str]) -> discord.Message | None:
@@ -55,10 +55,10 @@ class Fun(commands.Cog):
 
     @commands.command()
     async def meme(self, ctx: AloneContext) -> None:
-        #data: Dict[str, Any] = await self.fetch_subreddit("dankmemes")
-        #embed: discord.Embed = discord.Embed(title=data["title"], url=data["url"]).set_image(url=data["url"])
+        data: dict[str, Any] = await self.fetch_subreddit("dankmemes")
+        embed: discord.Embed = discord.Embed(title=data["title"], url=data["url"]).set_image(url=data["url"])
 
-        await ctx.reply("Temporarily disabled!") #await ctx.reply(embed=embed)
+        await ctx.reply(embed=embed)
 
     @commands.command()
     async def waifu(self, ctx: AloneContext) -> None:
@@ -80,14 +80,14 @@ class Fun(commands.Cog):
         if not subreddit:
             return await ctx.reply("You should give me a subreddit to search!")
 
-        #data: Dict[str, Any] = await self.fetch_subreddit(subreddit)
+        data: dict[str, Any] = await self.fetch_subreddit(subreddit)
         if not ctx.channel:
             pass
-        #elif data["over_18"] and not ctx.channel.is_nsfw():
-        #    return await ctx.reply("This post is nsfw! I cannot send this in a normal channel!")
+        elif data["over_18"] and not ctx.channel.is_nsfw(): # type: ignore
+            return await ctx.reply("This post is nsfw! I cannot send this in a normal channel!")
 
-        #embed: discord.Embed = discord.Embed(title=data["title"], url=data["url"]).set_image(url=data["url"])
-        await ctx.reply("Temporarily disabled!") #await ctx.reply(embed=embed)
+        embed: discord.Embed = discord.Embed(title=data["title"], url=data["url"]).set_image(url=data["url"])
+        await ctx.reply(embed=embed)
 
 
 async def setup(bot: AloneBot) -> None:

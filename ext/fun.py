@@ -17,12 +17,9 @@ if TYPE_CHECKING:
 class Fun(commands.Cog):
     def __init__(self, bot: AloneBot) -> None:
         self.bot: AloneBot = bot
-        self.headers = self.bot.headers
-        self.headers["Authorization"] = f"bearer {self.bot.access_token}"
-        del self.bot.headers
 
     async def fetch_subreddit(self, subreddit: str, sort: str = "hot") -> dict[str, Any]:
-        async with self.bot.session.get('https://oauth.reddit.com/api/v1/me', headers=self.headers) as response:
+        async with self.bot.session.get(f"https://reddit.com/r/{subreddit}/{sort}.json") as response:
             data: Any = await response.json()
             try:
                 data["data"]

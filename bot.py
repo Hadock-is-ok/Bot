@@ -85,16 +85,6 @@ class AloneBot(commands.Bot):
         for emoji in (await self.fetch_guild(self.emoji_guild)).emojis:
             self.EMOJIS[emoji.name] = emoji
 
-        auth = aiohttp.BasicAuth(os.environ["client_id"], os.environ["client_secret"])
-        data = {"grant_type": "client_credentials"}
-        self.headers = {"User-Agent": f"Alone Bot/1.something (by u/{os.environ["reddit_username"]})"}
-
-        async with self.session.post("https://www.reddit.com/api/v1/access_token", auth=auth, data=data, headers=self.headers) as response:
-            if response.status != 200:
-                raise RuntimeError(f"Couldn't get access token!\n{response}")
-            response_data = await response.json()
-            self.access_token = response_data["access_token"]
-
         await self.load_extension("jishaku")
         for file in pathlib.Path("ext").glob("**/*.py"):
             *tree, _ = file.parts

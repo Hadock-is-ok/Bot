@@ -19,7 +19,7 @@ class Fun(commands.Cog):
         self.bot: AloneBot = bot
 
     async def fetch_subreddit(self, subreddit: str, sort: str = "hot") -> dict[str, Any]:
-        async with self.bot.session.get(f"https://reddit.com/r/{subreddit}/{sort}.json") as response:
+        async with self.bot.session.get(f"https://old.reddit.com/r/{subreddit}/{sort}.json") as response:
             data: Any = await response.json()
             try:
                 data["data"]

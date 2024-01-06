@@ -26,6 +26,7 @@ class _Help(commands.HelpCommand):
     ) -> None:
         embed: discord.Embed = discord.Embed(
             title="Help",
+            color=self.context.author.color,
         )
         embed.add_field(
             name="How to use commands",
@@ -50,8 +51,9 @@ class _Help(commands.HelpCommand):
 
     async def send_command_help(self, command: commands.Command[Any, ..., Any], /) -> None:
         command_name: str = self.get_command_signature(command)
-        embed: discord.Embed = discord.Embed(title=command_name)
-        embed.add_field(name="Description of the command", value=command.help)
+        embed: discord.Embed = discord.Embed(title=command_name, color=self.context.author.color)
+        if command.help:
+            embed.add_field(name="Description of the command", value=command.help)
         alias: List[str] | Tuple[str] = command.aliases
         if alias:
             embed.add_field(name="Aliases", value=", ".join(alias), inline=False)
@@ -65,18 +67,21 @@ class _Help(commands.HelpCommand):
         await self.context.reply(embed=embed)
 
     async def send_group_help(self, group: commands.Group[Any, ..., Any], /) -> None:
-        embed: discord.Embed = discord.Embed(title=group)
+        embed: discord.Embed = discord.Embed(title=group, color=self.context.author.color)
         embed.add_field(
             name="Subcommands",
             value=", ".join([command.name for command in group.walk_commands()]),
         )
+        for command in group.walk_commands():
+            if command.help:
+                embed.add_field(name=command.name, value=command.help, inline=False)
         await self.context.reply(embed=embed)
 
     async def send_cog_help(self, cog: commands.Cog, /) -> None:
         embed: discord.Embed = discord.Embed(
             title=cog.qualified_name,
             description=cog.description,
-            color=discord.Color.blurple(),
+            color=self.context.author.color,
         )
         embed.add_field(
             name="Commands",

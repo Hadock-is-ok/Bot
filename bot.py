@@ -56,11 +56,10 @@ class AloneBot(commands.Bot):
 
     async def get_prefix(self, message: discord.Message, /) -> List[str] | str:
         prefixes: List[str] = self.DEFAULT_PREFIXES.copy()
-        user_prefixes: List[str] | None = self.user_prefixes.get(message.author.id)
-        if user_prefixes:
+        if user_prefixes := self.user_prefixes.get(message.author.id):
             prefixes.extend(user_prefixes)
 
-        if message.guild and (guild_prefix := self.guild_prefixes.get(message.guild.id, None)):
+        if message.guild and (guild_prefix := self.guild_prefixes.get(message.guild.id)):
             prefixes.append(guild_prefix)
 
         return commands.when_mentioned_or(*prefixes)(self, message)
@@ -71,7 +70,6 @@ class AloneBot(commands.Bot):
     async def setup_hook(self) -> None:
         self.db: asyncpg.Pool[Any] | Any = await asyncpg.create_pool(
             host=os.environ["database_ip"],
-            port=int(os.environ["database_port"]),
             user=os.environ["database_user"],
             password=os.environ["database_password"],
             database=os.environ["database_name"],

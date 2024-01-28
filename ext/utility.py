@@ -47,6 +47,8 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def choose(self, ctx: AloneContext, choices: commands.Greedy[Union[str, int]]) -> None:
+        if not choices:
+            return await ctx.message.add_reaction(ctx.emojis["slash"])
         await ctx.reply(str(choice(choices)))
 
     @commands.command()
@@ -119,8 +121,8 @@ class Utility(commands.Cog):
 
     @prefix.command(name="add")
     async def prefix_add(self, ctx: AloneContext, *, prefix: str = "") -> discord.Message | None:
-        if len(prefix) > 5:
-            return await ctx.reply("You can't have a prefix that's longer than 5 characters, sorry!")
+        if len(prefix) > 25:
+            return await ctx.reply("You can't have a prefix that's longer than 25 characters, sorry!")
 
         prefix_list: List[str] = self.bot.user_prefixes.setdefault(ctx.author.id, [])
         prefix_list.append(prefix)

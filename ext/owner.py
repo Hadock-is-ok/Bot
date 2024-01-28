@@ -9,7 +9,8 @@ if TYPE_CHECKING:
     from bot import AloneBot
     from utils import AloneContext
 
-message_param: discord.Message = commands.parameter(default=lambda ctx: ctx.message) # type: ignore
+message_param: discord.Message = commands.parameter(default=lambda ctx: ctx.message)  # type: ignore
+
 
 class Owner(commands.Cog):
     def __init__(self, bot: AloneBot) -> None:

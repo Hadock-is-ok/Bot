@@ -37,7 +37,7 @@ class DeleteView(discord.ui.View):
 class SupportView(discord.ui.View):
     def __init__(self, support_url: str) -> None:
         super().__init__(timeout=None)
-        self.add_item(discord.ui.Button(label="Support", url=support_url))
+        self.add_item(discord.ui.Button(label="Support", url=f"discord://-/invite/{support_url}"))
 
 
 class GithubButton(discord.ui.View):

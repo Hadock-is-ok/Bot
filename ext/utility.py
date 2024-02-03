@@ -249,7 +249,7 @@ class Utility(commands.Cog):
     async def support(self, ctx: AloneContext) -> None:
         embed: discord.Embed = discord.Embed(
             title="Support",
-            description=f"Join my [support server]({self.bot.support_server})!",
+            description=f"Join my [support server](https://discord.gg/{self.bot.support_server})!",
         )
         await ctx.reply(embed=embed, view=SupportView(self.bot.support_server))
 

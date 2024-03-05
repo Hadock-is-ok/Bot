@@ -99,6 +99,7 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.bot_has_permissions(manage_messages=True)
     @commands.has_permissions(manage_messages=True)
+    @commands.guild_only()
     async def purge(self, ctx: AloneContext, limit: int = 20) -> None:
         await ctx.message.delete()
         messages: Any = await ctx.channel.purge(limit=limit)  # type: ignore

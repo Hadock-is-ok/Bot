@@ -97,8 +97,8 @@ class Moderation(commands.Cog):
         await ctx.reply(f"Kicked {member}{f' for {reason}.' if reason else '.'}")
 
     @commands.command()
-    @commands.bot_has_guild_permissions(manage_messages=True)
-    @commands.has_guild_permissions(manage_messages=True)
+    @commands.bot_has_permissions(manage_messages=True)
+    @commands.has_permissions(manage_messages=True)
     async def purge(self, ctx: AloneContext, limit: int = 20) -> None:
         await ctx.message.delete()
         messages: Any = await ctx.channel.purge(limit=limit)  # type: ignore

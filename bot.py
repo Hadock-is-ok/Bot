@@ -32,7 +32,7 @@ class AloneBot(commands.Bot):
             **kwargs,
         )
 
-        self.owner_ids = [412734157819609090, 1022842005920940063]  # type: ignore
+        self.owner_ids = [412734157819609090]  # type: ignore
         self.blacklisted_users: Dict[int, str] = {}
         self.afk_users: Dict[int, str] = {}
         self.todos: Dict[int, List[TodoData]] = {}

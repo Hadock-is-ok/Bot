@@ -17,6 +17,7 @@ errors: dict[type[Exception], str] = {
     NoSubredditFound: "I couldn't find a subreddit by that name, maybe you should double check the name?",
     commands.CheckFailure: "You do not have permission to run this command!",
     commands.CommandOnCooldown: "You are on cooldown. Try again in {error.retry_after:.2f}s",
+    commands.MissingRequiredArgument: "You misstyped something.",
 }
 
 

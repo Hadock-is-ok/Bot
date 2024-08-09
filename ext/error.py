@@ -26,15 +26,17 @@ class Error(commands.Cog):
         self.bot: AloneBot = bot
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx: AloneContext, error: Exception) -> None:
+    async def on_command_error(self, ctx: AloneContext, error: Exception) -> discord.Message:
         "The error handler for the bot."
         if isinstance(error, commands.CommandNotFound):
             return
 
         await ctx.message.add_reaction(ctx.emojis["cross"])
 
+        # Check if this is a known error we can handle
         if reason := errors.get(type(error)):
-            await ctx.reply(
+            # If it is, return the message associated with it
+            return await ctx.reply(
                 embed=discord.Embed(
                     title="Error",
                     description=reason.format(self=self, ctx=ctx, error=error),
@@ -42,26 +44,26 @@ class Error(commands.Cog):
                 )
             )
 
-        else:
-            self.bot.logger.error("An error occurred", exc_info=error)
-            guild: str = f"Guild ID: {ctx.guild.id}\n" if ctx.guild else ""
-            embed: discord.Embed = discord.Embed(
-                title=f"Ignoring exception in {ctx.command}:",
-                description=f"```py\n{error}```\nThe developers have receieved this error and will fix it.",
-                color=0xF02E2E,
-            )
-            embed.set_author(name=f"{ctx.author.name}", icon_url=ctx.author.display_avatar)
-            embed.add_field(
-                name="Information",
-                value=f"Error Name: {error.__class__.__name__}\nMessage: {ctx.message.content}\n{guild}Channel ID: {ctx.channel.id}",
-            )
+        # If not, log the error and send a message notifying the user.
+        self.bot.logger.error("An error occurred", exc_info=error)
+        guild: str = f"Guild ID: {ctx.guild.id}\n" if ctx.guild else ""
+        embed: discord.Embed = discord.Embed(
+            title=f"Ignoring exception in {ctx.command}:",
+            description=f"```py\n{error}```\nThe developers have receieved this error and will fix it.",
+            color=0xF02E2E,
+        )
+        embed.set_author(name=f"{ctx.author.name}", icon_url=ctx.author.display_avatar)
+        embed.add_field(
+            name="Information",
+            value=f"Error Name: {error.__class__.__name__}\nMessage: {ctx.message.content}\n{guild}Channel ID: {ctx.channel.id}",
+        )
 
-            channel: discord.Webhook = self.bot.get_log_webhook()
-            await channel.send(
-                f"This error came from {ctx.author} using {ctx.command} in {ctx.guild}.",
-                embed=embed,
-            )
-            await ctx.reply(embed=embed)
+        channel: discord.Webhook = self.bot.get_log_webhook()
+        await channel.send(
+            f"This error came from {ctx.author} using {ctx.command} in {ctx.guild}.",
+            embed=embed,
+        )
+        return await ctx.reply(embed=embed)
 
 
 async def setup(bot: AloneBot) -> None:

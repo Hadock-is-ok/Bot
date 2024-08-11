@@ -212,6 +212,7 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def spotify(self, ctx: AloneContext, *, member: discord.Member = commands.Author):
+        await ctx.typing()
         spotify: discord.Spotify | None = discord.utils.find(  # type: ignore
             lambda activity: isinstance(activity, discord.Spotify), member.activities
         )

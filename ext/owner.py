@@ -140,15 +140,22 @@ class Owner(commands.Cog):
         await ctx.reply(message)
 
     @commands.command()
-    async def reload(self, ctx: AloneContext) -> None:
+    async def reload(self, ctx: AloneContext, *exts: str) -> None:
+        cogs: list[str] = []
+        if exts:
+            cogs = list(exts)
+        else:
+            cogs = self.bot.INITIAL_EXTENSIONS.copy()
+
         cog_status: str = ""
-        for extension in self.bot.INITIAL_EXTENSIONS:
+        for cog in cogs:
+            cog_name = cog.split(".")[-1].capitalize()
             try:
-                await self.bot.reload_extension(extension)
+                await self.bot.reload_extension(cog)
             except commands.ExtensionNotLoaded:
-                cog_status += f"{ctx.emojis['x']} {extension} not loaded!\n\n"
+                cog_status += f"{ctx.emojis['cross']} {cog_name} not loaded!\n\n"
                 continue
-            cog_status += f"\U0001f504 {extension} Reloaded!\n\n"
+            cog_status += f"\U0001f504 {cog_name} Reloaded!\n\n"
 
         await ctx.reply(embed=discord.Embed(title="Reload", description=cog_status))
         await ctx.message.add_reaction(ctx.emojis["tick"])

@@ -16,9 +16,6 @@ class _Help(commands.HelpCommand):
     if TYPE_CHECKING:
         context: AloneContext  # type: ignore
 
-    def get_command_signature(self, command: commands.Command[Any, ..., Any], /) -> str:
-        return f"{command.qualified_name}"
-
     async def send_bot_help(
         self,
         mapping: Mapping[Optional[commands.Cog], List[commands.Command[Any, ..., Any]]],
@@ -50,10 +47,10 @@ class _Help(commands.HelpCommand):
         await self.context.reply(embed=embed, add_button_view=False, view=view)  # type: ignore
 
     async def send_command_help(self, command: commands.Command[Any, ..., Any], /) -> None:
-        command_name: str = self.get_command_signature(command)
-        embed: discord.Embed = discord.Embed(title=command_name, color=self.context.author.color)
+        embed: discord.Embed = discord.Embed(title=command.qualified_name.capitalize(), description=self.get_command_signature(command), color=self.context.author.color)
+        embed.set_footer(text="< > = Required | [ ] = Optional")
         if command.help:
-            embed.add_field(name="Description of the command", value=command.help)
+            embed.add_field(name="Notes", value=command.help)
         alias: List[str] | Tuple[str] = command.aliases
         if alias:
             embed.add_field(name="Aliases", value=", ".join(alias), inline=False)

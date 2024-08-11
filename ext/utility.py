@@ -90,12 +90,12 @@ class Utility(commands.Cog):
         start: float = perf_counter()
         message: discord.Message = await ctx.reply("Pong!")
         end: float = perf_counter()
-        typing_ping: float = end - start
+        typing_ping: float = (end - start) * 1000
 
         start = perf_counter()
         await self.bot.db.execute("SELECT 1")
         end = perf_counter()
-        database_ping: float = end - start
+        database_ping: float = (end - start) * 1000
 
         embed: discord.Embed = discord.Embed(title="Ping")
         embed.add_field(
